@@ -1,13 +1,13 @@
-package ru.cfuv.cfuvscheduling;
+package ru.cfuv.auth;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CfuvschedulingApplicationTests {
+class AuthApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+    @Test
+    void contextLoads() {
+    }
 
 }
