@@ -1,0 +1,13 @@
+version: '3.5'
+
+services:
+  postgres:
+    container_name: CFUVScheduling
+    image: postgres
+    environment:
+      POSTGRES_USER: schedadmin
+      POSTGRES_PASSWORD: schedadmin
+      PGDATA: /data/postgres
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
