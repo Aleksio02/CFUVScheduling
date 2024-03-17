@@ -2,7 +2,7 @@ version: '3.5'
 
 services:
   postgres:
-    container_name: CFUVScheduling
+    container_name: cfuvsched
     image: postgres
     environment:
       POSTGRES_USER: schedadmin
