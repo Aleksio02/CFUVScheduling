@@ -1,4 +1,4 @@
-package ru.cfuv.ttmanager;
+package ru.cfuv.cfuvscheduling.ttmanager.dao.dto;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

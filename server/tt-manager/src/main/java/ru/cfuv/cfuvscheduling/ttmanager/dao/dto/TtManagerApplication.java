@@ -1,4 +1,4 @@
-package ru.cfuv.ttmanager;
+package ru.cfuv.cfuvscheduling.ttmanager.dao.dto;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

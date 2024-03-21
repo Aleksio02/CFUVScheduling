@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8081
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/cfuvsched
@@ -8,4 +8,9 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
+      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+    properties:
+      hibernate:
+        id:
+          new_generator_mappings: true
