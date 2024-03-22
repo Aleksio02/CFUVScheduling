@@ -1,4 +1,4 @@
-package ru.cfuv.auth;
+package ru.cfuv.cfuvscheduling.auth.dao.dto;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
