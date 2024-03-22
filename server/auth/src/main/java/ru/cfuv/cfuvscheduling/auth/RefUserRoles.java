@@ -1,4 +1,4 @@
-package ru.cfuv.cfuvscheduling.auth.dao.dto;
+package ru.cfuv.cfuvscheduling.auth;
 
 // Найти как сделать этот класс сущностью справочника "ref_user_roles" в БД
 // Таблица должна сама создаваться и заполняться при изменении этого класса (изменение ???)
