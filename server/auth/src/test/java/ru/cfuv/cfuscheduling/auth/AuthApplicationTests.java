@@ -1,4 +1,4 @@
-package ru.cfuv.auth;
+package ru.cfuv.cfuscheduling.auth;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

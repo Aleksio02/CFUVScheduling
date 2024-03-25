@@ -1,4 +1,4 @@
-package ru.cfuv.auth;
+package ru.cfuv.cfuscheduling.auth;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
