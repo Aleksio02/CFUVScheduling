@@ -1,4 +1,4 @@
-package ru.cfuv.cfuvscheduling.auth;
+package ru.cfuv.cfuvscheduling.auth.dao.dto;
 
 import jakarta.persistence.*;
 
