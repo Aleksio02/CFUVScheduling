@@ -1,7 +1,6 @@
-package ru.cfuv.cfuvscheduling.admin.dao.dto;
+package ru.cfuv.cfuvscheduling.auth.dao.dto;
 
 import jakarta.persistence.*;
-import ru.cfuv.cfuvscheduling.auth.dao.dto.RefUserRolesDto;
 
 @Entity
 @Table(schema = "public", name = "users")
