@@ -5,6 +5,7 @@ services:
     container_name: cfuvsched
     image: postgres
     environment:
+      POSTGRES_DB: cfuvsched
       POSTGRES_USER: schedadmin
       POSTGRES_PASSWORD: schedadmin
       PGDATA: /data/postgres
