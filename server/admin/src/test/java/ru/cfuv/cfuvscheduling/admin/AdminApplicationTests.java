@@ -1,4 +1,4 @@
-package ru.cfuv.admin;
+package ru.cfuv.cfuvscheduling.admin;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
