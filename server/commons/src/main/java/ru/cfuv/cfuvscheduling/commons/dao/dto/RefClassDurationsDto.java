@@ -1,12 +1,14 @@
-package ru.cfuv.cfuvscheduling.ttmanager.dao.dto;
+package ru.cfuv.cfuvscheduling.commons.dao.dto;
 
 import jakarta.persistence.*;
 
 import java.util.Date;
 
 @Entity
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"start_time", "end_time"})}, schema = "public", name = "ref_class_duration")
+@Table(uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"start_time", "end_time"})}, schema = "public", name = "ref_class_duration")
 public class RefClassDurationsDto {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer number;
