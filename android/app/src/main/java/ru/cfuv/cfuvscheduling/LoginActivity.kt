@@ -75,17 +75,19 @@ fun LoginScreen(onNavigateToRegister: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxSize()
         ) {
+            var login by rememberSaveable { mutableStateOf("") }
+            var pass by rememberSaveable { mutableStateOf("") }
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
+                value = login,
+                onValueChange = { login = it },
                 label = { Text(text = stringResource(id = R.string.loginUsernameField)) },
                 shape = RoundedCornerShape(24.dp),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
+                value = pass,
+                onValueChange = { pass = it },
                 label = { Text(text = stringResource(id = R.string.loginPasswordField)) },
                 shape = RoundedCornerShape(24.dp),
                 visualTransformation = PasswordVisualTransformation(),
