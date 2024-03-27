@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">CFUVScheduling</string>
+    <string name="title_activity_login">LoginActivity</string>
+
+    <!-- Login screen -->
+    <string name="loginTitle">Привет! 👋</string>
+    <string name="loginDescription">Это приложение для просмотра расписания ФТИ КФУ</string>
+    <string name="loginUsernameField">Логин</string>
+    <string name="loginPasswordField">Пароль</string>
+    <string name="loginButtonLabel">Войти</string>
+    <string name="loginButtonNoAccountLabel">Войти без аккаунта</string>
 </resources>
