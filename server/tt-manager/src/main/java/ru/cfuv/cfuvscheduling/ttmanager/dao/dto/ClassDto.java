@@ -1,10 +1,7 @@
 package ru.cfuv.cfuvscheduling.ttmanager.dao.dto;
 
 import jakarta.persistence.*;
-import ru.cfuv.cfuvscheduling.commons.dao.dto.GroupsDto;
-import ru.cfuv.cfuvscheduling.commons.dao.dto.RefClassDurationsDto;
-import ru.cfuv.cfuvscheduling.commons.dao.dto.RefClassTypeDto;
-import ru.cfuv.cfuvscheduling.commons.dao.dto.UserDto;
+import ru.cfuv.cfuvscheduling.commons.dao.dto.*;
 
 import java.sql.Date;
 
@@ -17,11 +14,8 @@ import java.sql.Date;
                 @UniqueConstraint(columnNames = {"user_id", "class_number", "date"})
         }
 )
-public class ClassDto {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
 
+public class ClassDto extends AbstractEntityDto {
     @Column(name = "subject_name")
     private String subjectName;
 
