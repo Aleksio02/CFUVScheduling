@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.cfuv.cfuvscheduling.ttmanager.bom.GroupsBom;
 import ru.cfuv.cfuvscheduling.ttmanager.service.GroupsService;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.GroupsDto;
 
@@ -17,7 +18,7 @@ public class GroupsController {
     private GroupsService groupsService;
 
     @GetMapping("/findAll")
-    public List<GroupsDto> findAllGroups() {
+    public List<GroupsBom> findAllGroups() {
         return groupsService.findAll();
     }
 }
