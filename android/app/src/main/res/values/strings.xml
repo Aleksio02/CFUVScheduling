@@ -15,4 +15,11 @@
     <string name="registerPasswordNoMatch">Пароли не совпадают!</string>
     <string name="registerButtonLabel">Зарегистрироваться</string>
 
+    <!-- Timetable -->
+    <string name="timetableTitle">Расписание на %1$s</string>
+    <string name="oddWeek">Нечетная неделя</string>
+    <string name="evenWeek">Четная неделя</string>
+    <string name="classTypeLecture">ЛК</string>
+    <string name="classTypePractical">ПЗ</string>
+
 </resources>
