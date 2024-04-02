@@ -1,4 +1,4 @@
-package ru.cfuv.cfuvscheduling
+package ru.cfuv.cfuvscheduling.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ru.cfuv.cfuvscheduling.api.DummyClassBom
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

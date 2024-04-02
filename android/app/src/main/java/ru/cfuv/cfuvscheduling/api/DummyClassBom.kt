@@ -1,4 +1,4 @@
-package ru.cfuv.cfuvscheduling
+package ru.cfuv.cfuvscheduling.api
 
 
 // TODO: aleksio: Заменить в будущем на что-то вменяемое (сделано для примера)
