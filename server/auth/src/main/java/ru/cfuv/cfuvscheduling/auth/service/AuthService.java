@@ -21,11 +21,8 @@ public class AuthService {
     private JwtUtils jwtUtils;
 
     public String authenticateUser(String username) {
-        // Поиск пользователя в репозитории по имени
         UserDto user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
-
-        // Генерация JWT токена
         String token = jwtUtils.generateToken(user.getUsername());
         return token;
     }

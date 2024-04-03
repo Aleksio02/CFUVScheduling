@@ -11,6 +11,7 @@ public class JwtController {
 
     @Autowired
     private AuthService authService;
+
     @PostMapping("/generate")
     public String generateJwt(@RequestBody String username) {
         return authService.authenticateUser(username);
