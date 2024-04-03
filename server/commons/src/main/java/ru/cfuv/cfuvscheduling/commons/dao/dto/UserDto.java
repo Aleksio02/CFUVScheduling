@@ -1,7 +1,11 @@
 package ru.cfuv.cfuvscheduling.commons.dao.dto;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(schema = "public", name = "users")
 public class UserDto extends AbstractEntityDto {
