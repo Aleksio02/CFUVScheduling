@@ -10,4 +10,8 @@ public class RefClassTypeConverter {
         destination.setName(source.getName());
     }
 
+    public void toDto(RefClassTypeBom source, RefClassTypeDto destination) {
+        destination.setId(source.getId());
+        destination.setName(source.getName());
+    }
 }

@@ -9,3 +9,7 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
+
+connector:
+  auth:
+    url: localhost:8081/auth

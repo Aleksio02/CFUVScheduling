@@ -13,6 +13,11 @@ class GlobalControllerExceptionHandler {
         return ResponseEntity.status(400).body(exception.getMessage());
     }
 
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ResponseEntity<?> handleAlreadyExistsException(AlreadyExistsException exception, WebRequest request) {
+        return ResponseEntity.status(400).body(exception.getMessage());
+    }
+
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<?> handleUnauthorizedException(UnauthorizedException exception, WebRequest request) {
         return ResponseEntity.status(401).body(exception.getMessage());
