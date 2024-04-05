@@ -4,7 +4,7 @@ import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.cfuv.cfuvscheduling.auth.bom.UserBom;
+import ru.cfuv.cfuvscheduling.commons.bom.UserBom;
 import ru.cfuv.cfuvscheduling.auth.converter.UserConverter;
 import ru.cfuv.cfuvscheduling.auth.jwt.JwtUtils;
 import ru.cfuv.cfuvscheduling.auth.dao.UserDao;

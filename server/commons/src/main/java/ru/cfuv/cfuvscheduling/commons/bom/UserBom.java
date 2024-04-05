@@ -1,4 +1,4 @@
-package ru.cfuv.cfuvscheduling.auth.bom;
+package ru.cfuv.cfuvscheduling.commons.bom;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,4 +9,7 @@ public class UserBom {
     private String username;
     private String role;
 
+    public boolean hasAdminRole() {
+        return role.equals(UserRoles.ADMIN.name());
+    }
 }

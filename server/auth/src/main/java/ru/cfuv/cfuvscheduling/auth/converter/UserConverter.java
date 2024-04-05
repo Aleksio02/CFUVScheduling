@@ -1,6 +1,6 @@
 package ru.cfuv.cfuvscheduling.auth.converter;
 
-import ru.cfuv.cfuvscheduling.auth.bom.UserBom;
+import ru.cfuv.cfuvscheduling.commons.bom.UserBom;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.UserDto;
 
 public class UserConverter {
