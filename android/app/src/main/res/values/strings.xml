@@ -22,4 +22,7 @@
     <string name="classTypeLecture">ЛК</string>
     <string name="classTypePractical">ПЗ</string>
 
+    <!-- Timetable list -->
+    <string name="timetableListDescription">Здесь можно выбрать группу, расписание которой будет показываться при входе в приложение.</string>
+
 </resources>
