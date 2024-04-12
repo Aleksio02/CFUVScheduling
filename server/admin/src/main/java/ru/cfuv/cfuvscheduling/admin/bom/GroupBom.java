@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AddNewGroupBom {
+public class GroupBom {
     private Integer id;
     private String name;
 }

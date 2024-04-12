@@ -1,4 +1,4 @@
-package ru.cfuv.cfuvscheduling.ttmanager.bom;
+package ru.cfuv.cfuvscheduling.commons.bom;
 
 import lombok.Getter;
 import lombok.Setter;

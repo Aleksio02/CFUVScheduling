@@ -2,9 +2,9 @@ package ru.cfuv.cfuvscheduling.ttmanager.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.cfuv.cfuvscheduling.commons.bom.GroupsBom;
 import ru.cfuv.cfuvscheduling.commons.dao.GroupsDao;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.GroupsDto;
-import ru.cfuv.cfuvscheduling.ttmanager.bom.GroupsBom;
 import ru.cfuv.cfuvscheduling.ttmanager.converter.GroupsConverter;
 
 import java.util.ArrayList;

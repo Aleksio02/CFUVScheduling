@@ -1,7 +1,7 @@
 package ru.cfuv.cfuvscheduling.ttmanager.converter;
 
+import ru.cfuv.cfuvscheduling.commons.bom.GroupsBom;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.GroupsDto;
-import ru.cfuv.cfuvscheduling.ttmanager.bom.GroupsBom;
 
 public class GroupsConverter {
 

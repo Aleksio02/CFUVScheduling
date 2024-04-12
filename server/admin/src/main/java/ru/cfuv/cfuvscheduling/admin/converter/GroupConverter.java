@@ -1,16 +1,16 @@
 package ru.cfuv.cfuvscheduling.admin.converter;
 
-import ru.cfuv.cfuvscheduling.admin.bom.AddNewGroupBom;
+import ru.cfuv.cfuvscheduling.admin.bom.GroupBom;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.GroupsDto;
 
-public class AddNewGroupConverter {
+public class GroupConverter {
 
-    public void fromDto(GroupsDto source, AddNewGroupBom destination) {
+    public void fromDto(GroupsDto source, GroupBom destination) {
         destination.setId(source.getId());
         destination.setName(source.getName());
     }
 
-    public void toDto(AddNewGroupBom source, GroupsDto destination) {
+    public void toDto(GroupBom source, GroupsDto destination) {
         destination.setId(source.getId());
         destination.setName(source.getName());
     }
