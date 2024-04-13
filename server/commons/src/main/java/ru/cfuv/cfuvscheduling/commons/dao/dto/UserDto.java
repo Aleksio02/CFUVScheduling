@@ -10,8 +10,12 @@ import lombok.Setter;
 @Table(schema = "public", name = "users")
 public class UserDto extends AbstractEntityDto {
 
+    @Column(nullable = false)
     private String username;
+
+    @Column(nullable = false)
     private String password;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     private RefUserRolesDto roleId;
