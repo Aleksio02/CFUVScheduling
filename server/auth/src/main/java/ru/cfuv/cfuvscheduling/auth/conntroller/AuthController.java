@@ -20,7 +20,7 @@ public class AuthController {
     }
 
     @PostMapping("/registerUser")
-    public AccountResponse registration(@RequestBody AccountForm userForm) {
+    public AccountResponse registerUser(@RequestBody AccountForm userForm) {
         return authService.registration(userForm);
     }
 }

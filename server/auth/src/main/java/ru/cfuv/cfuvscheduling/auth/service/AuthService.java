@@ -60,13 +60,14 @@ public class AuthService {
         RefUserRolesDto userRole = userRolesDao.findByName(UserRoles.USER.name()).get();
 
         UserDto userDto = new UserDto();
-        new UserConverter().fromRequestToDto(userForm, userDto, userRole);
+        new UserConverter().fromRequestToDto(userForm, userDto);
+        userDto.setRoleId(userRole);
         userDao.save(userDto);
 
         String token = new JwtUtils().generateToken(userForm.getUsername());
 
         UserBom userBom = new UserBom();
-        new UserConverter().fromRequestToBom(userForm, userBom);
+        new UserConverter().fromDto(userDto, userBom);
 
         return new AccountResponse(token, userBom);
     }

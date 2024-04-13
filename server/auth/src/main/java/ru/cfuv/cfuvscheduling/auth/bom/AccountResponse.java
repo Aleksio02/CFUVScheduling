@@ -10,5 +10,5 @@ import ru.cfuv.cfuvscheduling.commons.bom.UserBom;
 @AllArgsConstructor
 public class AccountResponse {
     private String token;
-    private UserBom userBom;
+    private UserBom user;
 }

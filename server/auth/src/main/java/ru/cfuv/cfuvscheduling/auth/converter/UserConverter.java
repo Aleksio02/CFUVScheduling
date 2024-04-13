@@ -13,15 +13,9 @@ public class UserConverter {
         destination.setRole(sourсe.getRoleId().getName());
     }
 
-    public void fromRequestToDto(AccountForm source, UserDto destination, RefUserRolesDto userRole) {
+    public void fromRequestToDto(AccountForm source, UserDto destination) {
         destination.setId(null);
         destination.setUsername(source.getUsername());
         destination.setPassword(source.getPassword());
-        destination.setRoleId(userRole);
-    }
-
-    public void fromRequestToBom(AccountForm source, UserBom destination) {
-        destination.setUsername(source.getUsername());
-        destination.setRole(UserRoles.USER.toString());
     }
 }
