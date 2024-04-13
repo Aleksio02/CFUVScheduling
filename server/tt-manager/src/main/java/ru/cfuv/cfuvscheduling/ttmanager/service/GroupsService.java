@@ -2,10 +2,10 @@ package ru.cfuv.cfuvscheduling.ttmanager.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.cfuv.cfuvscheduling.commons.bom.GroupsBom;
+import ru.cfuv.cfuvscheduling.commons.converter.GroupsConverter;
 import ru.cfuv.cfuvscheduling.commons.dao.GroupsDao;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.GroupsDto;
-import ru.cfuv.cfuvscheduling.ttmanager.bom.GroupsBom;
-import ru.cfuv.cfuvscheduling.ttmanager.converter.GroupsConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,7 @@ public class GroupsService {
 
         for (int i = 0; i < dtos.size(); i++) {
             GroupsBom bom = new GroupsBom();
-            new GroupsConverter().fromDTO(dtos.get(i), bom);
+            new GroupsConverter().fromDto(dtos.get(i), bom);
             boms.add(bom);
         }
 

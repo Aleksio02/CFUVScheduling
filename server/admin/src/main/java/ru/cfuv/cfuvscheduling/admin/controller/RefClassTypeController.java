@@ -23,10 +23,10 @@ import ru.cfuv.cfuvscheduling.commons.exception.UnauthorizedException;
 public class RefClassTypeController {
 
     @Autowired
-    private RefClassTypeService refClassTypeService;
+    private UserValidator userValidator;
 
     @Autowired
-    private AuthConnector authConnector;
+    private RefClassTypeService refClassTypeService;
 
     @GetMapping("/findAll")
     public List<RefClassTypeBom> findAll() {
@@ -35,31 +35,19 @@ public class RefClassTypeController {
 
     @PostMapping("/create")
     public RefClassTypeBom createClassType(@RequestHeader("Authorization") String token, @RequestBody RefClassTypeBom type) {
-        validateUserAsAdmin(token);
+        userValidator.validateUserAsAdmin(token);
         return refClassTypeService.createClassType(type);
     }
 
     @PostMapping("/rename")
     public RefClassTypeBom renameClassType(@RequestHeader("Authorization") String token, @RequestBody RefClassTypeBom type) {
-        validateUserAsAdmin(token);
+        userValidator.validateUserAsAdmin(token);
         return refClassTypeService.renameClassType(type);
     }
 
     @DeleteMapping("/delete/{id}")
     public void deleteClassType(@RequestHeader("Authorization") String token, @PathVariable Integer id) {
-        validateUserAsAdmin(token);
+        userValidator.validateUserAsAdmin(token);
         refClassTypeService.deleteClassType(id);
     }
-
-    private void validateUserAsAdmin(String token) {
-        String exceptionMessage = "You don't have access to this action";
-        try {
-            if (!authConnector.getCurrentUser(token).hasAdminRole()) {
-                throw new AccessForbiddenException(exceptionMessage);
-            }
-        } catch (FeignException e) {
-            throw new UnauthorizedException(exceptionMessage);
-        }
-    }
-
 }
