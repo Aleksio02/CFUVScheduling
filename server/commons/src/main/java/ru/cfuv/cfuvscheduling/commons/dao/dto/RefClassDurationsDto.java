@@ -1,9 +1,13 @@
 package ru.cfuv.cfuvscheduling.commons.dao.dto;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
+@Getter
+@Setter
 @Entity
 @Table(uniqueConstraints = {
     @UniqueConstraint(columnNames = {"start_time", "end_time"})}, schema = "public", name = "ref_class_duration")
