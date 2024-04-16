@@ -1,4 +1,4 @@
-package ru.cfuv.cfuvscheduling.ttmanager.dao;
+package ru.cfuv.cfuvscheduling.admin.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -2,21 +2,27 @@ package ru.cfuv.cfuvscheduling.admin.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.cfuv.cfuvscheduling.admin.service.GroupService;
+import ru.cfuv.cfuvscheduling.admin.service.GroupsService;
 import ru.cfuv.cfuvscheduling.commons.bom.GroupsBom;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/admin/group")
-public class GroupController {
+public class GroupsController {
 
     @Autowired
-    private GroupService groupService;
+    private GroupsService groupsService;
 
     @Autowired
     private UserValidator userValidator;
     @PostMapping("/addNewGroup")
     public GroupsBom group(@RequestHeader("Authorization") String token, @RequestBody GroupsBom group) {
         userValidator.validateUserAsAdmin(token);
-        return groupService.addNewGroup(group);
+        return groupsService.addNewGroup(group);
+    }
+    @GetMapping("/findAll")
+    public List<GroupsBom> findAllGroups() {
+        return groupsService.findAll();
     }
 }

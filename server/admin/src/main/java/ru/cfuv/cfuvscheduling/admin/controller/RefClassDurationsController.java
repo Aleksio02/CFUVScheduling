@@ -1,11 +1,11 @@
-package ru.cfuv.cfuvscheduling.ttmanager.controller;
+package ru.cfuv.cfuvscheduling.admin.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.cfuv.cfuvscheduling.ttmanager.bom.RefClassDurationsBom;
-import ru.cfuv.cfuvscheduling.ttmanager.service.RefClassDurationsService;
+import ru.cfuv.cfuvscheduling.admin.bom.RefClassDurationsBom;
+import ru.cfuv.cfuvscheduling.admin.service.RefClassDurationsService;
 
 import java.util.List;
 
