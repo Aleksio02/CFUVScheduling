@@ -1,11 +1,11 @@
-package ru.cfuv.cfuvscheduling.ttmanager.service;
+package ru.cfuv.cfuvscheduling.admin.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.cfuv.cfuvscheduling.admin.bom.RefClassDurationsBom;
+import ru.cfuv.cfuvscheduling.admin.converter.RefClassDurationsConverter;
+import ru.cfuv.cfuvscheduling.admin.dao.RefClassDurationsDao;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.RefClassDurationsDto;
-import ru.cfuv.cfuvscheduling.ttmanager.bom.RefClassDurationsBom;
-import ru.cfuv.cfuvscheduling.ttmanager.converter.RefClassDurationsConverter;
-import ru.cfuv.cfuvscheduling.ttmanager.dao.RefClassDurationsDao;
 
 import java.util.ArrayList;
 import java.util.List;
