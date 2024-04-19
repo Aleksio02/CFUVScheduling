@@ -43,7 +43,9 @@ fun TimetableScreen(date: LocalDate, viewModel: MainViewModel = viewModel()) {
     }
 
     Column(
-        Modifier.fillMaxSize()
+        Modifier
+            .fillMaxSize()
+            .padding(horizontal = 12.dp)
     ) {
         Text(
             text = stringResource(
@@ -126,7 +128,6 @@ fun ClassCard(data: DummyClassBom) {
                     horizontalAlignment = Alignment.End,
                     modifier = Modifier
                         .padding(start = 12.dp)
-                        .width(36.dp)
                 ) {
                     Text(
                         text = data.startTime,

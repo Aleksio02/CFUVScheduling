@@ -43,7 +43,7 @@ fun AccountScreen(viewModel: MainViewModel = viewModel()) {
 
     Column {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(horizontal = 16.dp)
         ) {
             Text(
                 text = ACCOUNT.name,
@@ -60,7 +60,9 @@ fun AccountScreen(viewModel: MainViewModel = viewModel()) {
             supportingContent = { Text(text = stringResource(id = R.string.settingsNotificationsDescription)) },
             leadingContent = { Icon(Icons.Rounded.Notifications, contentDescription = null) },
             trailingContent = { Switch(checked = notificationsEnabled, onCheckedChange = { notificationsEnabled = !notificationsEnabled }) },
-            modifier = Modifier.clickable { notificationsEnabled = !notificationsEnabled } // TODO: notifications logics
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .clickable { notificationsEnabled = !notificationsEnabled } // TODO: notifications logics
         )
         ListItem(
             headlineContent = { Text(text = stringResource(id = R.string.accountLogout)) },
