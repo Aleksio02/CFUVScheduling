@@ -12,16 +12,20 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import ru.cfuv.cfuvscheduling.MainViewModel
 import ru.cfuv.cfuvscheduling.api.DummyAccountInfoModel
 import ru.cfuv.cfuvscheduling.R
 
@@ -31,7 +35,12 @@ val ACCOUNT = DummyAccountInfoModel(
 )
 
 @Composable
-fun AccountScreen() {
+fun AccountScreen(viewModel: MainViewModel = viewModel()) {
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        viewModel.setAppBarTitle(context.getString(R.string.accountBarTitle))
+    }
+
     Column {
         Column(
             modifier = Modifier.padding(16.dp)

@@ -30,4 +30,13 @@
     <string name="settingsNotificationsTitle">Уведомления</string>
     <string name="settingsNotificationsDescription">Напоминания о следующей паре</string>
     <string name="accountLogout">Выйти из аккаунта</string>
+
+    <!-- Main screen -->
+    <string name="timetableNavItem">Пары</string>
+    <string name="timetableListNavItem">Расписания</string>
+    <string name="accountNavItem">Аккаунт</string>
+
+    <!-- Top app bar -->
+    <string name="timetableListBarTitle">Список групп</string>
+    <string name="accountBarTitle">Информация об аккаунте</string>
 </resources>
