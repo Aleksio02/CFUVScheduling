@@ -1,10 +1,14 @@
 package ru.cfuv.cfuvscheduling.ttmanager.dao.dto;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.*;
 
 import java.sql.Date;
 
+@Getter
+@Setter
 @Entity
 @Table(
         name = "classes",
@@ -14,7 +18,6 @@ import java.sql.Date;
                 @UniqueConstraint(columnNames = {"user_id", "class_number", "date"})
         }
 )
-
 public class ClassDto extends AbstractEntityDto {
     @Column(name = "subject_name")
     private String subjectName;

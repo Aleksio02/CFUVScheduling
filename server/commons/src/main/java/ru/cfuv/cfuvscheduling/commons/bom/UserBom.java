@@ -12,4 +12,8 @@ public class UserBom {
     public boolean hasAdminRole() {
         return role.equals(UserRoles.ADMIN.name());
     }
+
+    public boolean isTeacher() {
+        return role.equals(UserRoles.TEACHER.name());
+    }
 }

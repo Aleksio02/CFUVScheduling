@@ -6,7 +6,6 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import ru.cfuv.cfuvscheduling.admin.connector.AuthConnector;
 
 @EntityScan({"ru.cfuv.cfuvscheduling.commons.dao.dto", "ru.cfuv.cfuvscheduling.admin.dao.dto"})
 @EnableJpaRepositories("ru.cfuv.cfuvscheduling")

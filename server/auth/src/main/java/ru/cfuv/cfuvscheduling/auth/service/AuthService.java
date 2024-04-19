@@ -10,7 +10,7 @@ import ru.cfuv.cfuvscheduling.auth.dao.UserRolesDao;
 import ru.cfuv.cfuvscheduling.commons.bom.UserBom;
 import ru.cfuv.cfuvscheduling.auth.converter.UserConverter;
 import ru.cfuv.cfuvscheduling.auth.jwt.JwtUtils;
-import ru.cfuv.cfuvscheduling.auth.dao.UserDao;
+import ru.cfuv.cfuvscheduling.commons.dao.UserDao;
 import ru.cfuv.cfuvscheduling.commons.bom.UserRoles;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.RefUserRolesDto;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.UserDto;

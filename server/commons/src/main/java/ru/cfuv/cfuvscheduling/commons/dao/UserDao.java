@@ -1,4 +1,4 @@
-package ru.cfuv.cfuvscheduling.auth.dao;
+package ru.cfuv.cfuvscheduling.commons.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
