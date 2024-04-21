@@ -22,7 +22,7 @@ public class ClassController {
     private ClassService classService;
 
     @GetMapping("/{id}/addComment")
-    public void addCommentToClass(@RequestHeader("Authorization") String token, @PathVariable Integer id, @RequestParam @Nullable String comment) {
+    public void addCommentToClass(@RequestHeader(name = "Authorization", required = false) String token, @PathVariable Integer id, @RequestParam @Nullable String comment) {
         UserBom currentUser = userValidator.validateUserAsTeacher(token);
         classService.addCommentToClass(currentUser, id, comment);
     }

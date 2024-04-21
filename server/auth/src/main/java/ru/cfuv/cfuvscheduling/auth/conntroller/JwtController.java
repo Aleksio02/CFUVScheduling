@@ -1,6 +1,7 @@
 package ru.cfuv.cfuvscheduling.auth.conntroller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.cfuv.cfuvscheduling.auth.service.AuthService;
 import ru.cfuv.cfuvscheduling.commons.bom.UserBom;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/jwt")
 public class JwtController {
@@ -23,7 +25,7 @@ public class JwtController {
     }
 
     @GetMapping("/parse")
-    public UserBom parseJwt(@RequestHeader("Authorization") String token) {
+    public UserBom parseJwt(@RequestHeader(name = "Authorization", required = false) String token) {
         return authService.getCurrentUser(token);
     }
 }
