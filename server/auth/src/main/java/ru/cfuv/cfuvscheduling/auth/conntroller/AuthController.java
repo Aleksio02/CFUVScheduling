@@ -15,7 +15,7 @@ public class AuthController {
     private AuthService authService;
 
     @GetMapping("/getCurrentUser")
-    public UserBom getCurrentUser(@RequestHeader("Authorization") String token) {
+    public UserBom getCurrentUser(@RequestHeader(name = "Authorization", required = false) String token) {
         return authService.getCurrentUser(token);
     }
 

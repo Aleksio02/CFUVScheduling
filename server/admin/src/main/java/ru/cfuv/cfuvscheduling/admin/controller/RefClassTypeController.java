@@ -34,19 +34,19 @@ public class RefClassTypeController {
     }
 
     @PostMapping("/create")
-    public RefClassTypeBom createClassType(@RequestHeader("Authorization") String token, @RequestBody RefClassTypeBom type) {
+    public RefClassTypeBom createClassType(@RequestHeader(name = "Authorization",required = false) String token, @RequestBody RefClassTypeBom type) {
         userValidator.validateUserAsAdmin(token);
         return refClassTypeService.createClassType(type);
     }
 
     @PostMapping("/rename")
-    public RefClassTypeBom renameClassType(@RequestHeader("Authorization") String token, @RequestBody RefClassTypeBom type) {
+    public RefClassTypeBom renameClassType(@RequestHeader(name = "Authorization", required = false) String token, @RequestBody RefClassTypeBom type) {
         userValidator.validateUserAsAdmin(token);
         return refClassTypeService.renameClassType(type);
     }
 
     @DeleteMapping("/delete/{id}")
-    public void deleteClassType(@RequestHeader("Authorization") String token, @PathVariable Integer id) {
+    public void deleteClassType(@RequestHeader(name = "Authorization", required = false) String token, @PathVariable Integer id) {
         userValidator.validateUserAsAdmin(token);
         refClassTypeService.deleteClassType(id);
     }

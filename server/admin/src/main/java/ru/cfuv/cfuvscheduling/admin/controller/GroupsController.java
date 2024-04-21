@@ -17,7 +17,7 @@ public class GroupsController {
     @Autowired
     private UserValidator userValidator;
     @PostMapping("/addNewGroup")
-    public GroupsBom group(@RequestHeader("Authorization") String token, @RequestBody GroupsBom group) {
+    public GroupsBom group(@RequestHeader(name = "Authorization", required = false) String token, @RequestBody GroupsBom group) {
         userValidator.validateUserAsAdmin(token);
         return groupsService.addNewGroup(group);
     }
