@@ -14,6 +14,9 @@ spring:
       hibernate:
         id:
           new_generator_mappings: true
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
 
 connector:
   auth:
