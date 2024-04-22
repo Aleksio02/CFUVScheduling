@@ -14,22 +14,29 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import ru.cfuv.cfuvscheduling.MainViewModel
 import ru.cfuv.cfuvscheduling.R
 
-val GROUPS = listOf("ПИ-231(1)", "ПИ-231(2)", "ПИ-232(1)", "ПИ-232(2)", "ПИ-233(1)", "ПИ-233(2)")
-
 @Composable
-fun TimetableListScreen() {
-    var selectedID by rememberSaveable { mutableIntStateOf(0) }
+fun TimetableListScreen(viewModel: MainViewModel = viewModel()) {
+    val selectedID by viewModel.currentGroupIdx.collectAsState()
+    val groups by viewModel.groupList.collectAsState()
+
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        viewModel.setAppBarTitle(context.getString(R.string.timetableListBarTitle))
+    }
+
     LazyColumn {
         item {
             OutlinedCard(
@@ -50,11 +57,16 @@ fun TimetableListScreen() {
                 }
             }
         }
-        items(GROUPS.size) { idx ->
+        items(groups.size) { idx ->
             ListItem(
-                headlineContent = { Text(text = GROUPS[idx]) },
-                leadingContent = { RadioButton(selected = selectedID == idx, onClick = { selectedID = idx }) },
-                modifier = Modifier.clickable { selectedID = idx }
+                headlineContent = { Text(text = groups[idx]) },
+                leadingContent = {
+                    RadioButton(
+                        selected = selectedID == idx,
+                        onClick = { viewModel.setCurrentGroup(idx) }
+                    )
+                },
+                modifier = Modifier.clickable { viewModel.setCurrentGroup(idx) }
             )
         }
     }
