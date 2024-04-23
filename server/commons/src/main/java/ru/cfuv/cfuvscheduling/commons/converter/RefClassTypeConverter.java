@@ -1,6 +1,6 @@
-package ru.cfuv.cfuvscheduling.admin.converter;
+package ru.cfuv.cfuvscheduling.commons.converter;
 
-import ru.cfuv.cfuvscheduling.admin.bom.RefClassTypeBom;
+import ru.cfuv.cfuvscheduling.commons.bom.RefClassTypeBom;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.RefClassTypeDto;
 
 public class RefClassTypeConverter {

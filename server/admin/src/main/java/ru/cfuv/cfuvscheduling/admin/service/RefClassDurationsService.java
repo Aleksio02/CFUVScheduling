@@ -1,14 +1,13 @@
 package ru.cfuv.cfuvscheduling.admin.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import ru.cfuv.cfuvscheduling.admin.bom.RefClassDurationsBom;
-import ru.cfuv.cfuvscheduling.admin.converter.RefClassDurationsConverter;
-import ru.cfuv.cfuvscheduling.admin.dao.RefClassDurationsDao;
-import ru.cfuv.cfuvscheduling.commons.dao.dto.RefClassDurationsDto;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import ru.cfuv.cfuvscheduling.admin.dao.RefClassDurationsDao;
+import ru.cfuv.cfuvscheduling.commons.bom.RefClassDurationsBom;
+import ru.cfuv.cfuvscheduling.commons.converter.RefClassDurationsConverter;
+import ru.cfuv.cfuvscheduling.commons.dao.dto.RefClassDurationsDto;
 
 @Service
 public class RefClassDurationsService {
@@ -20,7 +19,7 @@ public class RefClassDurationsService {
         List<RefClassDurationsDto> dtos = refClassDurationsDao.findAll();
         List<RefClassDurationsBom> boms = new ArrayList<RefClassDurationsBom>();
 
-        for (int  i = 0; i < dtos.size(); i++) {
+        for (int i = 0; i < dtos.size(); i++) {
             RefClassDurationsBom bom = new RefClassDurationsBom();
             new RefClassDurationsConverter().fromDto(dtos.get(i), bom);
             boms.add(bom);

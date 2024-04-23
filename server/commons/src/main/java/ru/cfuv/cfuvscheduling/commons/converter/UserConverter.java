@@ -1,21 +1,24 @@
-package ru.cfuv.cfuvscheduling.auth.converter;
+package ru.cfuv.cfuvscheduling.commons.converter;
 
-import ru.cfuv.cfuvscheduling.auth.bom.AccountForm;
-import ru.cfuv.cfuvscheduling.auth.dao.UserRolesDao;
 import ru.cfuv.cfuvscheduling.commons.bom.UserBom;
-import ru.cfuv.cfuvscheduling.commons.bom.UserRoles;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.RefUserRolesDto;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.UserDto;
 
 public class UserConverter {
+
     public void fromDto(UserDto sourсe, UserBom destination) {
+        destination.setId(sourсe.getId());
         destination.setUsername(sourсe.getUsername());
         destination.setRole(sourсe.getRoleId().getName());
     }
 
-    public void fromRequestToDto(AccountForm source, UserDto destination) {
+    public void toDto(UserBom source, UserDto destination) {
         destination.setId(null);
         destination.setUsername(source.getUsername());
-        destination.setPassword(source.getPassword());
+
+        RefUserRolesDto refUserRolesDto = new RefUserRolesDto();
+        refUserRolesDto.setId(source.getRoleId());
+        refUserRolesDto.setName(source.getRole());
+        destination.setRoleId(refUserRolesDto);
     }
 }

@@ -1,17 +1,16 @@
 package ru.cfuv.cfuvscheduling.auth.service;
 
 import javax.persistence.EntityNotFoundException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.cfuv.cfuvscheduling.auth.bom.AccountForm;
 import ru.cfuv.cfuvscheduling.auth.bom.AccountResponse;
 import ru.cfuv.cfuvscheduling.auth.dao.UserRolesDao;
-import ru.cfuv.cfuvscheduling.commons.bom.UserBom;
-import ru.cfuv.cfuvscheduling.auth.converter.UserConverter;
 import ru.cfuv.cfuvscheduling.auth.jwt.JwtUtils;
-import ru.cfuv.cfuvscheduling.commons.dao.UserDao;
+import ru.cfuv.cfuvscheduling.commons.bom.UserBom;
 import ru.cfuv.cfuvscheduling.commons.bom.UserRoles;
+import ru.cfuv.cfuvscheduling.commons.converter.UserConverter;
+import ru.cfuv.cfuvscheduling.commons.dao.UserDao;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.RefUserRolesDto;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.UserDto;
 import ru.cfuv.cfuvscheduling.commons.exception.AlreadyExistsException;
@@ -32,7 +31,7 @@ public class AuthService {
 
     public String authenticateUser(String username) {
         UserDto user = userDao.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+            .orElseThrow(() -> new EntityNotFoundException("User not found"));
         String token = jwtUtils.generateToken(user.getUsername());
         return token;
     }
@@ -41,7 +40,7 @@ public class AuthService {
         try {
             String username = jwtUtils.parseJwt(token);
             UserDto user = userDao.findByUsername(username)
-                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
             UserBom userBom = new UserBom();
             new UserConverter().fromDto(user, userBom);
             return userBom;
@@ -52,7 +51,7 @@ public class AuthService {
 
     public AccountResponse registration(AccountForm userForm) throws AlreadyExistsException {
         UserDto foundUser = userDao.findByUsername(userForm.getUsername())
-                .orElse(null);
+            .orElse(null);
         if (foundUser != null) {
             throw new AlreadyExistsException("This username already taken");
         }
@@ -60,7 +59,8 @@ public class AuthService {
         RefUserRolesDto userRole = userRolesDao.findByName(UserRoles.USER.name()).get();
 
         UserDto userDto = new UserDto();
-        new UserConverter().fromRequestToDto(userForm, userDto);
+        userDto.setUsername(userForm.getUsername());
+        userDto.setPassword(userForm.getPassword());
         userDto.setRoleId(userRole);
         userDao.save(userDto);
 
