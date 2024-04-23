@@ -1,5 +1,6 @@
 package ru.cfuv.cfuvscheduling.admin.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -43,5 +44,22 @@ public class GroupsService {
         }
 
         return boms;
+    }
+
+    public GroupsBom updateGroupName(GroupsBom groupsBom) {
+        Integer groupId = groupsBom.getId();
+        String newName = groupsBom.getName();
+        try {
+            GroupsDto existingGroup = groupsDao.findById(groupId)
+                    .orElseThrow(() -> new IllegalArgumentException("Group with id " + groupId + " not found"));
+            existingGroup.setName(newName);
+            groupsDao.save(existingGroup);
+            GroupsBom updatedGroup = new GroupsBom();
+            updatedGroup.setId(existingGroup.getId());
+            updatedGroup.setName(existingGroup.getName());
+            return updatedGroup;
+        } catch (IllegalArgumentException e) {
+            throw new EntityNotFoundException(e.getMessage());
+        }
     }
 }
