@@ -27,7 +27,9 @@ public class GroupsController {
         return groupsService.findAll();
     }
     @PostMapping("/renameGroup")
+
     public void updateGroupName(@RequestHeader("Authorization") String jwtToken, @RequestBody GroupsBom groupsBom) {
+        userValidator.validateUserAsAdmin(jwtToken);
         groupsService.updateGroupName(groupsBom);
     }
 }
