@@ -22,16 +22,10 @@ public class GroupsController {
         userValidator.validateUserAsAdmin(token);
         return groupsService.addNewGroup(group);
     }
-
     @GetMapping("/findAll")
     public List<GroupsBom> findAllGroups() {
         return groupsService.findAll();
     }
-
-    public GroupsController(GroupsService groupsService) {
-        this.groupsService = groupsService;
-    }
-
     @PostMapping("/renameGroup")
     public void updateGroupName(@RequestHeader("Authorization") String jwtToken, @RequestBody GroupsBom groupsBom) {
         groupsService.updateGroupName(groupsBom);
