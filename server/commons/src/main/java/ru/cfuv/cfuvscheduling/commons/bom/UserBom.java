@@ -6,7 +6,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserBom {
+
+    private Integer id;
     private String username;
+    private Integer roleId;
     private String role;
 
     public boolean hasAdminRole() {

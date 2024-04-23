@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.cfuv.cfuvscheduling.commons.bom.UserBom;
-import ru.cfuv.cfuvscheduling.ttmanager.dao.dto.ClassDto;
+import ru.cfuv.cfuvscheduling.ttmanager.bom.ClassBom;
 import ru.cfuv.cfuvscheduling.ttmanager.service.ClassService;
 
 @RestController
@@ -35,12 +35,11 @@ public class ClassController {
     }
 
     @GetMapping("/findClassesForGroup")
-    public List<ClassDto> findClassesForGroup(
+    public List<ClassBom> findClassesForGroup(
         @RequestParam String groupName,
         @RequestParam LocalDate startDate,
         @RequestParam LocalDate endDate
     ) {
-//        TODO: aleksio: return BOM!!!!
         return classService.findClassesForGroup(groupName, startDate, endDate);
     }
 }

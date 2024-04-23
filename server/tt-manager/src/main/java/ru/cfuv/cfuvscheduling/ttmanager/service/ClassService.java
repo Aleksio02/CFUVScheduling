@@ -3,15 +3,17 @@ package ru.cfuv.cfuvscheduling.ttmanager.service;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import ru.cfuv.cfuvscheduling.commons.bom.UserBom;
 import ru.cfuv.cfuvscheduling.commons.dao.GroupsDao;
 import ru.cfuv.cfuvscheduling.commons.dao.UserDao;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.GroupsDto;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.UserDto;
 import ru.cfuv.cfuvscheduling.commons.exception.AccessForbiddenException;
+import ru.cfuv.cfuvscheduling.ttmanager.bom.ClassBom;
+import ru.cfuv.cfuvscheduling.ttmanager.converter.ClassConverter;
 import ru.cfuv.cfuvscheduling.ttmanager.dao.ClassDao;
 import ru.cfuv.cfuvscheduling.ttmanager.dao.dto.ClassDto;
 
@@ -39,11 +41,14 @@ public class ClassService {
         throw new AccessForbiddenException("You can't add comment to this class");
     }
 
-    public List<ClassDto> findClassesForGroup(String groupName, LocalDate startDate, LocalDate endDate) {
+    public List<ClassBom> findClassesForGroup(String groupName, LocalDate startDate, LocalDate endDate) {
         GroupsDto foundGroup = groupsDao.findByName(groupName)
             .orElseThrow(() -> new EntityNotFoundException("Group with given name isn't exist"));
-//        TODO: aleksio: return BOM!!!!
-        return classDao.findAllByGroupIdAndDateBetween(foundGroup, startDate, endDate);
+        return classDao.findAllByGroupIdAndDateBetween(foundGroup, startDate, endDate).stream().map(i -> {
+            ClassBom classBom = new ClassBom();
+            new ClassConverter().fromDto(i, classBom);
+            return classBom;
+        }).collect(Collectors.toList());
     }
 
 
