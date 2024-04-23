@@ -5,4 +5,4 @@ import ru.cfuv.cfuvscheduling.commons.dao.dto.GroupsDto;
 
 @Repository
 public interface GroupsDao extends ReferenceDao<GroupsDto, Integer> {
-    }
+}
