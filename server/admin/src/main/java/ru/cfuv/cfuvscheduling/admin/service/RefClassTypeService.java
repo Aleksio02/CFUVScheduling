@@ -47,8 +47,8 @@ public class RefClassTypeService {
 
     public RefClassTypeBom renameClassType(RefClassTypeBom type) {
         try {
-            if (type.getId() == null) {
-                throw new IllegalArgumentException("Id shouldn't be null!");
+            if (type.getId() == null || !refClassTypeDao.existsById(type.getId())) {
+                throw new IllegalArgumentException("Id shouldn't be null or type with this id isn't exist!");
             }
             RefClassTypeDto typeDto = new RefClassTypeDto();
             RefClassTypeConverter converter = new RefClassTypeConverter();
