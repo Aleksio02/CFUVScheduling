@@ -55,8 +55,7 @@ public class GroupsService {
             existingGroup.setName(newName);
             groupsDao.save(existingGroup);
             GroupsBom updatedGroup = new GroupsBom();
-            updatedGroup.setId(existingGroup.getId());
-            updatedGroup.setName(existingGroup.getName());
+            new GroupsConverter().fromDto(existingGroup, updatedGroup);
             return updatedGroup;
         } catch (IllegalArgumentException e) {
             throw new EntityNotFoundException(e.getMessage());
