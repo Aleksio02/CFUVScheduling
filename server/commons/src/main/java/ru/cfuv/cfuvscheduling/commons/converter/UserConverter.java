@@ -6,10 +6,11 @@ import ru.cfuv.cfuvscheduling.commons.dao.dto.UserDto;
 
 public class UserConverter {
 
-    public void fromDto(UserDto sourсe, UserBom destination) {
-        destination.setId(sourсe.getId());
-        destination.setUsername(sourсe.getUsername());
-        destination.setRole(sourсe.getRoleId().getName());
+    public void fromDto(UserDto source, UserBom destination) {
+        destination.setId(source.getId());
+        destination.setUsername(source.getUsername());
+        destination.setRoleId(source.getRoleId().getId());
+        destination.setRole(source.getRoleId().getName());
     }
 
     public void toDto(UserBom source, UserDto destination) {
