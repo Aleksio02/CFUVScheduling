@@ -5,11 +5,10 @@
     <parent>
         <groupId>ru.cfuv</groupId>
         <artifactId>cfuvscheduling</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.2-SNAPSHOT</version>
     </parent>
     <groupId>ru.cfuv</groupId>
     <artifactId>admin</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <name>admin</name>
     <description>admin</description>
     <packaging>jar</packaging>
@@ -20,7 +19,7 @@
         <dependency>
             <groupId>ru.cfuv</groupId>
             <artifactId>commons</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>

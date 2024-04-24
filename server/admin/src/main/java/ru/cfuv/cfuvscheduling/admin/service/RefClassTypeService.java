@@ -1,14 +1,14 @@
 package ru.cfuv.cfuvscheduling.admin.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import ru.cfuv.cfuvscheduling.admin.bom.RefClassTypeBom;
-import ru.cfuv.cfuvscheduling.admin.converter.RefClassTypeConverter;
+import ru.cfuv.cfuvscheduling.commons.bom.RefClassTypeBom;
+import ru.cfuv.cfuvscheduling.commons.converter.RefClassTypeConverter;
 import ru.cfuv.cfuvscheduling.commons.dao.RefClassTypeDao;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.RefClassTypeDto;
-
-import java.util.*;
 import ru.cfuv.cfuvscheduling.commons.exception.AlreadyExistsException;
 import ru.cfuv.cfuvscheduling.commons.exception.IncorrectRequestDataException;
 
@@ -47,8 +47,8 @@ public class RefClassTypeService {
 
     public RefClassTypeBom renameClassType(RefClassTypeBom type) {
         try {
-            if (type.getId() == null){
-                throw new IllegalArgumentException("Id shouldn't be null!");
+            if (type.getId() == null || !refClassTypeDao.existsById(type.getId())) {
+                throw new IllegalArgumentException("Id shouldn't be null or type with this id isn't exist!");
             }
             RefClassTypeDto typeDto = new RefClassTypeDto();
             RefClassTypeConverter converter = new RefClassTypeConverter();
