@@ -9,6 +9,7 @@ import ru.cfuv.cfuvscheduling.commons.converter.GroupsConverter;
 import ru.cfuv.cfuvscheduling.commons.dao.GroupsDao;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.GroupsDto;
 import ru.cfuv.cfuvscheduling.commons.exception.AlreadyExistsException;
+import ru.cfuv.cfuvscheduling.commons.exception.IncorrectRequestDataException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,18 +48,28 @@ public class GroupsService {
     }
 
     public GroupsBom updateGroupName(GroupsBom groupsBom) {
+        if (groupsBom == null) {
+            throw new IncorrectRequestDataException("GroupsBom cannot be null");
+        }
+
         Integer groupId = groupsBom.getId();
-        String newName = groupsBom.getName();
+        if (groupId == null) {
+            throw new IncorrectRequestDataException("Group id cannot be null");
+        }
+
         try {
             GroupsDto existingGroup = groupsDao.findById(groupId)
-                    .orElseThrow(() -> new IllegalArgumentException("Group with id " + groupId + " not found"));
+                    .orElseThrow(() -> new EntityNotFoundException("Group with id " + groupId + " not found"));
+            String newName = groupsBom.getName();
             existingGroup.setName(newName);
             groupsDao.save(existingGroup);
             GroupsBom updatedGroup = new GroupsBom();
             new GroupsConverter().fromDto(existingGroup, updatedGroup);
             return updatedGroup;
-        } catch (IllegalArgumentException e) {
+        } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException(e.getMessage());
         }
     }
 }
+/*
+* */
