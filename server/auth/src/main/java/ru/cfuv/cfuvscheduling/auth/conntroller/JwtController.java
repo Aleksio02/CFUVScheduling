@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.cfuv.cfuvscheduling.auth.bom.AccountForm;
 import ru.cfuv.cfuvscheduling.auth.service.AuthService;
 import ru.cfuv.cfuvscheduling.commons.bom.UserBom;
 
@@ -21,7 +22,10 @@ public class JwtController {
 
     @PostMapping("/generate")
     public String generateJwt(@RequestBody String username) {
-        return authService.authenticateUser(username);
+        AccountForm accountForm = new AccountForm();
+        accountForm.setUsername(username);
+        String token = authService.authenticateUser(accountForm);
+        return token;
     }
 
     @GetMapping("/parse")

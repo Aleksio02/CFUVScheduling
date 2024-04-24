@@ -23,4 +23,9 @@ public class AuthController {
     public AccountResponse registerUser(@RequestBody AccountForm userForm) {
         return authService.registration(userForm);
     }
+
+    @PostMapping("/authenticateUser")
+    public String authenticateUser(@RequestBody AccountForm accountForm) {
+        return authService.authenticateUser(accountForm);
+    }
 }

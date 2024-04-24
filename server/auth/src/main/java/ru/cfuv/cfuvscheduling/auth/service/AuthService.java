@@ -29,12 +29,17 @@ public class AuthService {
     private JwtUtils jwtUtils;
 
 
-    public String authenticateUser(String username) {
-        UserDto user = userDao.findByUsername(username)
-            .orElseThrow(() -> new EntityNotFoundException("User not found"));
-        String token = jwtUtils.generateToken(user.getUsername());
+    public String authenticateUser(AccountForm accountForm) {
+        UserDto foundUser = userDao.findByUsername(accountForm.getUsername())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        if (!foundUser.getPassword().equals(accountForm.getPassword())) {
+            throw new EntityNotFoundException("Incorrect username or password");
+        }
+
+        String token = jwtUtils.generateToken(accountForm.getUsername());
         return token;
     }
+
 
     public UserBom getCurrentUser(String token) {
         try {
