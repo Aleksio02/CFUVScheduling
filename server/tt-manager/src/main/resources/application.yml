@@ -7,6 +7,7 @@ spring:
     password: schedadmin
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+    defer-datasource-initialization: true
     hibernate:
       ddl-auto: update
       naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
@@ -17,6 +18,9 @@ spring:
   jackson:
     serialization:
       fail-on-empty-beans: false
+  sql:
+    init:
+      mode: always
 
 connector:
   auth:
