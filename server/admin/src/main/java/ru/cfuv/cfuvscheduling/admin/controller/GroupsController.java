@@ -16,13 +16,22 @@ public class GroupsController {
 
     @Autowired
     private UserValidator userValidator;
+
     @PostMapping("/addNewGroup")
     public GroupsBom group(@RequestHeader(name = "Authorization", required = false) String token, @RequestBody GroupsBom group) {
         userValidator.validateUserAsAdmin(token);
         return groupsService.addNewGroup(group);
     }
+
     @GetMapping("/findAll")
     public List<GroupsBom> findAllGroups() {
         return groupsService.findAll();
     }
+
+    @PostMapping("/renameGroup")
+    public void updateGroupName(@RequestHeader("Authorization") String jwtToken, @RequestBody GroupsBom groupsBom) {
+        userValidator.validateUserAsAdmin(jwtToken);
+        groupsService.updateGroupName(groupsBom);
+    }
 }
+
