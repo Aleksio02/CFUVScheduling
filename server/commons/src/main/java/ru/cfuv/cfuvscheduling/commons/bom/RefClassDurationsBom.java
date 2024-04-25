@@ -1,14 +1,14 @@
 package ru.cfuv.cfuvscheduling.commons.bom;
 
-import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.LocalTime;
 
 @Setter
 @Getter
 public class RefClassDurationsBom {
-
     private Integer number;
-    private Date startTime;
-    private Date endTime;
+    private LocalTime startTime;
+    private LocalTime endTime;
 }
