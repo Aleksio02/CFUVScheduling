@@ -49,7 +49,7 @@ public class GroupsService {
 
     public GroupsBom updateGroupName(GroupsBom groupsBom) {
         Integer groupId = groupsBom.getId();
-        if (groupsBom == null) {
+        if (groupsBom == null || groupsBom.getId() == null || groupsBom.getName() == null) {
             throw new IncorrectRequestDataException("GroupsBom cannot be null");
         }
         try {
