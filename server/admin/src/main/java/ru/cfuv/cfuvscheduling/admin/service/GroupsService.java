@@ -48,15 +48,10 @@ public class GroupsService {
     }
 
     public GroupsBom updateGroupName(GroupsBom groupsBom) {
+        Integer groupId = groupsBom.getId();
         if (groupsBom == null) {
             throw new IncorrectRequestDataException("GroupsBom cannot be null");
         }
-
-        Integer groupId = groupsBom.getId();
-        if (groupId == null) {
-            throw new IncorrectRequestDataException("Group id cannot be null");
-        }
-
         try {
             GroupsDto existingGroup = groupsDao.findById(groupId)
                     .orElseThrow(() -> new EntityNotFoundException("Group with id " + groupId + " not found"));
