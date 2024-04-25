@@ -47,20 +47,18 @@ public class GroupsService {
         return boms;
     }
 
-    public GroupsBom updateGroupName(GroupsBom groupsBom) {
-        Integer groupId = groupsBom.getId();
-        if (groupsBom == null || groupsBom.getId() == null || groupsBom.getName() == null) {
+    public void updateGroupName(GroupsBom groupsBom) {
+        if (groupsBom.getId() == null || groupsBom.getName() == null) {
             throw new IncorrectRequestDataException("GroupsBom cannot be null");
         }
         try {
-            GroupsDto existingGroup = groupsDao.findById(groupId)
-                    .orElseThrow(() -> new EntityNotFoundException("Group with id " + groupId + " not found"));
+            GroupsDto existingGroup = groupsDao.findById(groupsBom.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Group with id " + groupsBom.getId() + " not found"));
             String newName = groupsBom.getName();
             existingGroup.setName(newName);
             groupsDao.save(existingGroup);
             GroupsBom updatedGroup = new GroupsBom();
             new GroupsConverter().fromDto(existingGroup, updatedGroup);
-            return updatedGroup;
         } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException(e.getMessage());
         }
