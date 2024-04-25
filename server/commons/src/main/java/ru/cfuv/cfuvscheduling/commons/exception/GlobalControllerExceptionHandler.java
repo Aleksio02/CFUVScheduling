@@ -34,4 +34,9 @@ class GlobalControllerExceptionHandler {
     public ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException exception, WebRequest request) {
         return ResponseEntity.status(404).body(new ErrorResponse().generateResponse(404, exception.getMessage()));
     }
+
+    @ExceptionHandler(ServerUnavailableException.class)
+    public ResponseEntity<?> handleEntityNotFoundException(ServerUnavailableException exception, WebRequest request) {
+        return ResponseEntity.status(504).body(new ErrorResponse().generateResponse(504, exception.getMessage()));
+    }
 }
