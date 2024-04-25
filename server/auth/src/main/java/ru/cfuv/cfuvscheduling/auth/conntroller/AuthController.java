@@ -25,7 +25,7 @@ public class AuthController {
     }
 
     @PostMapping("/authenticateUser")
-    public String authenticateUser(@RequestBody AccountForm accountForm) {
+    public AccountResponse authenticateUser(@RequestBody AccountForm accountForm) {
         return authService.authenticateUser(accountForm);
     }
 }
