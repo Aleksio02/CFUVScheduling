@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import ru.cfuv.cfuvscheduling.commons.bom.UserBom;
 import ru.cfuv.cfuvscheduling.commons.dao.GroupsDao;
@@ -14,6 +15,7 @@ import ru.cfuv.cfuvscheduling.commons.dao.dto.GroupsDto;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.RefClassTypeDto;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.UserDto;
 import ru.cfuv.cfuvscheduling.commons.exception.AccessForbiddenException;
+import ru.cfuv.cfuvscheduling.commons.exception.AlreadyExistsException;
 import ru.cfuv.cfuvscheduling.commons.exception.IncorrectRequestDataException;
 import ru.cfuv.cfuvscheduling.ttmanager.bom.ClassBom;
 import ru.cfuv.cfuvscheduling.ttmanager.converter.ClassConverter;
@@ -65,6 +67,7 @@ public class ClassService {
             classBom.getGroup() == null || classBom.getGroup().getId() == null || classBom.getClassDate() == null) {
             throw new IncorrectRequestDataException("Object fields can't be null");
         }
+
         UserDto currentUserDto = userDao.findByUsername(currentUser.getUsername()).get();
         RefClassTypeDto refClassTypeDto = classTypeDao.findByName(CONSULTATION_TYPE_NAME).get();
         ClassDto classDto = new ClassDto();
@@ -72,8 +75,11 @@ public class ClassService {
         classDto.setId(null);
         classDto.setUserId(currentUserDto);
         classDto.setTypeId(refClassTypeDto);
-        classDao.save(classDto);
-
+        try {
+            classDao.save(classDto);
+        } catch (DataIntegrityViolationException e) {
+            throw new AlreadyExistsException("You can't create consultation in this day and this place with given group");
+        }
         new ClassConverter().fromDto(classDto, classBom);
         return classBom;
     }
