@@ -30,12 +30,9 @@ public class AuthService {
     private JwtUtils jwtUtils;
 
     public String authenticateUser(String username) {
-        UserDto foundUser = userDao.findByUsername(username)
+        UserDto user = userDao.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
-        if (!foundUser.getPassword().equals(username)) {
-            throw new EntityNotFoundException("Incorrect username or password");
-        }
-        String token = jwtUtils.generateToken(username);
+        String token = jwtUtils.generateToken(user.getUsername());
         return token;
     }
 
