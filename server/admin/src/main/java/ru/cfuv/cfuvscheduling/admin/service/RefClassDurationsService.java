@@ -1,5 +1,7 @@
 package ru.cfuv.cfuvscheduling.admin.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.cfuv.cfuvscheduling.admin.dao.RefClassDurationsDao;
@@ -8,9 +10,6 @@ import ru.cfuv.cfuvscheduling.commons.converter.RefClassDurationsConverter;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.RefClassDurationsDto;
 import ru.cfuv.cfuvscheduling.commons.exception.AlreadyExistsException;
 import ru.cfuv.cfuvscheduling.commons.exception.IncorrectRequestDataException;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class RefClassDurationsService {
@@ -32,28 +31,31 @@ public class RefClassDurationsService {
     }
 
     public RefClassDurationsBom addClassDuration(RefClassDurationsBom classDuration) throws AlreadyExistsException {
-        if (classDuration.getNumber() == null || classDuration.getStartTime() == null || classDuration.getEndTime() == null) {
+        if (classDuration.getNumber() == null || classDuration.getStartTime() == null ||
+            classDuration.getEndTime() == null) {
             throw new IncorrectRequestDataException("Obj fields can't be null.");
         }
 
         RefClassDurationsDto existingClassDuration = refClassDurationsDao.findById(classDuration.getNumber()).
-                orElse(null);
+            orElse(null);
         if (existingClassDuration != null) {
             throw new AlreadyExistsException("A class duration with this ID already exists.");
         }
 
         List<RefClassDurationsDto> tableClassDuration = refClassDurationsDao.findAll();
         for (int i = 0; i < tableClassDuration.size(); i++) {
-            if (tableClassDuration.get(i).getStartTime().getHour() == classDuration.getStartTime().getHour() && tableClassDuration.get(i).getStartTime().getMinute() == classDuration.getStartTime().getMinute()) {
+            if (tableClassDuration.get(i).getStartTime().getHour() == classDuration.getStartTime().getHour() &&
+                tableClassDuration.get(i).getStartTime().getMinute() == classDuration.getStartTime().getMinute()) {
                 throw new AlreadyExistsException("A class duration with this startTime already exists.");
             }
-            if (tableClassDuration.get(i).getEndTime().getHour() == classDuration.getEndTime().getHour() && tableClassDuration.get(i).getEndTime().getMinute() == classDuration.getEndTime().getMinute()) {
+            if (tableClassDuration.get(i).getEndTime().getHour() == classDuration.getEndTime().getHour() &&
+                tableClassDuration.get(i).getEndTime().getMinute() == classDuration.getEndTime().getMinute()) {
                 throw new AlreadyExistsException("A class duration with this endTime already exists.");
             }
         }
 
         RefClassDurationsDto newDto = new RefClassDurationsDto();
-        new RefClassDurationsConverter().fromBom(classDuration, newDto);
+        new RefClassDurationsConverter().toDto(classDuration, newDto);
         refClassDurationsDao.save(newDto);
 
         return classDuration;

@@ -9,6 +9,10 @@ import ru.cfuv.cfuvscheduling.commons.converter.GroupsConverter;
 import ru.cfuv.cfuvscheduling.commons.converter.RefClassDurationsConverter;
 import ru.cfuv.cfuvscheduling.commons.converter.RefClassTypeConverter;
 import ru.cfuv.cfuvscheduling.commons.converter.UserConverter;
+import ru.cfuv.cfuvscheduling.commons.dao.dto.GroupsDto;
+import ru.cfuv.cfuvscheduling.commons.dao.dto.RefClassDurationsDto;
+import ru.cfuv.cfuvscheduling.commons.dao.dto.RefClassTypeDto;
+import ru.cfuv.cfuvscheduling.commons.dao.dto.UserDto;
 import ru.cfuv.cfuvscheduling.ttmanager.bom.ClassBom;
 import ru.cfuv.cfuvscheduling.ttmanager.dao.dto.ClassDto;
 
@@ -36,5 +40,31 @@ public class ClassConverter {
         UserBom teacher = new UserBom();
         new UserConverter().fromDto(source.getUserId(), teacher);
         destination.setTeacher(teacher);
+    }
+
+    public void toDto(ClassBom source, ClassDto destination) {
+        destination.setId(source.getId());
+        destination.setSubjectName(source.getSubjectName());
+        destination.setClassroom(source.getClassroom());
+        destination.setComment(source.getComment());
+        destination.setDate(source.getClassDate());
+
+        RefClassDurationsDto refClassDurationsDto = new RefClassDurationsDto();
+        new RefClassDurationsConverter().toDto(source.getDuration(), refClassDurationsDto);
+        destination.setClassNumber(refClassDurationsDto);
+
+        GroupsDto groupsDto = new GroupsDto();
+        new GroupsConverter().toDto(source.getGroup(), groupsDto);
+        destination.setGroupId(groupsDto);
+
+        if (source.getClassType() != null) {
+            RefClassTypeDto refClassTypeDto = new RefClassTypeDto();
+            new RefClassTypeConverter().toDto(source.getClassType(), refClassTypeDto);
+            destination.setTypeId(refClassTypeDto);
+        }
+
+        UserDto teacher = new UserDto();
+        new UserConverter().toDto(source.getTeacher(), teacher);
+        destination.setUserId(teacher);
     }
 }

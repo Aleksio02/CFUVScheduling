@@ -8,10 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.cfuv.cfuvscheduling.commons.bom.UserBom;
 import ru.cfuv.cfuvscheduling.commons.dao.GroupsDao;
+import ru.cfuv.cfuvscheduling.commons.dao.RefClassTypeDao;
 import ru.cfuv.cfuvscheduling.commons.dao.UserDao;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.GroupsDto;
+import ru.cfuv.cfuvscheduling.commons.dao.dto.RefClassTypeDto;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.UserDto;
 import ru.cfuv.cfuvscheduling.commons.exception.AccessForbiddenException;
+import ru.cfuv.cfuvscheduling.commons.exception.IncorrectRequestDataException;
 import ru.cfuv.cfuvscheduling.ttmanager.bom.ClassBom;
 import ru.cfuv.cfuvscheduling.ttmanager.converter.ClassConverter;
 import ru.cfuv.cfuvscheduling.ttmanager.dao.ClassDao;
@@ -20,11 +23,16 @@ import ru.cfuv.cfuvscheduling.ttmanager.dao.dto.ClassDto;
 @Service
 public class ClassService {
 
+    private final String CONSULTATION_TYPE_NAME = "consultation";
+
     @Autowired
     private UserDao userDao;
 
     @Autowired
     private GroupsDao groupsDao;
+
+    @Autowired
+    private RefClassTypeDao classTypeDao;
 
     @Autowired
     private ClassDao classDao;
@@ -51,5 +59,23 @@ public class ClassService {
         }).collect(Collectors.toList());
     }
 
+    public ClassBom createConsultation(ClassBom classBom, UserBom currentUser) {
+        if (classBom.getSubjectName() == null || classBom.getClassroom() == null ||
+            classBom.getDuration() == null || classBom.getDuration().getNumber() == null ||
+            classBom.getGroup() == null || classBom.getGroup().getId() == null || classBom.getClassDate() == null) {
+            throw new IncorrectRequestDataException("Object fields can't be null");
+        }
+        UserDto currentUserDto = userDao.findByUsername(currentUser.getUsername()).get();
+        RefClassTypeDto refClassTypeDto = classTypeDao.findByName(CONSULTATION_TYPE_NAME).get();
+        ClassDto classDto = new ClassDto();
+        new ClassConverter().toDto(classBom, classDto);
+        classDto.setId(null);
+        classDto.setUserId(currentUserDto);
+        classDto.setTypeId(refClassTypeDto);
+        classDao.save(classDto);
+
+        new ClassConverter().fromDto(classDto, classBom);
+        return classBom;
+    }
 
 }
