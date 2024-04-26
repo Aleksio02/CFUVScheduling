@@ -11,4 +11,10 @@ public class RefClassDurationsConverter {
         destination.setEndTime(source.getEndTime());
     }
 
+    public void fromBom(RefClassDurationsBom source, RefClassDurationsDto destination) {
+        destination.setNumber(source.getNumber());
+        destination.setStartTime(source.getStartTime());
+        destination.setEndTime(source.getEndTime());
+    }
+
 }
