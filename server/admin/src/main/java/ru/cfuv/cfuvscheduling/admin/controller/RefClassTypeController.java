@@ -1,6 +1,7 @@
 package ru.cfuv.cfuvscheduling.admin.controller;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,8 +31,8 @@ public class RefClassTypeController {
 
     @PostMapping("/create")
     public RefClassTypeBom createClassType(
-        @RequestHeader(name = "Authorization", required = false) String token,
-        @RequestBody RefClassTypeBom type
+            @RequestHeader(name = "Authorization", required = false) String token,
+            @RequestBody RefClassTypeBom type
     ) {
         userValidator.validateUserAsAdmin(token);
         return refClassTypeService.createClassType(type);
@@ -39,8 +40,8 @@ public class RefClassTypeController {
 
     @PostMapping("/rename")
     public RefClassTypeBom renameClassType(
-        @RequestHeader(name = "Authorization", required = false) String token,
-        @RequestBody RefClassTypeBom type
+            @RequestHeader(name = "Authorization", required = false) String token,
+            @RequestBody RefClassTypeBom type
     ) {
         userValidator.validateUserAsAdmin(token);
         return refClassTypeService.renameClassType(type);
@@ -48,8 +49,8 @@ public class RefClassTypeController {
 
     @DeleteMapping("/delete/{id}")
     public void deleteClassType(
-        @RequestHeader(name = "Authorization", required = false) String token,
-        @PathVariable Integer id
+            @RequestHeader(name = "Authorization", required = false) String token,
+            @PathVariable Integer id
     ) {
         userValidator.validateUserAsAdmin(token);
         refClassTypeService.deleteClassType(id);
