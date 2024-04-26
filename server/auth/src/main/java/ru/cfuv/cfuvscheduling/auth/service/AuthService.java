@@ -53,15 +53,17 @@ public class AuthService {
     }
 
     public UserBom getCurrentUser(String token) {
+        String jwtCheckStage = "parsing";
         try {
             String username = jwtUtils.parseJwt(token);
+            jwtCheckStage = "validating";
             UserDto user = userDao.findByUsername(username)
                     .orElseThrow(() -> new EntityNotFoundException("User not found"));
             UserBom userBom = new UserBom();
             new UserConverter().fromDto(user, userBom);
             return userBom;
         } catch (Exception e) {
-            throw new IncorrectRequestDataException("Error occured in parsing JWT");
+            throw new IncorrectRequestDataException("Error occured in %s JWT".formatted(jwtCheckStage));
         }
     }
 
