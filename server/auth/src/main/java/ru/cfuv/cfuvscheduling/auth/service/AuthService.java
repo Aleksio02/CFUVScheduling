@@ -31,7 +31,7 @@ public class AuthService {
 
     public String authenticateUser(String username) {
         UserDto user = userDao.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+            .orElseThrow(() -> new EntityNotFoundException("User not found"));
         String token = jwtUtils.generateToken(user.getUsername());
         return token;
     }
@@ -42,7 +42,7 @@ public class AuthService {
         }
 
         UserDto foundUser = userDao.findByUsernameAndPassword(accountForm.getUsername(), accountForm.getPassword())
-                .orElseThrow(() -> new EntityNotFoundException("Incorrect username or password"));
+            .orElseThrow(() -> new EntityNotFoundException("Incorrect username or password"));
 
         UserConverter converter = new UserConverter();
         UserBom userBom = new UserBom();
@@ -58,7 +58,7 @@ public class AuthService {
             String username = jwtUtils.parseJwt(token);
             jwtCheckStage = "validating";
             UserDto user = userDao.findByUsername(username)
-                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
             UserBom userBom = new UserBom();
             new UserConverter().fromDto(user, userBom);
             return userBom;
@@ -69,7 +69,7 @@ public class AuthService {
 
     public AccountResponse registration(AccountForm userForm) throws AlreadyExistsException {
         UserDto foundUser = userDao.findByUsername(userForm.getUsername())
-                .orElse(null);
+            .orElse(null);
         if (foundUser != null) {
             throw new AlreadyExistsException("This username already taken");
         }
