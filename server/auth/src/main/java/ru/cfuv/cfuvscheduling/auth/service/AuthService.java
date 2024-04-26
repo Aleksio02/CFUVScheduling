@@ -68,11 +68,12 @@ public class AuthService {
     }
 
     public AccountResponse registration(AccountForm userForm) throws AlreadyExistsException {
-        UserDto foundUser = userDao.findByUsername(userForm.getUsername())
-            .orElse(null);
-        if (foundUser != null) {
-            throw new AlreadyExistsException("This username already taken");
+        if (userForm.getUsername() == null || userForm.getPassword() == null) {
+            throw new IncorrectRequestDataException("Object fields can't be null");
         }
+
+        userDao.findByUsername(userForm.getUsername())
+            .ifPresent(i -> {throw new AlreadyExistsException("This username already taken");});
 
         RefUserRolesDto userRole = userRolesDao.findByName(UserRoles.USER.name()).get();
 
