@@ -26,7 +26,7 @@ services:
     image: sanyapilot/cfuvscheduling_auth:test
     build: ./auth
     environment:
-      - POSTGRES_HOST=postgres
+      POSTGRES_HOST: postgres
     
     networks:
       - cfuvsched_net
@@ -46,7 +46,8 @@ services:
     image: sanyapilot/cfuvscheduling_admin:test
     build: ./admin
     environment:
-      - POSTGRES_HOST=postgres
+      POSTGRES_HOST: postgres
+      AUTH_SERVER_HOST: auth
     
     networks:
       - cfuvsched_net
@@ -70,7 +71,8 @@ services:
     image: sanyapilot/cfuvscheduling_ttmanager:test
     build: ./tt-manager
     environment:
-      - POSTGRES_HOST=postgres
+      POSTGRES_HOST: postgres
+      AUTH_SERVER_HOST: auth
     
     networks:
       - cfuvsched_net
