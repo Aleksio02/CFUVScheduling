@@ -22,6 +22,9 @@ public class GroupsService {
 
     public GroupsBom addNewGroup(GroupsBom group) {
         try {
+            if (group.getName() == null || group.getName().trim().length() < 3) {
+                throw new IncorrectRequestDataException("The class type name cannot be null and should contain three or more symbols");
+            }
             group.setId(null);
             GroupsDto groupDto = new GroupsDto();
             GroupsConverter converter = new GroupsConverter();
@@ -48,8 +51,11 @@ public class GroupsService {
     }
 
     public void updateGroupName(GroupsBom groupsBom) {
-        if (groupsBom.getId() == null || groupsBom.getName() == null) {
-            throw new IncorrectRequestDataException("GroupsBom cannot be null");
+        if (groupsBom.getName() == null || groupsBom.getName().trim().length() < 3) {
+            throw new IncorrectRequestDataException("The class type name cannot be null and should contain three or more symbols");
+        }
+        if (groupsBom.getId() == null) {
+            throw new IncorrectRequestDataException("Groups id cannot be null");
         }
         try {
             GroupsDto existingGroup = groupsDao.findById(groupsBom.getId())
