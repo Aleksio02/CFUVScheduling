@@ -1,6 +1,5 @@
 package ru.cfuv.cfuvscheduling.auth.service;
 
-import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.cfuv.cfuvscheduling.auth.bom.AccountForm;
@@ -15,6 +14,8 @@ import ru.cfuv.cfuvscheduling.commons.dao.dto.RefUserRolesDto;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.UserDto;
 import ru.cfuv.cfuvscheduling.commons.exception.AlreadyExistsException;
 import ru.cfuv.cfuvscheduling.commons.exception.IncorrectRequestDataException;
+
+import javax.persistence.EntityNotFoundException;
 
 @Service
 public class AuthService {
@@ -33,6 +34,22 @@ public class AuthService {
             .orElseThrow(() -> new EntityNotFoundException("User not found"));
         String token = jwtUtils.generateToken(user.getUsername());
         return token;
+    }
+
+    public AccountResponse authenticateUser(AccountForm accountForm) {
+        if (accountForm.getUsername() == null || accountForm.getPassword() == null) {
+            throw new IncorrectRequestDataException("Username or password cannot be null");
+        }
+
+        UserDto foundUser = userDao.findByUsernameAndPassword(accountForm.getUsername(), accountForm.getPassword())
+            .orElseThrow(() -> new EntityNotFoundException("Incorrect username or password"));
+
+        UserConverter converter = new UserConverter();
+        UserBom userBom = new UserBom();
+        converter.fromDto(foundUser, userBom);
+
+        String token = jwtUtils.generateToken(accountForm.getUsername());
+        return new AccountResponse(token, userBom);
     }
 
     public UserBom getCurrentUser(String token) {
