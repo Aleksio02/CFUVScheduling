@@ -10,6 +10,7 @@ import ru.cfuv.cfuvscheduling.commons.dao.GroupsDao;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.GroupsDto;
 import ru.cfuv.cfuvscheduling.commons.exception.AlreadyExistsException;
 import ru.cfuv.cfuvscheduling.commons.exception.IncorrectRequestDataException;
+import ru.cfuv.cfuvscheduling.commons.exception.AlreadyExistsException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +66,7 @@ public class GroupsService {
             groupsDao.save(existingGroup);
             GroupsBom updatedGroup = new GroupsBom();
             new GroupsConverter().fromDto(existingGroup, updatedGroup);
-        } catch ( AlreadyExistException e) {
+        } catch ( AlreadyExistsException e) {
             throw new EntityNotFoundException(e.getMessage());
         }
     }
