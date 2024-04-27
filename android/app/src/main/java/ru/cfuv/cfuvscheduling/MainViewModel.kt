@@ -11,7 +11,9 @@ import retrofit2.Response
 import ru.cfuv.cfuvscheduling.api.NetErrors
 import ru.cfuv.cfuvscheduling.api.NetStatus
 import ru.cfuv.cfuvscheduling.api.SchedApi
+import ru.cfuv.cfuvscheduling.api.TTClassModel
 import java.net.ConnectException
+import java.time.LocalDate
 
 class MainViewModel : ViewModel() {
     companion object {
@@ -23,6 +25,7 @@ class MainViewModel : ViewModel() {
     private val _currentGroupName = MutableStateFlow("")
     private val _currentGroupIdx = MutableStateFlow(0)
     private val _groupList = MutableStateFlow(listOf<String>())
+    private val _currentClasses = MutableStateFlow(listOf<TTClassModel>())
 
     val netStatus: StateFlow<NetStatus>
         get() = _netStatus
@@ -34,6 +37,8 @@ class MainViewModel : ViewModel() {
         get() = _currentGroupName
     val currentGroupIdx: StateFlow<Int>
         get() = _currentGroupIdx
+    val currentClasses: StateFlow<List<TTClassModel>>
+        get() = _currentClasses
 
     private suspend fun <T> processResp(func: suspend () -> Response<T>): T? {
         val resp: Response<T>
@@ -62,14 +67,26 @@ class MainViewModel : ViewModel() {
         } else resp.body()
     }
 
+    private suspend fun fetchTimetable() {
+        val res = processResp { SchedApi.timetable.getClasses(
+            groupName = _currentGroupName.value,
+            startDate = LocalDate.now(),
+            endDate = LocalDate.now()
+        ) } ?: return
+        _currentClasses.value = res
+    }
+
     init {
-        // Fetch groups
         viewModelScope.launch {
+            // Fetch groups
             val res = processResp { SchedApi.admin.getGroups() } ?: return@launch
             val strList = mutableListOf<String>()
             res.forEach { strList.add(it.name) }
             _groupList.value = strList.toList()
             _currentGroupName.value = _groupList.value[0]
+
+            // Fetch timetable for selected group
+            fetchTimetable()
         }
     }
 
@@ -80,5 +97,7 @@ class MainViewModel : ViewModel() {
     fun setCurrentGroup(idx: Int) {
         _currentGroupIdx.value = idx
         _currentGroupName.value = _groupList.value[idx]
+        // Fetch timetable for selected group
+        viewModelScope.launch { fetchTimetable() }
     }
 }

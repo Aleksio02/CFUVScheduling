@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -31,7 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.cfuv.cfuvscheduling.MainViewModel
 import ru.cfuv.cfuvscheduling.R
-import ru.cfuv.cfuvscheduling.api.DummyClassBom
+import ru.cfuv.cfuvscheduling.api.TTClassModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -41,52 +43,32 @@ fun TimetableScreen(date: LocalDate, viewModel: MainViewModel = viewModel()) {
     LaunchedEffect(currentGroupName) {
         viewModel.setAppBarTitle(currentGroupName)
     }
+    val classes by viewModel.currentClasses.collectAsState()
 
-    Column(
+    LazyColumn(
         Modifier
             .fillMaxSize()
             .padding(horizontal = 12.dp)
     ) {
-        Text(
-            text = stringResource(
-                id = R.string.timetableTitle,
-                date.format(DateTimeFormatter.ofPattern("EEEE"))
-            ),
-            fontSize = 28.sp
-        )
-        // TODO: Определять четность недели
-        Text(
-            text = stringResource(id = R.string.oddWeek),
-            fontSize = 24.sp,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-        val classObj1 = DummyClassBom(
-            className = "Современные технологии программирования",
-            isPractical = true,
-            teacherName = "Чабанов Владимир Викторович",
-            room = "8А",
-            startTime = "8:00",
-            finishTime = "9:30"
-        )
-
-        ClassCard(data = classObj1)
-
-        val classObj2 = DummyClassBom(
-            className = "Высшая математика",
-            isPractical = false,
-            teacherName = "Смирнова Светлана Ивановна",
-            room = "204А",
-            startTime = "18:00",
-            finishTime = "19:30"
-        )
-
-        ClassCard(data = classObj2)
+        item {
+            Text(
+                text = stringResource(
+                    id = R.string.timetableTitle,
+                    date.format(DateTimeFormatter.ofPattern("EEEE"))
+                ),
+                fontSize = 28.sp,
+                modifier = Modifier.padding(bottom = 12.dp)
+            )
+        }
+        items(classes) {
+            ClassCard(it)
+        }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ClassCard(data: DummyClassBom) {
+fun ClassCard(data: TTClassModel) {
     var cardExpanded by rememberSaveable { mutableStateOf(false) }
     OutlinedCard(
         onClick = { cardExpanded = !cardExpanded },
@@ -100,28 +82,30 @@ fun ClassCard(data: DummyClassBom) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                val isPractical = data.classType.name == "practical"
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(50))
                         .background(
-                            if (data.isPractical) MaterialTheme.colorScheme.tertiaryContainer else
+                            if (isPractical)
+                                MaterialTheme.colorScheme.tertiaryContainer else
                                 MaterialTheme.colorScheme.primaryContainer
                         )
                 ) {
                     Text(
-                        text = stringResource(id = if (data.isPractical) R.string.classTypePractical else R.string.classTypeLecture),
+                        text = stringResource(id = if (isPractical) R.string.classTypePractical else R.string.classTypeLecture),
                         modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp)
                     )
                 }
                 Text(
-                    text = data.className,
+                    text = data.subjectName,
                     fontSize = 16.sp,
                     modifier = Modifier
                         .padding(horizontal = 12.dp)
                         .weight(1f),
                 )
                 Text(
-                    text = data.room,
+                    text = data.classroom,
                     fontSize = 16.sp,
                 )
                 Column(
@@ -130,15 +114,15 @@ fun ClassCard(data: DummyClassBom) {
                         .padding(start = 12.dp)
                 ) {
                     Text(
-                        text = data.startTime,
+                        text = data.duration.startTime.format(DateTimeFormatter.ofPattern("HH:mm")),
                         modifier = Modifier.padding(bottom = 2.dp)
                     )
-                    Text(text = data.finishTime)
+                    Text(text = data.duration.endTime.format(DateTimeFormatter.ofPattern("HH:mm")))
                 }
             }
             AnimatedVisibility(visible = cardExpanded) {
                 Text(
-                    text = data.teacherName,
+                    text = data.teacher.username,
                     modifier = Modifier.padding(top = 8.dp)
                 )
             }
