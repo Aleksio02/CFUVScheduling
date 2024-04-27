@@ -53,7 +53,7 @@ public class RefClassDurationsService {
         }
 
         RefClassDurationsDto newDto = new RefClassDurationsDto();
-        new RefClassDurationsConverter().fromBom(classDuration, newDto);
+        new RefClassDurationsConverter().toDto(classDuration, newDto);
         refClassDurationsDao.save(newDto);
 
         return classDuration;
