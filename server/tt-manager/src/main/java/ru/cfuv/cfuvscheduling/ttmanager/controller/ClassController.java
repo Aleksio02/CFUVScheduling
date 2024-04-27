@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,5 +43,14 @@ public class ClassController {
         @RequestParam LocalDate endDate
     ) {
         return classService.findClassesForGroup(groupName, startDate, endDate);
+    }
+
+    @PostMapping("/createConsultation")
+    public ClassBom createConsultation(
+        @RequestHeader(name = "Authorization", required = false) String token,
+        @RequestBody ClassBom classBom
+    ) {
+        UserBom currentUser = userValidator.validateUserAsTeacher(token);
+        return classService.createConsultation(classBom, currentUser);
     }
 }

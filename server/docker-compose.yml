@@ -1,14 +1,98 @@
-version: '3.5'
-
 services:
   postgres:
-    container_name: cfuvsched
+    container_name: cfuvsched_db
     image: postgres
     environment:
       POSTGRES_DB: cfuvsched
       POSTGRES_USER: schedadmin
       POSTGRES_PASSWORD: schedadmin
-      PGDATA: /data/postgres
-    ports:
-      - "5432:5432"
+    
+    volumes:
+      - cfuvsched_data:/var/lib/postgresql/data/
+    
+    networks:
+      - cfuvsched_net
+    
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U schedadmin -d cfuvsched"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    
     restart: unless-stopped
+  
+  auth:
+    container_name: cfuvsched_auth
+    image: sanyapilot/cfuvscheduling_auth:test
+    build: ./auth
+    environment:
+      POSTGRES_HOST: postgres
+    
+    networks:
+      - cfuvsched_net
+    
+    ports:
+      - "8081:8081"
+    
+    depends_on:
+      postgres:
+        condition: service_healthy
+        restart: true
+    
+    restart: unless-stopped
+  
+  admin:
+    container_name: cfuvsched_admin
+    image: sanyapilot/cfuvscheduling_admin:test
+    build: ./admin
+    environment:
+      POSTGRES_HOST: postgres
+      AUTH_SERVER_HOST: auth
+    
+    networks:
+      - cfuvsched_net
+    
+    ports:
+      - "8082:8082"
+    
+    depends_on:
+      postgres:
+        condition: service_healthy
+        restart: true
+      
+      auth:
+        condition: service_started
+        restart: false
+    
+    restart: unless-stopped
+  
+  tt-manager:
+    container_name: cfuvsched_ttmanager
+    image: sanyapilot/cfuvscheduling_ttmanager:test
+    build: ./tt-manager
+    environment:
+      POSTGRES_HOST: postgres
+      AUTH_SERVER_HOST: auth
+    
+    networks:
+      - cfuvsched_net
+    
+    ports:
+      - "8080:8080"
+    
+    depends_on:
+      postgres:
+        condition: service_healthy
+        restart: true
+      
+      auth:
+        condition: service_started
+        restart: false
+    
+    restart: unless-stopped
+
+volumes:
+  cfuvsched_data:
+
+networks:
+  cfuvsched_net:

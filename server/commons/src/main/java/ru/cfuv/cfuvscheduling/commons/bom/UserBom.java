@@ -10,6 +10,9 @@ public class UserBom {
 
     private Integer id;
     private String username;
+    private String firstName;
+    private String secondName;
+    private String lastName;
     private Integer roleId;
     private String role;
 

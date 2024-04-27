@@ -1,5 +1,6 @@
 package ru.cfuv.cfuvscheduling.admin.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import ru.cfuv.cfuvscheduling.commons.converter.GroupsConverter;
 import ru.cfuv.cfuvscheduling.commons.dao.GroupsDao;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.GroupsDto;
 import ru.cfuv.cfuvscheduling.commons.exception.AlreadyExistsException;
+import ru.cfuv.cfuvscheduling.commons.exception.IncorrectRequestDataException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,5 +45,22 @@ public class GroupsService {
         }
 
         return boms;
+    }
+
+    public void updateGroupName(GroupsBom groupsBom) {
+        if (groupsBom.getId() == null || groupsBom.getName() == null) {
+            throw new IncorrectRequestDataException("GroupsBom cannot be null");
+        }
+        try {
+            GroupsDto existingGroup = groupsDao.findById(groupsBom.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Group with id " + groupsBom.getId() + " not found"));
+            String newName = groupsBom.getName();
+            existingGroup.setName(newName);
+            groupsDao.save(existingGroup);
+            GroupsBom updatedGroup = new GroupsBom();
+            new GroupsConverter().fromDto(existingGroup, updatedGroup);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
+        }
     }
 }

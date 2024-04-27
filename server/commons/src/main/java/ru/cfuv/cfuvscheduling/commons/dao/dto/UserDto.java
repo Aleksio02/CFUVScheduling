@@ -10,8 +10,15 @@ import lombok.Setter;
 @Table(schema = "public", name = "users")
 public class UserDto extends AbstractEntityDto {
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private String username;
+
+    @Column(name = "first_name")
+    private String firstName;
+    @Column(name = "second_name")
+    private String secondName;
+    @Column(name = "last_name")
+    private String lastName;
 
     @Column(nullable = false)
     private String password;
