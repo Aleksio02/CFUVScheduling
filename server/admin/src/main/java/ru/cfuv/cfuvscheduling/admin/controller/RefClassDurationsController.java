@@ -22,7 +22,7 @@ public class RefClassDurationsController {
         return refClassDurationsService.findAll();
     }
 
-    @PostMapping("addClassDuration")
+    @PostMapping("/addClassDuration")
     public RefClassDurationsBom addClassDuration(@RequestBody RefClassDurationsBom classDuration, @RequestHeader(name = "Authorization", required = false) String token) {
         userValidator.validateUserAsAdmin(token);
         return refClassDurationsService.addClassDuration(classDuration);
