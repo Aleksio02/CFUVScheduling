@@ -9,6 +9,9 @@ import ru.cfuv.cfuvscheduling.commons.dao.dto.RefClassDurationsDto;
 import ru.cfuv.cfuvscheduling.commons.exception.AlreadyExistsException;
 import ru.cfuv.cfuvscheduling.commons.exception.IncorrectRequestDataException;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,14 +45,11 @@ public class RefClassDurationsService {
             throw new AlreadyExistsException("A class duration with this ID already exists.");
         }
 
-        List<RefClassDurationsDto> tableClassDuration = refClassDurationsDao.findAll();
-        for (int i = 0; i < tableClassDuration.size(); i++) {
-            if (tableClassDuration.get(i).getStartTime().getHour() == classDuration.getStartTime().getHour() && tableClassDuration.get(i).getStartTime().getMinute() == classDuration.getStartTime().getMinute()) {
-                throw new AlreadyExistsException("A class duration with this startTime already exists.");
-            }
-            if (tableClassDuration.get(i).getEndTime().getHour() == classDuration.getEndTime().getHour() && tableClassDuration.get(i).getEndTime().getMinute() == classDuration.getEndTime().getMinute()) {
-                throw new AlreadyExistsException("A class duration with this endTime already exists.");
-            }
+        classDuration.setStartTime(LocalTime.parse(classDuration.getStartTime().format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))));
+        classDuration.setEndTime(LocalTime.parse(classDuration.getEndTime().format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))));
+
+        if (refClassDurationsDao.existsByStartTimeAndEndTime(classDuration.getStartTime(), classDuration.getEndTime())) {
+            throw new AlreadyExistsException("This duration already exists.");
         }
 
         RefClassDurationsDto newDto = new RefClassDurationsDto();
