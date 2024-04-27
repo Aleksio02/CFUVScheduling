@@ -14,7 +14,6 @@ import java.time.LocalTime;
 public class RefClassDurationsDto {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer number;
     @Column(name = "start_time", nullable = false)
     private LocalTime startTime;
