@@ -37,7 +37,10 @@ data class TTClassDuration(
 
 @Serializable
 data class TTClassTeacher(
-    val username: String
+    val username: String,
+    val firstName: String?,
+    val secondName: String?,
+    val lastName: String?
 )
 
 @Serializable

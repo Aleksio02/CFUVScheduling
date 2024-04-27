@@ -121,8 +121,15 @@ fun ClassCard(data: TTClassModel) {
                 }
             }
             AnimatedVisibility(visible = cardExpanded) {
+                val teacherName = if (data.teacher.firstName != null && data.teacher.lastName != null && data.teacher.secondName != null) {
+                    "${data.teacher.lastName} " +
+                    "${data.teacher.firstName[0].uppercase()}. " +
+                    "${data.teacher.secondName[0].uppercase()}."
+                } else {
+                    data.teacher.username
+                }
                 Text(
-                    text = data.teacher.username,
+                    text = teacherName,
                     modifier = Modifier.padding(top = 8.dp)
                 )
             }
