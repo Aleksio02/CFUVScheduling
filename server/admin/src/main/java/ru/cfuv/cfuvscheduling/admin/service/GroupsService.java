@@ -59,13 +59,13 @@ public class GroupsService {
         }
         try {
             GroupsDto existingGroup = groupsDao.findById(groupsBom.getId())
-                    .orElseThrow(() -> new EntityNotFoundException("Group with id " + groupsBom.getId() + " not found"));
+                    .orElseThrow(() -> new DataIntegrityViolationException ("Group with id " + groupsBom.getId() + " not found"));
             String newName = groupsBom.getName();
             existingGroup.setName(newName);
             groupsDao.save(existingGroup);
             GroupsBom updatedGroup = new GroupsBom();
             new GroupsConverter().fromDto(existingGroup, updatedGroup);
-        } catch (EntityNotFoundException e) {
+        } catch ( AlreadyExistException e) {
             throw new EntityNotFoundException(e.getMessage());
         }
     }
