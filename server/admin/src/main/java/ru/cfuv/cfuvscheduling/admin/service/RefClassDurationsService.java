@@ -1,7 +1,11 @@
 package ru.cfuv.cfuvscheduling.admin.service;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.cfuv.cfuvscheduling.admin.dao.RefClassDurationsDao;
@@ -31,27 +35,21 @@ public class RefClassDurationsService {
     }
 
     public RefClassDurationsBom addClassDuration(RefClassDurationsBom classDuration) throws AlreadyExistsException {
-        if (classDuration.getNumber() == null || classDuration.getStartTime() == null ||
-            classDuration.getEndTime() == null) {
+        if (classDuration.getNumber() == null || classDuration.getStartTime() == null || classDuration.getEndTime() == null) {
             throw new IncorrectRequestDataException("Obj fields can't be null.");
         }
 
         RefClassDurationsDto existingClassDuration = refClassDurationsDao.findById(classDuration.getNumber()).
-            orElse(null);
+                orElse(null);
         if (existingClassDuration != null) {
             throw new AlreadyExistsException("A class duration with this ID already exists.");
         }
 
-        List<RefClassDurationsDto> tableClassDuration = refClassDurationsDao.findAll();
-        for (int i = 0; i < tableClassDuration.size(); i++) {
-            if (tableClassDuration.get(i).getStartTime().getHour() == classDuration.getStartTime().getHour() &&
-                tableClassDuration.get(i).getStartTime().getMinute() == classDuration.getStartTime().getMinute()) {
-                throw new AlreadyExistsException("A class duration with this startTime already exists.");
-            }
-            if (tableClassDuration.get(i).getEndTime().getHour() == classDuration.getEndTime().getHour() &&
-                tableClassDuration.get(i).getEndTime().getMinute() == classDuration.getEndTime().getMinute()) {
-                throw new AlreadyExistsException("A class duration with this endTime already exists.");
-            }
+        classDuration.setStartTime(LocalTime.parse(classDuration.getStartTime().format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))));
+        classDuration.setEndTime(LocalTime.parse(classDuration.getEndTime().format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))));
+
+        if (refClassDurationsDao.existsByStartTimeAndEndTime(classDuration.getStartTime(), classDuration.getEndTime())) {
+            throw new AlreadyExistsException("This duration already exists.");
         }
 
         RefClassDurationsDto newDto = new RefClassDurationsDto();
@@ -60,5 +58,6 @@ public class RefClassDurationsService {
 
         return classDuration;
     }
+
 
 }
