@@ -2,7 +2,7 @@ server:
   port: 8082
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/cfuvsched
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:5432/cfuvsched
     username: schedadmin
     password: schedadmin
   jpa:
@@ -12,4 +12,4 @@ spring:
 
 connector:
   auth:
-    url: localhost:8081/auth
+    url: ${AUTH_SERVER_HOST:localhost}:${AUTH_SERVER_PORT:8081}/auth
