@@ -23,7 +23,7 @@ public class GroupsService {
     public GroupsBom addNewGroup(GroupsBom group) {
         try {
             if (group.getName() == null || group.getName().trim().length() < 3) {
-                throw new IncorrectRequestDataException("The class type name cannot be null and should contain three or more symbols");
+                throw new IncorrectRequestDataException("The groups name cannot be null and should contain three or more symbols");
             }
             group.setId(null);
             GroupsDto groupDto = new GroupsDto();
@@ -52,7 +52,7 @@ public class GroupsService {
 
     public void updateGroupName(GroupsBom groupsBom) {
         if (groupsBom.getName() == null || groupsBom.getName().trim().length() < 3) {
-            throw new IncorrectRequestDataException("The class type name cannot be null and should contain three or more symbols");
+            throw new IncorrectRequestDataException("The groups name cannot be null and should contain three or more symbols");
         }
         if (groupsBom.getId() == null) {
             throw new IncorrectRequestDataException("Groups id cannot be null");

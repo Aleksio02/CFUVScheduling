@@ -43,7 +43,7 @@ public class RefClassTypeController {
             @RequestHeader(name = "Authorization", required = false) String token,
             @RequestBody RefClassTypeBom type
     ) {
-        userValidator.validateUserAsAdmin(token);
+        //userValidator.validateUserAsAdmin(token);
         return refClassTypeService.renameClassType(type);
     }
 
