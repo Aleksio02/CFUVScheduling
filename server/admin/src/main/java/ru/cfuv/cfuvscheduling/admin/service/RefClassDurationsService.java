@@ -1,5 +1,7 @@
 package ru.cfuv.cfuvscheduling.admin.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.cfuv.cfuvscheduling.admin.dao.RefClassDurationsDao;
@@ -9,12 +11,10 @@ import ru.cfuv.cfuvscheduling.commons.dao.dto.RefClassDurationsDto;
 import ru.cfuv.cfuvscheduling.commons.exception.AlreadyExistsException;
 import ru.cfuv.cfuvscheduling.commons.exception.IncorrectRequestDataException;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.ArrayList;
-import java.util.List;
-
 @Service
 public class RefClassDurationsService {
 
@@ -35,12 +35,13 @@ public class RefClassDurationsService {
     }
 
     public RefClassDurationsBom addClassDuration(RefClassDurationsBom classDuration) throws AlreadyExistsException {
-        if (classDuration.getNumber() == null || classDuration.getStartTime() == null || classDuration.getEndTime() == null) {
+        if (classDuration.getNumber() == null || classDuration.getStartTime() == null ||
+            classDuration.getEndTime() == null) {
             throw new IncorrectRequestDataException("Obj fields can't be null.");
         }
 
         RefClassDurationsDto existingClassDuration = refClassDurationsDao.findById(classDuration.getNumber()).
-                orElse(null);
+            orElse(null);
         if (existingClassDuration != null) {
             throw new AlreadyExistsException("A class duration with this ID already exists.");
         }
@@ -57,6 +58,21 @@ public class RefClassDurationsService {
         refClassDurationsDao.save(newDto);
 
         return classDuration;
+    }
+
+    public void deleteClassDuration(Integer id) {
+        if(id == null) {
+            throw new IncorrectRequestDataException("Obj fields can't be null.");
+        }
+        if (!refClassDurationsDao.existsById(id)) {
+            throw new EntityNotFoundException("The class duration with this ID was not found.");
+        }
+
+        try {
+            refClassDurationsDao.deleteById(id);
+        } catch (Exception e) {
+            throw new IncorrectRequestDataException("Error occurred during class duration deletion.");
+        }
     }
 
 }

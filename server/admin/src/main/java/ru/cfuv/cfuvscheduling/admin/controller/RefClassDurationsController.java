@@ -27,4 +27,10 @@ public class RefClassDurationsController {
         userValidator.validateUserAsAdmin(token);
         return refClassDurationsService.addClassDuration(classDuration);
     }
+
+    @DeleteMapping("/deleteClassDuration")
+    public void deleteClassDuration(@RequestBody Integer id, @RequestHeader(name = "Authorization", required = false) String token) {
+        //userValidator.validateUserAsAdmin(token);
+        refClassDurationsService.deleteClassDuration(id);
+    }
 }
