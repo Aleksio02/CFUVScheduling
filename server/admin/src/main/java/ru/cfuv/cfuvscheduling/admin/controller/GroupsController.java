@@ -33,5 +33,14 @@ public class GroupsController {
         userValidator.validateUserAsAdmin(jwtToken);
         groupsService.updateGroupName(groupsBom);
     }
+
+    @DeleteMapping("/deleteGroup/{id}")
+    public void deleteGroup(
+            @RequestHeader(name = "Authorization", required = false) String token,
+            @PathVariable Integer id
+    ) {
+        userValidator.validateUserAsAdmin(token);
+        groupsService.deleteGroup(id);
+    }
 }
 
