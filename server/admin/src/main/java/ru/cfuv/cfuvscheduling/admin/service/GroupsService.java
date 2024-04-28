@@ -1,6 +1,7 @@
 package ru.cfuv.cfuvscheduling.admin.service;
 
-import jakarta.persistence.EntityNotFoundException;
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -10,7 +11,6 @@ import ru.cfuv.cfuvscheduling.commons.dao.GroupsDao;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.GroupsDto;
 import ru.cfuv.cfuvscheduling.commons.exception.AlreadyExistsException;
 import ru.cfuv.cfuvscheduling.commons.exception.IncorrectRequestDataException;
-import ru.cfuv.cfuvscheduling.commons.exception.AlreadyExistsException;
 
 
 import java.util.ArrayList;
@@ -60,8 +60,7 @@ public class GroupsService {
             throw new IncorrectRequestDataException("Groups id cannot be null");
         }
         try {
-            GroupsDto existingGroup = groupsDao.findById(groupsBom.getId())
-                    .orElseThrow(() -> new EntityNotFoundException("Group with id " + groupsBom.getId() + " not found"));
+            GroupsDto existingGroup = groupsDao.findById(groupsBom.getId()).orElseThrow(() -> new EntityNotFoundException("Group with id " + groupsBom.getId() + " not found"));
             String newName = groupsBom.getName();
             existingGroup.setName(newName);
             groupsDao.save(existingGroup);
@@ -71,4 +70,16 @@ public class GroupsService {
             throw new AlreadyExistsException("This name already exists");
         }
     }
+
+    public void deleteGroup(Integer groupId) {
+        if (!groupsDao.existsById(groupId)) {
+            throw new EntityNotFoundException("Group with ID %d not found".formatted(groupId));
+        }
+        try {
+            groupsDao.deleteById(groupId);
+        } catch (Exception e) {
+            throw new IncorrectRequestDataException("Error occurred during group deletion");
+        }
+    }
 }
+
