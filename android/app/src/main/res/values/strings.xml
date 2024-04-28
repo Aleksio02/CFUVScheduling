@@ -39,4 +39,10 @@
     <!-- Top app bar -->
     <string name="timetableListBarTitle">Список групп</string>
     <string name="accountBarTitle">Информация об аккаунте</string>
+
+    <!-- Net errors -->
+    <string name="netErrorNoInternet">Нет интернет соединения!</string>
+    <string name="netErrorTimeout">Таймаут! Проблемы с интернетом?</string>
+    <string name="netErrorGeneric">Произошла ошибка при общении с сервером!</string>
+    <string name="netErrorServerside">Произошла ошибка на сервере!</string>
 </resources>
