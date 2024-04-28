@@ -68,7 +68,7 @@ public class GroupsService {
             GroupsBom updatedGroup = new GroupsBom();
             new GroupsConverter().fromDto(existingGroup, updatedGroup);
         } catch (DataIntegrityViolationException e) {
-            throw new AlreadyExistsException("This name already exists ");
+            throw new AlreadyExistsException("This name already exists");
         }
     }
 }
