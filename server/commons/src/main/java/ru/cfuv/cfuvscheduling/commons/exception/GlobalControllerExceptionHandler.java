@@ -11,7 +11,6 @@ import ru.cfuv.cfuvscheduling.commons.bom.ErrorResponse;
 class GlobalControllerExceptionHandler {
     @ExceptionHandler(IncorrectRequestDataException.class)
     public ResponseEntity<?> handleIncorrectRequestDataException(IncorrectRequestDataException exception, WebRequest request) {
-//        return ResponseEntity.status(400).body(exception.getMessage());
         return ResponseEntity.status(400).body(new ErrorResponse().generateResponse(400, exception.getMessage()));
     }
 
@@ -36,7 +35,7 @@ class GlobalControllerExceptionHandler {
     }
 
     @ExceptionHandler(ServerUnavailableException.class)
-    public ResponseEntity<?> handleEntityNotFoundException(ServerUnavailableException exception, WebRequest request) {
+    public ResponseEntity<?> handleServerUnavailableException(ServerUnavailableException exception, WebRequest request) {
         return ResponseEntity.status(504).body(new ErrorResponse().generateResponse(504, exception.getMessage()));
     }
 }

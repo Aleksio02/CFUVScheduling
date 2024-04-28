@@ -2,6 +2,7 @@ package ru.cfuv.cfuvscheduling.admin.service;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,8 @@ import ru.cfuv.cfuvscheduling.commons.dao.RefClassTypeDao;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.RefClassTypeDto;
 import ru.cfuv.cfuvscheduling.commons.exception.AlreadyExistsException;
 import ru.cfuv.cfuvscheduling.commons.exception.IncorrectRequestDataException;
+
+import javax.persistence.EntityNotFoundException;
 
 @Service
 public class RefClassTypeService {
@@ -32,6 +35,9 @@ public class RefClassTypeService {
     }
 
     public RefClassTypeBom createClassType(RefClassTypeBom type) {
+        if (type.getName() == null || type.getName().trim().length() < 3) {
+            throw new IncorrectRequestDataException("The class type name cannot be null and should contain three or more symbols");
+        }
         try {
             type.setId(null);
             RefClassTypeDto typeDto = new RefClassTypeDto();
@@ -47,6 +53,9 @@ public class RefClassTypeService {
 
     public RefClassTypeBom renameClassType(RefClassTypeBom type) {
         try {
+            if (type.getName() == null || type.getName().trim().length() < 3) {
+                throw new IncorrectRequestDataException("The class type name cannot be null and should contain three or more symbols");
+            }
             if (type.getId() == null || !refClassTypeDao.existsById(type.getId())) {
                 throw new IllegalArgumentException("Id shouldn't be null or type with this id isn't exist!");
             }
@@ -64,10 +73,13 @@ public class RefClassTypeService {
     }
 
     public void deleteClassType(Integer typeId) {
+        if (!refClassTypeDao.existsById(typeId)) {
+            throw new EntityNotFoundException("Class type with ID %d not found".formatted(typeId));
+        }
         try {
             refClassTypeDao.deleteById(typeId);
         } catch (Exception e) {
-            throw new IncorrectRequestDataException("Error occured during class type deletion");
+            throw new IncorrectRequestDataException("Error occurred during class type deletion");
         }
     }
 }
