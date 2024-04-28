@@ -76,10 +76,6 @@ public class RefClassTypeService {
         if (!refClassTypeDao.existsById(typeId)) {
             throw new EntityNotFoundException("Class type with ID %d not found".formatted(typeId));
         }
-        try {
-            refClassTypeDao.deleteById(typeId);
-        } catch (Exception e) {
-            throw new IncorrectRequestDataException("Error occurred during class type deletion");
-        }
+        refClassTypeDao.deleteById(typeId);
     }
 }

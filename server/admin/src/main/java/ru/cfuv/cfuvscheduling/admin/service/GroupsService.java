@@ -75,11 +75,7 @@ public class GroupsService {
         if (!groupsDao.existsById(groupId)) {
             throw new EntityNotFoundException("Group with ID %d not found".formatted(groupId));
         }
-        try {
-            groupsDao.deleteById(groupId);
-        } catch (Exception e) {
-            throw new IncorrectRequestDataException("Error occurred during group deletion");
-        }
+        groupsDao.deleteById(groupId);
     }
 }
 
