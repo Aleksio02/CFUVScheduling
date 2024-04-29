@@ -1,5 +1,6 @@
 package ru.cfuv.cfuvscheduling
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -41,18 +42,28 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import ru.cfuv.cfuvscheduling.api.NetErrors
 import ru.cfuv.cfuvscheduling.composables.AccountScreen
+import ru.cfuv.cfuvscheduling.composables.LoginScreen
 import ru.cfuv.cfuvscheduling.composables.NetStatusSnack
+import ru.cfuv.cfuvscheduling.composables.RegisterScreen
 import ru.cfuv.cfuvscheduling.composables.TimetableListScreen
 import ru.cfuv.cfuvscheduling.composables.TimetableScreen
 import ru.cfuv.cfuvscheduling.ui.theme.CFUVSchedulingTheme
 import java.time.LocalDate
+
+// DataStore
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "authData")
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,7 +75,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen()
+                    MainScreen(viewModel(factory = MainViewModelFactory(LocalContext.current.dataStore)))
                 }
             }
         }
@@ -83,11 +94,11 @@ data class DestinationInfo(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(viewModel: MainViewModel = viewModel()) {
+fun MainScreen(viewModel: MainViewModel) {
+    val context = LocalContext.current
     val navController = rememberNavController()
     val appBarTitle by viewModel.appBarTitle.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
-    val context = LocalContext.current
 
     val destinations = listOf(
         DestinationInfo(
@@ -106,7 +117,7 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
             id = "account",
             icon = Icons.Rounded.AccountCircle,
             label = R.string.accountNavItem,
-            composable = { AccountScreen(viewModel) }
+            composable = { AccountScreen(viewModel, onNavigateToLogin = { navController.navigate("loginForms/$it") }) }
         )
     )
 
@@ -173,6 +184,22 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
                 destinations.forEach { dest ->
                     composable(dest.id, content = dest.composable)
                 }
+                // Login and register
+                composable(
+                    "loginForms/{showSkipButton}",
+                    arguments = listOf(navArgument("showSkipButton") { type = NavType.BoolType })
+                ) { entry ->
+                    LoginScreen(
+                        viewModel = viewModel,
+                        showSkipButton = entry.arguments?.getBoolean("showSkipButton") ?: false,
+                        onNavigateToRegister = { navController.navigate("registerForms") },
+                        onBackToAccountPage = { navController.popBackStack("account", false) }
+                    )
+                }
+                composable("registerForms") { RegisterScreen(
+                    viewModel = viewModel,
+                    onBackToAccountPage = { navController.popBackStack("account", false) }
+                ) }
             }
         }
     }
@@ -186,7 +213,7 @@ fun MainScreenPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            MainScreen()
+            MainScreen(viewModel(factory = MainViewModelFactory(LocalContext.current.dataStore)))
         }
     }
 }

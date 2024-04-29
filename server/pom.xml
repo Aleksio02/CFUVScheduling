@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>ru.cfuv</groupId>
 	<artifactId>cfuvscheduling</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.3-SNAPSHOT</version>
 	<name>cfuvscheduling</name>
 	<description>cfuvscheduling</description>
     <modules>

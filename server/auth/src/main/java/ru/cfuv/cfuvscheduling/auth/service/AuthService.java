@@ -12,8 +12,10 @@ import ru.cfuv.cfuvscheduling.commons.converter.UserConverter;
 import ru.cfuv.cfuvscheduling.commons.dao.UserDao;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.RefUserRolesDto;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.UserDto;
+import ru.cfuv.cfuvscheduling.commons.exception.AccessForbiddenException;
 import ru.cfuv.cfuvscheduling.commons.exception.AlreadyExistsException;
 import ru.cfuv.cfuvscheduling.commons.exception.IncorrectRequestDataException;
+import ru.cfuv.cfuvscheduling.commons.exception.UnauthorizedException;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -42,7 +44,7 @@ public class AuthService {
         }
 
         UserDto foundUser = userDao.findByUsernameAndPassword(accountForm.getUsername(), accountForm.getPassword())
-            .orElseThrow(() -> new EntityNotFoundException("Incorrect username or password"));
+            .orElseThrow(() -> new UnauthorizedException("Incorrect username or password"));
 
         UserConverter converter = new UserConverter();
         UserBom userBom = new UserBom();

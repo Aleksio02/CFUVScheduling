@@ -36,21 +36,13 @@ data class TTClassDuration(
 )
 
 @Serializable
-data class TTClassTeacher(
-    val username: String,
-    val firstName: String?,
-    val secondName: String?,
-    val lastName: String?
-)
-
-@Serializable
 data class TTClassModel(
     val subjectName: String,
     val classroom: String,
     val duration: TTClassDuration,
     val comment: String,
     val classType: N,  // Aleksioi was too lazy to omit Int ids from response and return a String instead of object
-    val teacher: TTClassTeacher
+    val teacher: UserModel
 ) {
     @Serializable
     data class N(

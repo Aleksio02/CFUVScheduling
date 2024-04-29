@@ -3,7 +3,7 @@
     <string name="title_activity_login">LoginActivity</string>
 
     <!-- Login screen -->
-    <string name="loginTitle">Привет! 👋</string>
+    <string name="loginTitle">Вход 👋</string>
     <string name="loginDescription">Это приложение для просмотра расписания ФТИ КФУ</string>
     <string name="loginUsernameField">Логин</string>
     <string name="loginPasswordField">Пароль</string>
@@ -14,6 +14,9 @@
     <string name="registerPasswordAgainField">Пароль еще раз</string>
     <string name="registerPasswordNoMatch">Пароли не совпадают!</string>
     <string name="registerButtonLabel">Зарегистрироваться</string>
+    <string name="registerLoginRequirements">Минимум 8 символов, латинские буквы. Можно использовать цифры и эти символы: -_.@</string>
+    <string name="registerPasswordRequirements">Минимум 8 символов, латинские буквы и цифры. Можно использовать специальные символы.</string>
+    <string name="registerChecksNotPassed">Не выполнены требования!</string>
 
     <!-- Timetable -->
     <string name="timetableTitle">Расписание на %1$s</string>
@@ -29,7 +32,13 @@
     <string name="accountRole">Роль: %1$s</string>
     <string name="settingsNotificationsTitle">Уведомления</string>
     <string name="settingsNotificationsDescription">Напоминания о следующей паре</string>
-    <string name="accountLogout">Выйти из аккаунта</string>
+    <string name="logout">Выйти</string>
+    <string name="login">Войти</string>
+    <string name="guestUsername">Гость</string>
+    <string name="loginInvalid">Неверный логин или пароль!</string>
+    <string name="accountRoleUser">Пользователь</string>
+    <string name="accountRoleTeacher">Преподаватель</string>
+    <string name="accountRoleAdmin">Администратор</string>
 
     <!-- Main screen -->
     <string name="timetableNavItem">Пары</string>
