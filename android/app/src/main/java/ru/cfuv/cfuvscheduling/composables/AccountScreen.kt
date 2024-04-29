@@ -17,6 +17,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,23 +32,27 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.cfuv.cfuvscheduling.MainViewModel
-import ru.cfuv.cfuvscheduling.api.DummyAccountInfoModel
+import ru.cfuv.cfuvscheduling.MainViewModelFactory
 import ru.cfuv.cfuvscheduling.R
+import ru.cfuv.cfuvscheduling.dataStore
 
-val ACCOUNT = DummyAccountInfoModel(
-    "SanyaPilot",
-    "Студент"
+val USER_ROLE_STRINGS = mapOf(
+    "USER" to R.string.accountRoleUser,
+    "TEACHER" to R.string.accountRoleTeacher,
+    "ADMIN" to R.string.accountRoleAdmin
 )
 
 @Composable
 fun AccountScreen(
     viewModel: MainViewModel = viewModel(),
-    onNavigateToLogin: () -> Unit
+    onNavigateToLogin: (Boolean) -> Unit
 ) {
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         viewModel.setAppBarTitle(context.getString(R.string.accountBarTitle))
     }
+
+    val userData = viewModel.userData.collectAsState()
 
     Column {
         Row(
@@ -59,17 +64,38 @@ fun AccountScreen(
                     .weight(1f)
                     .padding(horizontal = 16.dp)
             ) {
+                val userName = if (userData.value != null) {
+                    val data = userData.value!!
+                    if (data.firstName != null && data.lastName != null && data.secondName != null) {
+                        "${data.lastName} " +
+                        "${data.firstName[0].uppercase()}. " +
+                        "${data.secondName[0].uppercase()}."
+                    } else {
+                        data.username
+                    }
+                } else {
+                    stringResource(id = R.string.guestUsername)
+                }
                 Text(
-                    text = ACCOUNT.name,
+                    text = userName,
                     fontSize = 32.sp
                 )
-                Text(
-                    text = stringResource(id = R.string.accountRole, ACCOUNT.role),
-                    fontSize = 20.sp
-                )
+                if (userData.value != null && USER_ROLE_STRINGS[userData.value!!.role] != null) {
+                    Text(
+                        text = stringResource(id = R.string.accountRole, stringResource(id = USER_ROLE_STRINGS[userData.value!!.role]!!)),
+                        fontSize = 20.sp
+                    )
+                }
             }
             FilledTonalButton(
-                onClick = { onNavigateToLogin() },
+                onClick = {
+                    if (userData.value == null) {
+                        onNavigateToLogin(false)
+                    } else {
+                        viewModel.logoutUser()
+                        onNavigateToLogin(true)
+                    }
+                },
                 modifier = Modifier.padding(end = 16.dp),
                 contentPadding = PaddingValues(
                     start = 16.dp,
@@ -79,11 +105,12 @@ fun AccountScreen(
                 )
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.rounded_login_24),
+                    painter = painterResource(id = if (userData.value == null) R.drawable.rounded_login_24
+                                                   else R.drawable.rounded_logout_24),
                     contentDescription = null,
                     modifier = Modifier.padding(end = 8.dp)
                 )
-                Text(text = stringResource(id = R.string.login))
+                Text(text = stringResource(id = if (userData.value == null) R.string.login else R.string.logout))
             }
         }
         var notificationsEnabled by rememberSaveable { mutableStateOf(false) }
@@ -105,6 +132,6 @@ fun AccountScreenPreview() {
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
-        AccountScreen(onNavigateToLogin = {})
+        AccountScreen(viewModel = viewModel(factory = MainViewModelFactory(LocalContext.current.dataStore)), onNavigateToLogin = {})
     }
 }
