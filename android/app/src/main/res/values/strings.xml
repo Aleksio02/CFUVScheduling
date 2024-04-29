@@ -3,7 +3,7 @@
     <string name="title_activity_login">LoginActivity</string>
 
     <!-- Login screen -->
-    <string name="loginTitle">Привет! 👋</string>
+    <string name="loginTitle">Вход 👋</string>
     <string name="loginDescription">Это приложение для просмотра расписания ФТИ КФУ</string>
     <string name="loginUsernameField">Логин</string>
     <string name="loginPasswordField">Пароль</string>
@@ -29,7 +29,8 @@
     <string name="accountRole">Роль: %1$s</string>
     <string name="settingsNotificationsTitle">Уведомления</string>
     <string name="settingsNotificationsDescription">Напоминания о следующей паре</string>
-    <string name="accountLogout">Выйти из аккаунта</string>
+    <string name="logout">Выйти</string>
+    <string name="login">Войти</string>
 
     <!-- Main screen -->
     <string name="timetableNavItem">Пары</string>

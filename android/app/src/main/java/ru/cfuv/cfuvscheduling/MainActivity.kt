@@ -48,7 +48,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ru.cfuv.cfuvscheduling.api.NetErrors
 import ru.cfuv.cfuvscheduling.composables.AccountScreen
+import ru.cfuv.cfuvscheduling.composables.LoginScreen
 import ru.cfuv.cfuvscheduling.composables.NetStatusSnack
+import ru.cfuv.cfuvscheduling.composables.RegisterScreen
 import ru.cfuv.cfuvscheduling.composables.TimetableListScreen
 import ru.cfuv.cfuvscheduling.composables.TimetableScreen
 import ru.cfuv.cfuvscheduling.ui.theme.CFUVSchedulingTheme
@@ -106,7 +108,7 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
             id = "account",
             icon = Icons.Rounded.AccountCircle,
             label = R.string.accountNavItem,
-            composable = { AccountScreen(viewModel) }
+            composable = { AccountScreen(viewModel, onNavigateToLogin = { navController.navigate("loginForms") }) }
         )
     )
 
@@ -173,6 +175,9 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
                 destinations.forEach { dest ->
                     composable(dest.id, content = dest.composable)
                 }
+                // Login and register
+                composable("loginForms") { LoginScreen(onNavigateToRegister = { navController.navigate("registerForms") }) }
+                composable("registerForms") { RegisterScreen() }
             }
         }
     }
