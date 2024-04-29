@@ -30,8 +30,8 @@ public class TeacherController {
         return teacherService.findAllTeachers();
     }
 
-    @PostMapping("/addTeachersRole/{userId}")
-    public void addTeacherRole(@RequestHeader(name = "Authorization", required = false) String token, @PathVariable Integer userId) {
+    @PostMapping("/changeUserRoleToTeacher/{userId}")
+    public void changeUserRoleToTeacher(@RequestHeader(name = "Authorization", required = false) String token, @PathVariable Integer userId) {
         if (!authService.getCurrentUser(token).hasAdminRole()) {
             throw new AccessForbiddenException("You don't have access to this action!");
         }
