@@ -33,10 +33,18 @@ public class TeacherService {
     }
 
 
-    public void changeUserRoleToTeacher(Integer userId) {
+    public void giveTeacherRoleToUser(Integer userId) {
         UserDto userDto = userDao.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User with this id not found"));
         RefUserRolesDto userRole = userRolesDao.findByName(UserRoles.TEACHER.name()).get();
+        userDto.setRoleId(userRole);
+        userDao.save(userDto);
+    }
+
+    public void removeTeacherRoleFromUser(Integer userId) {
+        UserDto userDto = userDao.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User with this id not found"));
+        RefUserRolesDto userRole = userRolesDao.findByName(UserRoles.USER.name()).get();
         userDto.setRoleId(userRole);
         userDao.save(userDto);
     }

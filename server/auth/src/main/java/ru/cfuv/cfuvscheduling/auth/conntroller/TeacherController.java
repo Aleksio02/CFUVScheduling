@@ -28,12 +28,20 @@ public class TeacherController {
         return teacherService.findAllTeachers();
     }
 
-    @PostMapping("/changeUserRoleToTeacher/{userId}")
-    public void changeUserRoleToTeacher(@RequestHeader(name = "Authorization", required = false) String token, @PathVariable Integer userId) {
+    @PostMapping("/giveTeacherRoleToUser/{userId}")
+    public void giveTeacherRoleToUser(@RequestHeader(name = "Authorization", required = false) String token, @PathVariable Integer userId) {
         if (!authService.getCurrentUser(token).hasAdminRole()) {
             throw new AccessForbiddenException("You don't have access to this action!");
         }
-        teacherService.changeUserRoleToTeacher(userId);
+        teacherService.giveTeacherRoleToUser(userId);
+    }
+
+    @PostMapping("/removeTeacherRoleFromUser/{userId}")
+    public void removeTeacherRoleFromUser(@RequestHeader(name = "Authorization", required = false) String token, @PathVariable Integer userId) {
+        if (!authService.getCurrentUser(token).hasAdminRole()) {
+            throw new AccessForbiddenException("You don't have access to this action!");
+        }
+        teacherService.removeTeacherRoleFromUser(userId);
     }
 }
 
