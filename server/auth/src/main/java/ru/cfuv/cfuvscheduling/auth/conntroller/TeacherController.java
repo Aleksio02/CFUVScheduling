@@ -1,18 +1,19 @@
 package ru.cfuv.cfuvscheduling.auth.conntroller;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import ru.cfuv.cfuvscheduling.auth.service.AuthService;
 import ru.cfuv.cfuvscheduling.auth.service.TeacherService;
 import ru.cfuv.cfuvscheduling.commons.bom.UserBom;
+import ru.cfuv.cfuvscheduling.commons.bom.UserRoles;
 import ru.cfuv.cfuvscheduling.commons.exception.AccessForbiddenException;
 
+
 @RestController
-@RequestMapping("/admin/teacher")
+@RequestMapping("/teacher")
 public class TeacherController {
 
     @Autowired
@@ -27,5 +28,10 @@ public class TeacherController {
             throw new AccessForbiddenException("You don't have access to this action!");
         }
         return teacherService.findAllTeachers();
+    }
+
+    @PostMapping("/{userId}/role")
+    public void addTeacherRole(@PathVariable Integer userId) {
+        teacherService.changeUserRoleToTeacher(userId);
     }
 }
