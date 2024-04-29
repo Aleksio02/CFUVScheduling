@@ -6,9 +6,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -17,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -37,7 +41,7 @@ import ru.cfuv.cfuvscheduling.dataStore
 
 @Composable
 fun LoginScreen(
-    viewModel: MainViewModel = viewModel(),
+    viewModel: MainViewModel,
     showSkipButton: Boolean = false,
     onNavigateToRegister: () -> Unit,
     onBackToAccountPage: () -> Unit
@@ -47,10 +51,10 @@ fun LoginScreen(
         onBackToAccountPage()
     }
 
-    Column(modifier = Modifier.padding(24.dp)) {
+    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Text(
             text = stringResource(id = R.string.loginTitle),
-            fontSize = 48.sp,
+            fontSize = 40.sp,
             fontWeight = FontWeight.Bold
         )
         Text(
@@ -122,27 +126,37 @@ fun LoginScreenPreview() {
 }
 
 @Composable
-fun RegisterScreen(onBackToAccountPage: () -> Unit) {
-    Column(modifier = Modifier.padding(24.dp)) {
+fun RegisterScreen(
+    viewModel: MainViewModel,
+    onBackToAccountPage: () -> Unit
+) {
+    val userData = viewModel.userData.collectAsState()
+    if (userData.value != null) {
+        onBackToAccountPage()
+    }
+
+    Column {
         Text(
             text = stringResource(id = R.string.registerTitle),
             fontSize = 40.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = stringResource(id = R.string.loginDescription),
-            fontSize = 20.sp,
-            modifier = Modifier.padding(top = 8.dp)
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(horizontal = 16.dp)
         )
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp)
         ) {
             var login by rememberSaveable { mutableStateOf("") }
             var pass by rememberSaveable { mutableStateOf("") }
             var pass2 by rememberSaveable { mutableStateOf("") }
 
+            val loginRegex = Regex("[A-Za-z0-9-_.@]{8,}")
+            val loginLettersRegex = Regex("[A-Za-z]+")
+            val loginAllowed = loginRegex.matchEntire(login) != null && loginLettersRegex.containsMatchIn(login)
             OutlinedTextField(
                 value = login,
                 onValueChange = { login = it },
@@ -151,6 +165,17 @@ fun RegisterScreen(onBackToAccountPage: () -> Unit) {
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 modifier = Modifier.fillMaxWidth()
             )
+            AnimatedVisibility(visible = login != "" && !loginAllowed) {
+                Text(
+                    text = stringResource(id = R.string.registerLoginRequirements),
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
+
+            val passwordRegex = Regex(".{8,}")
+            val passwordMandatoryRegex = Regex("[A-Za-z0-9]+")
+            val passwordAllowed = passwordRegex.matchEntire(pass) != null && passwordMandatoryRegex.containsMatchIn(pass)
             OutlinedTextField(
                 value = pass,
                 onValueChange = { pass = it },
@@ -158,9 +183,15 @@ fun RegisterScreen(onBackToAccountPage: () -> Unit) {
                 shape = RoundedCornerShape(24.dp),
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             )
+            AnimatedVisibility(visible = pass != "" && !passwordAllowed) {
+                Text(
+                    text = stringResource(id = R.string.registerPasswordRequirements),
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
             OutlinedTextField(
                 value = pass2,
                 onValueChange = { pass2 = it },
@@ -178,11 +209,26 @@ fun RegisterScreen(onBackToAccountPage: () -> Unit) {
                     .fillMaxWidth()
             )
 
+            var showErrorText by remember { mutableStateOf(false) }
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    if (!loginAllowed || !passwordAllowed || pass != pass2) {
+                        showErrorText = true
+                    } else {
+                        viewModel.registerUser(login, pass)
+                    }
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(text = stringResource(id = R.string.registerButtonLabel))
+            }
+            AnimatedVisibility(visible = showErrorText) {
+                Text(
+                    text = stringResource(id = R.string.registerChecksNotPassed),
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(8.dp)
+                )
             }
         }
     }
@@ -194,6 +240,6 @@ fun RegisterScreenPreview() {
     Surface(
         modifier = Modifier.fillMaxSize(),
     ) {
-        RegisterScreen({})
+        RegisterScreen(viewModel = viewModel(factory = MainViewModelFactory(LocalContext.current.dataStore)), {})
     }
 }

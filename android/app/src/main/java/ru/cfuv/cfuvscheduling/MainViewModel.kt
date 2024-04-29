@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import okio.IOException
@@ -100,11 +101,10 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
         viewModelScope.launch {
             // Try to fetch user info
             val userTokenFlow = datastore.data.map { it[USER_TOKEN_DS_KEY] }
-            userTokenFlow.collect { token ->
-                if (token != null) {
-                    val res = processResp { SchedApi.auth.getCurrentUser(token) } ?: return@collect
-                    _userData.value = res
-                }
+            val token = userTokenFlow.first()
+            if (token != null) {
+                val res = processResp { SchedApi.auth.getCurrentUser(token) } ?: return@launch
+                _userData.value = res
             }
         }
         viewModelScope.launch {
@@ -139,7 +139,14 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
             _userData.value = res.user
         }
     }
-
+    fun registerUser(username: String, pass: String) {
+        viewModelScope.launch {
+            val res = processResp { SchedApi.auth.registerUser(LoginBody(username, pass)) } ?: return@launch
+            // Write token
+            datastore.edit { it[USER_TOKEN_DS_KEY] = res.token }
+            _userData.value = res.user
+        }
+    }
     fun logoutUser() {
         viewModelScope.launch {
             datastore.edit { it.remove(USER_TOKEN_DS_KEY) }

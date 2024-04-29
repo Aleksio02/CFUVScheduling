@@ -75,7 +75,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen()
+                    MainScreen(viewModel(factory = MainViewModelFactory(LocalContext.current.dataStore)))
                 }
             }
         }
@@ -94,9 +94,8 @@ data class DestinationInfo(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
+fun MainScreen(viewModel: MainViewModel) {
     val context = LocalContext.current
-    val viewModel: MainViewModel = viewModel(factory = MainViewModelFactory(context.dataStore))
     val navController = rememberNavController()
     val appBarTitle by viewModel.appBarTitle.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -198,6 +197,7 @@ fun MainScreen() {
                     )
                 }
                 composable("registerForms") { RegisterScreen(
+                    viewModel = viewModel,
                     onBackToAccountPage = { navController.popBackStack("account", false) }
                 ) }
             }
@@ -213,7 +213,7 @@ fun MainScreenPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            MainScreen()
+            MainScreen(viewModel(factory = MainViewModelFactory(LocalContext.current.dataStore)))
         }
     }
 }

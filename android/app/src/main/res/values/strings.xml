@@ -14,6 +14,9 @@
     <string name="registerPasswordAgainField">Пароль еще раз</string>
     <string name="registerPasswordNoMatch">Пароли не совпадают!</string>
     <string name="registerButtonLabel">Зарегистрироваться</string>
+    <string name="registerLoginRequirements">Минимум 8 символов, латинские буквы. Можно использовать цифры и эти символы: -_.@</string>
+    <string name="registerPasswordRequirements">Минимум 8 символов, латинские буквы и цифры. Можно использовать специальные символы.</string>
+    <string name="registerChecksNotPassed">Не выполнены требования!</string>
 
     <!-- Timetable -->
     <string name="timetableTitle">Расписание на %1$s</string>
