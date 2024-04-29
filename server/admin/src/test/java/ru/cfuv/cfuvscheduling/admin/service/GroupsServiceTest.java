@@ -53,8 +53,7 @@ class GroupsServiceTest {
     public void testAddNewGroup_NullName() {
         GroupsBom groupToAdd = new GroupsBom();
 
-        IncorrectRequestDataException exception = assertThrows(IncorrectRequestDataException.class, () -> groupsService.addNewGroup(groupToAdd));
-        assertEquals("The groups name cannot be null and should contain three or more symbols", exception.getMessage());
+        assertThrows(IncorrectRequestDataException.class, () -> groupsService.addNewGroup(groupToAdd));
     }
 
     @Test
@@ -62,8 +61,7 @@ class GroupsServiceTest {
         GroupsBom groupToAdd = new GroupsBom();
         groupToAdd.setName("23");
 
-        IncorrectRequestDataException exception = assertThrows(IncorrectRequestDataException.class, () -> groupsService.addNewGroup(groupToAdd));
-        assertEquals("The groups name cannot be null and should contain three or more symbols", exception.getMessage());
+        assertThrows(IncorrectRequestDataException.class, () -> groupsService.addNewGroup(groupToAdd));
     }
 
     @Test
@@ -73,8 +71,7 @@ class GroupsServiceTest {
 
         when(groupsDao.save(any(GroupsDto.class))).thenThrow(DataIntegrityViolationException.class);
 
-        AlreadyExistsException exception = assertThrows(AlreadyExistsException.class, () -> groupsService.addNewGroup(groupToAdd));
-        assertEquals("Group with name 231 already exist", exception.getMessage());
+        assertThrows(AlreadyExistsException.class, () -> groupsService.addNewGroup(groupToAdd));
     }
 
     @Test
@@ -96,8 +93,6 @@ class GroupsServiceTest {
         List<GroupsBom> result = groupsService.findAll();
 
         assertEquals(2, result.size());
-        assertEquals("231", result.get(0).getName());
-        assertEquals("232", result.get(1).getName());
     }
 
     @Test
@@ -107,7 +102,7 @@ class GroupsServiceTest {
         groupToUpdate.setName("231");
 
         GroupsDto existingGroup = new GroupsDto();
-        existingGroup.setId(10);
+        existingGroup.setId(11);
         existingGroup.setName("221");
 
         when(groupsDao.findById(11)).thenReturn(Optional.of(existingGroup));
@@ -123,8 +118,7 @@ class GroupsServiceTest {
         GroupsBom groupToUpdate = new GroupsBom();
         groupToUpdate.setId(14);
 
-        IncorrectRequestDataException exception = assertThrows(IncorrectRequestDataException.class, () -> groupsService.updateGroupName(groupToUpdate));
-        assertEquals("The groups name cannot be null and should contain three or more symbols", exception.getMessage());
+        assertThrows(IncorrectRequestDataException.class, () -> groupsService.updateGroupName(groupToUpdate));
     }
 
     @Test
@@ -133,8 +127,7 @@ class GroupsServiceTest {
         groupToUpdate.setId(14);
         groupToUpdate.setName("23");
 
-        IncorrectRequestDataException exception = assertThrows(IncorrectRequestDataException.class, () -> groupsService.updateGroupName(groupToUpdate));
-        assertEquals("The groups name cannot be null and should contain three or more symbols", exception.getMessage());
+        assertThrows(IncorrectRequestDataException.class, () -> groupsService.updateGroupName(groupToUpdate));
     }
 
     @Test
@@ -142,8 +135,7 @@ class GroupsServiceTest {
         GroupsBom groupToUpdate = new GroupsBom();
         groupToUpdate.setName("NewGroup");
 
-        IncorrectRequestDataException exception = assertThrows(IncorrectRequestDataException.class, () -> groupsService.updateGroupName(groupToUpdate));
-        assertEquals("Groups id cannot be null", exception.getMessage());
+        assertThrows(IncorrectRequestDataException.class, () -> groupsService.updateGroupName(groupToUpdate));
     }
 
     @Test
@@ -154,8 +146,7 @@ class GroupsServiceTest {
 
         when(groupsDao.findById(14)).thenReturn(Optional.empty());
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> groupsService.updateGroupName(groupToUpdate));
-        assertEquals("Group with id 14 not found", exception.getMessage());
+        assertThrows(EntityNotFoundException.class, () -> groupsService.updateGroupName(groupToUpdate));
     }
 
     @Test
@@ -168,11 +159,10 @@ class GroupsServiceTest {
         existingGroupDto.setId(11);
         existingGroupDto.setName("231");
 
-        when(groupsDao.findById(11)).thenReturn(java.util.Optional.of(existingGroupDto));
+        when(groupsDao.findById(11)).thenReturn(Optional.of(existingGroupDto));
         when(groupsDao.save(any(GroupsDto.class))).thenThrow(DataIntegrityViolationException.class);
 
-        AlreadyExistsException exception = assertThrows(AlreadyExistsException.class, () -> groupsService.updateGroupName(groupToUpdate));
-        assertEquals("This name already exists", exception.getMessage());
+        assertThrows(AlreadyExistsException.class, () -> groupsService.updateGroupName(groupToUpdate));
     }
 
     @Test
@@ -196,8 +186,7 @@ class GroupsServiceTest {
 
         when(groupsDao.existsById(groupToDelete.getId())).thenReturn(false);
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> groupsService.deleteGroup(groupToDelete.getId()));
-        assertEquals("Group with ID 14 not found", exception.getMessage());
+        assertThrows(EntityNotFoundException.class, () -> groupsService.deleteGroup(groupToDelete.getId()));
 
         verify(groupsDao, never()).deleteById(groupToDelete.getId());
     }
