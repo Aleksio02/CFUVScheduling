@@ -15,18 +15,17 @@ fun NetStatusSnack(
     netStatus: NetStatus,
     snackbarHostState: SnackbarHostState
 ) {
-    if (!netStatus.ok) {
-        LaunchedEffect(snackbarHostState) {
-            snackbarHostState.showSnackbar(
-                message = when(netStatus.error) {
-                    NetErrors.SERVERSIDE -> context.resources.getString(R.string.netErrorServerside)
-                    NetErrors.NO_INTERNET -> context.resources.getString(R.string.netErrorNoInternet)
-                    NetErrors.TIMEOUT -> context.resources.getString(R.string.netErrorTimeout)
-                    NetErrors.UNKNOWN -> context.resources.getString(R.string.netErrorGeneric)
-                    else -> "WTF"
-                },
-                duration = SnackbarDuration.Long
-            )
-        }
+    LaunchedEffect(snackbarHostState) {
+        snackbarHostState.showSnackbar(
+            message = when(netStatus.error) {
+                NetErrors.UNAUTHORIZED -> context.resources.getString(R.string.loginInvalid)
+                NetErrors.SERVERSIDE -> context.resources.getString(R.string.netErrorServerside)
+                NetErrors.NO_INTERNET -> context.resources.getString(R.string.netErrorNoInternet)
+                NetErrors.TIMEOUT -> context.resources.getString(R.string.netErrorTimeout)
+                NetErrors.UNKNOWN -> context.resources.getString(R.string.netErrorGeneric)
+                else -> "WTF"
+            },
+            duration = SnackbarDuration.Long
+        )
     }
 }

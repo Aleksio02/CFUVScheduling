@@ -5,7 +5,7 @@
     <parent>
         <groupId>ru.cfuv</groupId>
         <artifactId>cfuvscheduling</artifactId>
-        <version>0.0.2-SNAPSHOT</version>
+        <version>0.0.3-SNAPSHOT</version>
     </parent>
     <groupId>ru.cfuv</groupId>
     <artifactId>auth</artifactId>
@@ -19,7 +19,7 @@
         <dependency>
             <groupId>ru.cfuv</groupId>
             <artifactId>commons</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
+            <version>0.0.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>

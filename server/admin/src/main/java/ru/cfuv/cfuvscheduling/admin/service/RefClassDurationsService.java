@@ -1,5 +1,6 @@
 package ru.cfuv.cfuvscheduling.admin.service;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -14,6 +15,7 @@ import ru.cfuv.cfuvscheduling.commons.converter.RefClassDurationsConverter;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.RefClassDurationsDto;
 import ru.cfuv.cfuvscheduling.commons.exception.AlreadyExistsException;
 import ru.cfuv.cfuvscheduling.commons.exception.IncorrectRequestDataException;
+
 
 @Service
 public class RefClassDurationsService {
@@ -59,5 +61,12 @@ public class RefClassDurationsService {
         return classDuration;
     }
 
+
+    public void deleteClassDuration(Integer id) {
+        if (!refClassDurationsDao.existsById(id)) {
+            throw new EntityNotFoundException("The class duration with this ID was not found.");
+        }
+        refClassDurationsDao.deleteById(id);
+    }
 
 }
