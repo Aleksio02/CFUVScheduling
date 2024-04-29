@@ -33,7 +33,7 @@ public class TeacherService {
     }
 
 
-    public void changeUserRoleToTeacher(Integer userId) {
+    public void giveTeacherRoleToUser(Integer userId) {
         UserDto userDto = userDao.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User with this id not found"));
         RefUserRolesDto userRole = userRolesDao.findByName(UserRoles.TEACHER.name()).get();
