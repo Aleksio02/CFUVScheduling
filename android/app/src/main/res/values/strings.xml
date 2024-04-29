@@ -31,6 +31,11 @@
     <string name="settingsNotificationsDescription">Напоминания о следующей паре</string>
     <string name="logout">Выйти</string>
     <string name="login">Войти</string>
+    <string name="guestUsername">Гость</string>
+    <string name="loginInvalid">Неверный логин или пароль!</string>
+    <string name="accountRoleUser">Пользователь</string>
+    <string name="accountRoleTeacher">Преподаватель</string>
+    <string name="accountRoleAdmin">Администратор</string>
 
     <!-- Main screen -->
     <string name="timetableNavItem">Пары</string>

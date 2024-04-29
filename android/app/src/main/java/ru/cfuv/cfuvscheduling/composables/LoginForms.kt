@@ -14,12 +14,14 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -27,10 +29,24 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import ru.cfuv.cfuvscheduling.MainViewModel
+import ru.cfuv.cfuvscheduling.MainViewModelFactory
 import ru.cfuv.cfuvscheduling.R
+import ru.cfuv.cfuvscheduling.dataStore
 
 @Composable
-fun LoginScreen(onNavigateToRegister: () -> Unit) {
+fun LoginScreen(
+    viewModel: MainViewModel = viewModel(),
+    showSkipButton: Boolean = false,
+    onNavigateToRegister: () -> Unit,
+    onBackToAccountPage: () -> Unit
+) {
+    val userData = viewModel.userData.collectAsState()
+    if (userData.value != null) {
+        onBackToAccountPage()
+    }
+
     Column(modifier = Modifier.padding(24.dp)) {
         Text(
             text = stringResource(id = R.string.loginTitle),
@@ -68,25 +84,26 @@ fun LoginScreen(onNavigateToRegister: () -> Unit) {
                     .fillMaxWidth()
             )
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { viewModel.loginUser(login, pass) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp)
             ) {
                 Text(text = stringResource(id = R.string.loginButtonLabel))
             }
-            OutlinedButton(
-                onClick = { /*TODO*/ },
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Text(text = stringResource(id = R.string.loginButtonNoAccountLabel))
+            if (showSkipButton) {
+                OutlinedButton(
+                    onClick = { onBackToAccountPage() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Text(text = stringResource(id = R.string.loginButtonNoAccountLabel))
+                }
             }
             OutlinedButton(
                 onClick = onNavigateToRegister,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp)
             ) {
                 Text(text = stringResource(id = R.string.registerButtonLabel))
             }
@@ -100,12 +117,12 @@ fun LoginScreenPreview() {
     Surface(
         modifier = Modifier.fillMaxSize(),
     ) {
-        LoginScreen({})
+        LoginScreen(viewModel = viewModel(factory = MainViewModelFactory(LocalContext.current.dataStore)), showSkipButton = true, onNavigateToRegister = {}, onBackToAccountPage = {})
     }
 }
 
 @Composable
-fun RegisterScreen() {
+fun RegisterScreen(onBackToAccountPage: () -> Unit) {
     Column(modifier = Modifier.padding(24.dp)) {
         Text(
             text = stringResource(id = R.string.registerTitle),
@@ -177,6 +194,6 @@ fun RegisterScreenPreview() {
     Surface(
         modifier = Modifier.fillMaxSize(),
     ) {
-        RegisterScreen()
+        RegisterScreen({})
     }
 }
