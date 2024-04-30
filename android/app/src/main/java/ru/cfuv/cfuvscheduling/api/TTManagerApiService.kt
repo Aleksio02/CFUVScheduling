@@ -10,6 +10,8 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Path
 import retrofit2.http.Query
 import java.time.LocalDate
 import java.time.LocalTime
@@ -37,10 +39,11 @@ data class TTClassDuration(
 
 @Serializable
 data class TTClassModel(
+    val id: Int,
     val subjectName: String,
     val classroom: String,
     val duration: TTClassDuration,
-    val comment: String,
+    var comment: String,
     val classType: N,  // Aleksioi was too lazy to omit Int ids from response and return a String instead of object
     val teacher: UserModel
 ) {
@@ -57,4 +60,11 @@ interface TTManagerApiService {
         @Query("startDate") startDate: LocalDate,
         @Query("endDate") endDate: LocalDate
     ): Response<List<TTClassModel>>
+
+    @GET("/tt-manager/class/{id}/addComment")  // Why not POST/PUT/UPDATE?
+    suspend fun addComment(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int,
+        @Query("comment") comment: String
+    ): Response<Void>
 }

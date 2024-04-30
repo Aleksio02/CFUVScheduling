@@ -2,8 +2,10 @@ package ru.cfuv.cfuvscheduling.composables
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,11 +13,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -26,15 +33,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.cfuv.cfuvscheduling.MainViewModel
+import ru.cfuv.cfuvscheduling.MainViewModelFactory
 import ru.cfuv.cfuvscheduling.R
+import ru.cfuv.cfuvscheduling.api.TTClassDuration
 import ru.cfuv.cfuvscheduling.api.TTClassModel
+import ru.cfuv.cfuvscheduling.api.UserModel
+import ru.cfuv.cfuvscheduling.dataStore
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 @Composable
@@ -44,6 +59,7 @@ fun TimetableScreen(date: LocalDate, viewModel: MainViewModel = viewModel()) {
         viewModel.setAppBarTitle(currentGroupName)
     }
     val classes by viewModel.currentClasses.collectAsState()
+    val userData by viewModel.userData.collectAsState()
 
     LazyColumn(
         Modifier
@@ -61,15 +77,35 @@ fun TimetableScreen(date: LocalDate, viewModel: MainViewModel = viewModel()) {
             )
         }
         items(classes) {
-            ClassCard(it)
+            ClassCard(
+                data = it,
+                userData = userData,
+                onChangeComment = { comment ->
+                    viewModel.updateClassComment(it.id, comment)
+                }
+            )
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ClassCard(data: TTClassModel) {
+fun ClassCard(data: TTClassModel, userData: UserModel?, onChangeComment: (String) -> Unit) {
     var cardExpanded by rememberSaveable { mutableStateOf(false) }
+    var commentDialogOpened by rememberSaveable { mutableStateOf(false) }
+
+    // Comment dialog
+    if (commentDialogOpened) {
+        CommentDialog(
+            classData = data,
+            onDismissRequest = { commentDialogOpened = false },
+            onConfirmation = {
+                onChangeComment(it)
+                commentDialogOpened = false
+            }
+        )
+    }
+
     OutlinedCard(
         onClick = { cardExpanded = !cardExpanded },
         Modifier
@@ -120,18 +156,54 @@ fun ClassCard(data: TTClassModel) {
                     Text(text = data.duration.endTime.format(DateTimeFormatter.ofPattern("HH:mm")))
                 }
             }
-            AnimatedVisibility(visible = cardExpanded) {
-                val teacherName = if (data.teacher.firstName != null && data.teacher.lastName != null && data.teacher.secondName != null) {
-                    "${data.teacher.lastName} " +
-                    "${data.teacher.firstName[0].uppercase()}. " +
-                    "${data.teacher.secondName[0].uppercase()}."
-                } else {
-                    data.teacher.username
-                }
-                Text(
-                    text = teacherName,
+            if (data.comment.isNotEmpty()) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(top = 8.dp)
-                )
+                ) {
+                    Icon(painter = painterResource(id = R.drawable.rounded_sticky_note_2_24), contentDescription = null)
+                    Text(text = data.comment, modifier = Modifier.padding(start = 8.dp))
+                }
+            }
+            AnimatedVisibility(visible = cardExpanded) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp)
+                ) {
+                    val teacherName =
+                        if (data.teacher.firstName != null && data.teacher.lastName != null && data.teacher.secondName != null) {
+                            "${data.teacher.lastName} " +
+                            "${data.teacher.firstName[0].uppercase()}. " +
+                            "${data.teacher.secondName[0].uppercase()}."
+                        } else {
+                            data.teacher.username
+                        }
+                    Text(
+                        text = teacherName,
+                        modifier = Modifier.weight(1f)
+                    )
+                    // Show comment button
+                    if (userData?.role == "TEACHER" && data.teacher.username == userData.username) {
+                        FilledTonalButton(
+                            onClick = { commentDialogOpened = true },
+                            contentPadding = PaddingValues(
+                                start = 16.dp,
+                                end = 24.dp,
+                                top = 8.dp,
+                                bottom = 8.dp
+                            )
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.rounded_edit_note_24),
+                                contentDescription = null,
+                                modifier = Modifier.padding(end = 8.dp)
+                            )
+                            Text(text = stringResource(id = R.string.addCommentButton))
+                        }
+                    }
+                }
             }
         }
     }
@@ -143,6 +215,77 @@ fun TimetableScreenPreview() {
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
-        TimetableScreen(LocalDate.now())
+        TimetableScreen(viewModel = viewModel(factory = MainViewModelFactory(LocalContext.current.dataStore)), date = LocalDate.now())
     }
+}
+
+@Composable
+fun CommentDialog(
+    classData: TTClassModel,
+    onDismissRequest: () -> Unit,
+    onConfirmation: (String) -> Unit
+) {
+    Dialog(onDismissRequest = onDismissRequest) {
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(28.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.addCommentDialogTitle),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+                var tempComment by rememberSaveable { mutableStateOf(classData.comment) }
+                OutlinedTextField(
+                    value = tempComment,
+                    onValueChange = { tempComment = it },
+                    label = { Text(text = stringResource(id = R.string.addCommentDialogFieldLabel)) },
+                    shape = RoundedCornerShape(24.dp),
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ){
+                    TextButton(onClick = onDismissRequest) {
+                        Text(text = stringResource(id = R.string.cancel))
+                    }
+                    TextButton(onClick = { onConfirmation(tempComment) }) {
+                        Text(text = stringResource(id = android.R.string.ok))
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun CommentDialogPreview() {
+    CommentDialog(
+        classData = TTClassModel(
+            id = 0,
+            subjectName = "Операционные системы",
+            classroom = "8А",
+            duration = TTClassDuration(
+                startTime = LocalTime.now(),
+                endTime = LocalTime.now(),
+            ),
+            classType = TTClassModel.N(name = "practical"),
+            teacher = UserModel(
+                username = "zloykin",
+                firstName = "Евгений",
+                secondName = "Сергеевич",
+                lastName = "Зойкин",
+                role = "TEACHER"
+            ),
+            comment = ""
+        ),
+        onDismissRequest = {},
+        onConfirmation = {}
+    )
 }
