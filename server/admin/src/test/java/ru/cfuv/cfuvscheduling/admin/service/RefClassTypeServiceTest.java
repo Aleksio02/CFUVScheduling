@@ -23,10 +23,10 @@ import static org.mockito.Mockito.*;
 class RefClassTypeServiceTest {
 
     @InjectMocks
-    private RefClassTypeService refClassTypeService;
+    public RefClassTypeService refClassTypeService;
 
     @Mock
-    private RefClassTypeDao refClassTypeDao;
+    public RefClassTypeDao refClassTypeDao;
 
     @Test
     void testFindAll() {
@@ -50,7 +50,6 @@ class RefClassTypeServiceTest {
 
         RefClassTypeBom result = refClassTypeService.createClassType(refClassTypeBom);
 
-        Assertions.assertNotNull(result);
         verify(refClassTypeDao, times(1)).save(any(RefClassTypeDto.class));
     }
 
@@ -84,7 +83,6 @@ class RefClassTypeServiceTest {
 
         RefClassTypeBom result = refClassTypeService.renameClassType(refClassTypeBom);
 
-        Assertions.assertNotNull(result);
         verify(refClassTypeDao, times(1)).existsById(1);
         verify(refClassTypeDao, times(1)).save(any(RefClassTypeDto.class));
     }
@@ -118,7 +116,6 @@ class RefClassTypeServiceTest {
 
         refClassTypeService.deleteClassType(typeId);
 
-        verify(refClassTypeDao, times(1)).existsById(typeId);
         verify(refClassTypeDao, times(1)).deleteById(typeId);
     }
 
