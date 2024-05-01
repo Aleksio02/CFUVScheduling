@@ -1,10 +1,12 @@
 package ru.cfuv.cfuvscheduling.auth.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.cfuv.cfuvscheduling.auth.bom.AccountForm;
 import ru.cfuv.cfuvscheduling.auth.bom.AccountResponse;
 import ru.cfuv.cfuvscheduling.auth.dao.UserRolesDao;
+import ru.cfuv.cfuvscheduling.auth.hash.PasswordEncoder;
 import ru.cfuv.cfuvscheduling.auth.jwt.JwtUtils;
 import ru.cfuv.cfuvscheduling.commons.bom.UserBom;
 import ru.cfuv.cfuvscheduling.commons.bom.UserRoles;
@@ -43,8 +45,13 @@ public class AuthService {
             throw new IncorrectRequestDataException("Username or password cannot be null");
         }
 
-        UserDto foundUser = userDao.findByUsernameAndPassword(accountForm.getUsername(), accountForm.getPassword())
-            .orElseThrow(() -> new UnauthorizedException("Incorrect username or password"));
+        UserDto foundUser = userDao.findByUsername(accountForm.getUsername())
+                .orElseThrow(() -> new UnauthorizedException("Incorrect username or password"));
+
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        if (!passwordEncoder.matches(accountForm.getPassword(), foundUser.getPassword())) {
+            throw new UnauthorizedException("Incorrect username or password");
+        }
 
         UserConverter converter = new UserConverter();
         UserBom userBom = new UserBom();
@@ -79,9 +86,11 @@ public class AuthService {
 
         RefUserRolesDto userRole = userRolesDao.findByName(UserRoles.USER.name()).get();
 
+        String hashedPassword = PasswordEncoder.encode(userForm.getPassword());
+
         UserDto userDto = new UserDto();
         userDto.setUsername(userForm.getUsername());
-        userDto.setPassword(userForm.getPassword());
+        userDto.setPassword(hashedPassword);
         userDto.setRoleId(userRole);
         userDao.save(userDto);
 
