@@ -63,8 +63,10 @@ public class ClassConverter {
             destination.setTypeId(refClassTypeDto);
         }
 
-        UserDto teacher = new UserDto();
-        new UserConverter().toDto(source.getTeacher(), teacher);
-        destination.setUserId(teacher);
+        if (source.getTeacher() != null) {
+            UserDto teacher = new UserDto();
+            new UserConverter().toDto(source.getTeacher(), teacher);
+            destination.setUserId(teacher);
+        }
     }
 }
