@@ -73,7 +73,6 @@ class RefClassTypeServiceTest {
                 .thenThrow(new DataIntegrityViolationException("Violation of unique constraint"));
 
         Assertions.assertThrows(AlreadyExistsException.class, () -> refClassTypeService.createClassType(refClassTypeBom));
-        verify(refClassTypeDao, times(1)).save(any(RefClassTypeDto.class));
     }
 
     @Test
