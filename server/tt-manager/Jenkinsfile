@@ -34,7 +34,7 @@ pipeline {
         catchError{
           sh 'docker container rm cfuvscheduling_tt-manager'
         }
-        sh """docker run -d --name=cfuvscheduling_tt-manager -p 8082:8082 --network=cfuvsched_net -e POSTGRES_HOST=${env.POSTGRES_HOST} -e AUTH_SERVER_HOST=${env.AUTH_SERVER_HOST} -e AUTH_SERVER_PORT=${env.AUTH_SERVER_PORT} cfuvscheduling_tt-manager:test"""
+        sh """docker run -d --name=cfuvscheduling_tt-manager -p 8080:8080 --network=cfuvsched_net -e POSTGRES_HOST=${env.POSTGRES_HOST} -e AUTH_SERVER_HOST=${env.AUTH_SERVER_HOST} -e AUTH_SERVER_PORT=${env.AUTH_SERVER_PORT} cfuvscheduling_tt-manager:test"""
       }
     }
   }
