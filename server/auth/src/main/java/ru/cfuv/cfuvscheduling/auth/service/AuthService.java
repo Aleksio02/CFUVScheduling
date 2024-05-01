@@ -14,7 +14,6 @@ import ru.cfuv.cfuvscheduling.commons.converter.UserConverter;
 import ru.cfuv.cfuvscheduling.commons.dao.UserDao;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.RefUserRolesDto;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.UserDto;
-import ru.cfuv.cfuvscheduling.commons.exception.AccessForbiddenException;
 import ru.cfuv.cfuvscheduling.commons.exception.AlreadyExistsException;
 import ru.cfuv.cfuvscheduling.commons.exception.IncorrectRequestDataException;
 import ru.cfuv.cfuvscheduling.commons.exception.UnauthorizedException;
@@ -35,7 +34,7 @@ public class AuthService {
 
     public String authenticateUser(String username) {
         UserDto user = userDao.findByUsername(username)
-            .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
         String token = jwtUtils.generateToken(user.getUsername());
         return token;
     }
@@ -45,11 +44,10 @@ public class AuthService {
             throw new IncorrectRequestDataException("Username or password cannot be null");
         }
 
-        UserDto foundUser = userDao.findByUsername(accountForm.getUsername())
-                .orElseThrow(() -> new UnauthorizedException("Incorrect username or password"));
+        UserDto foundUser = userDao.findByUsername(accountForm.getUsername()).orElse(null);
 
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        if (!passwordEncoder.matches(accountForm.getPassword(), foundUser.getPassword())) {
+        if (foundUser == null || !passwordEncoder.matches(accountForm.getPassword(), foundUser.getPassword())) {
             throw new UnauthorizedException("Incorrect username or password");
         }
 
@@ -67,7 +65,7 @@ public class AuthService {
             String username = jwtUtils.parseJwt(token);
             jwtCheckStage = "validating";
             UserDto user = userDao.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
             UserBom userBom = new UserBom();
             new UserConverter().fromDto(user, userBom);
             return userBom;
@@ -82,7 +80,9 @@ public class AuthService {
         }
 
         userDao.findByUsername(userForm.getUsername())
-            .ifPresent(i -> {throw new AlreadyExistsException("This username already taken");});
+                .ifPresent(i -> {
+                    throw new AlreadyExistsException("This username already taken");
+                });
 
         RefUserRolesDto userRole = userRolesDao.findByName(UserRoles.USER.name()).get();
 
