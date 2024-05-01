@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 import ru.cfuv.cfuvscheduling.commons.bom.RefClassTypeBom;
 import ru.cfuv.cfuvscheduling.commons.dao.RefClassTypeDao;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.RefClassTypeDto;
@@ -63,12 +64,14 @@ class RefClassTypeServiceTest {
     }
 
     @Test
-    void testCreateClassType_AlreadyExists() {
+    void testCreateClassType_DataIntegrityViolation() {
         RefClassTypeBom refClassTypeBom = new RefClassTypeBom();
         refClassTypeBom.setName("Valid Name");
-        when(refClassTypeDao.save(any(RefClassTypeDto.class))).thenThrow(new AlreadyExistsException("Type already exists"));
+        when(refClassTypeDao.findByName("Valid Name")).thenReturn(null);
+        when(refClassTypeDao.save(any(RefClassTypeDto.class))).thenThrow(new DataIntegrityViolationException("Violation of unique constraint"));
 
         Assertions.assertThrows(AlreadyExistsException.class, () -> refClassTypeService.createClassType(refClassTypeBom));
+        verify(refClassTypeDao, times(1)).findByName("Valid Name");
         verify(refClassTypeDao, times(1)).save(any(RefClassTypeDto.class));
     }
 
