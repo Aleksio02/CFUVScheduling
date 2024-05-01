@@ -16,6 +16,7 @@ import ru.cfuv.cfuvscheduling.commons.exception.IncorrectRequestDataException;
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -51,7 +52,8 @@ class RefClassTypeServiceTest {
 
         RefClassTypeBom result = refClassTypeService.createClassType(refClassTypeBom);
 
-        verify(refClassTypeDao, times(1)).save(any(RefClassTypeDto.class));
+        assertNotNull(result);
+        assertEquals(refClassTypeBom.getName(), result.getName());
     }
 
     @Test
@@ -67,11 +69,10 @@ class RefClassTypeServiceTest {
     public void testCreateClassType_DataIntegrityViolation() {
         RefClassTypeBom refClassTypeBom = new RefClassTypeBom();
         refClassTypeBom.setName("Valid Name");
-        when(refClassTypeDao.findByName("Valid Name")).thenReturn(null);
-        when(refClassTypeDao.save(any(RefClassTypeDto.class))).thenThrow(new DataIntegrityViolationException("Violation of unique constraint"));
+        when(refClassTypeDao.save(any(RefClassTypeDto.class)))
+                .thenThrow(new DataIntegrityViolationException("Violation of unique constraint"));
 
         Assertions.assertThrows(AlreadyExistsException.class, () -> refClassTypeService.createClassType(refClassTypeBom));
-        verify(refClassTypeDao, times(1)).findByName("Valid Name");
         verify(refClassTypeDao, times(1)).save(any(RefClassTypeDto.class));
     }
 
@@ -84,7 +85,7 @@ class RefClassTypeServiceTest {
         when(refClassTypeDao.existsById(1)).thenReturn(true);
         when(refClassTypeDao.save(any(RefClassTypeDto.class))).thenReturn(refClassTypeDto);
 
-        RefClassTypeBom result = refClassTypeService.renameClassType(refClassTypeBom);
+        refClassTypeService.renameClassType(refClassTypeBom);
 
         verify(refClassTypeDao, times(1)).existsById(1);
         verify(refClassTypeDao, times(1)).save(any(RefClassTypeDto.class));
