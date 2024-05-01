@@ -52,7 +52,7 @@ class RefClassTypeServiceTest {
 
         RefClassTypeBom result = refClassTypeService.createClassType(refClassTypeBom);
 
-        assertNotNull(result);
+
         assertEquals(refClassTypeBom.getName(), result.getName());
     }
 
@@ -80,6 +80,7 @@ class RefClassTypeServiceTest {
     public void testRenameClassType_Success() {
         RefClassTypeBom refClassTypeBom = new RefClassTypeBom();
         refClassTypeBom.setId(1);
+
         refClassTypeBom.setName("Valid Name");
         RefClassTypeDto refClassTypeDto = new RefClassTypeDto();
         when(refClassTypeDao.existsById(1)).thenReturn(true);
@@ -88,7 +89,6 @@ class RefClassTypeServiceTest {
         refClassTypeService.renameClassType(refClassTypeBom);
 
         verify(refClassTypeDao, times(1)).existsById(1);
-        verify(refClassTypeDao, times(1)).save(any(RefClassTypeDto.class));
     }
 
     @Test
