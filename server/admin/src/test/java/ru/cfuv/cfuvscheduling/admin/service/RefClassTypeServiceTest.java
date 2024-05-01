@@ -24,13 +24,13 @@ import static org.mockito.Mockito.*;
 class RefClassTypeServiceTest {
 
     @InjectMocks
-    public RefClassTypeService refClassTypeService;
+    private RefClassTypeService refClassTypeService;
 
     @Mock
-    public RefClassTypeDao refClassTypeDao;
+    private RefClassTypeDao refClassTypeDao;
 
     @Test
-    void testFindAll() {
+    public void testFindAll() {
         List<RefClassTypeDto> dtos = new ArrayList<>();
         dtos.add(new RefClassTypeDto());
         dtos.add(new RefClassTypeDto());
@@ -43,7 +43,7 @@ class RefClassTypeServiceTest {
     }
 
     @Test
-    void testCreateClassType_Success() {
+    public void testCreateClassType_Success() {
         RefClassTypeBom refClassTypeBom = new RefClassTypeBom();
         refClassTypeBom.setName("Valid Name");
         RefClassTypeDto refClassTypeDto = new RefClassTypeDto();
@@ -55,7 +55,7 @@ class RefClassTypeServiceTest {
     }
 
     @Test
-    void testCreateClassType_InvalidName() {
+    public void testCreateClassType_InvalidName() {
         RefClassTypeBom refClassTypeBom = new RefClassTypeBom();
         refClassTypeBom.setName("In");
 
@@ -64,7 +64,7 @@ class RefClassTypeServiceTest {
     }
 
     @Test
-    void testCreateClassType_DataIntegrityViolation() {
+    public void testCreateClassType_DataIntegrityViolation() {
         RefClassTypeBom refClassTypeBom = new RefClassTypeBom();
         refClassTypeBom.setName("Valid Name");
         when(refClassTypeDao.findByName("Valid Name")).thenReturn(null);
@@ -76,7 +76,7 @@ class RefClassTypeServiceTest {
     }
 
     @Test
-    void testRenameClassType_Success() {
+    public void testRenameClassType_Success() {
         RefClassTypeBom refClassTypeBom = new RefClassTypeBom();
         refClassTypeBom.setId(1);
         refClassTypeBom.setName("Valid Name");
@@ -91,7 +91,7 @@ class RefClassTypeServiceTest {
     }
 
     @Test
-    void testRenameClassType_InvalidName() {
+    public void testRenameClassType_InvalidName() {
         RefClassTypeBom refClassTypeBom = new RefClassTypeBom();
         refClassTypeBom.setId(1);
         refClassTypeBom.setName("NT");
@@ -101,7 +101,7 @@ class RefClassTypeServiceTest {
     }
 
     @Test
-    void testRenameClassType_TypeNotFound() {
+    public void testRenameClassType_TypeNotFound() {
         RefClassTypeBom refClassTypeBom = new RefClassTypeBom();
         refClassTypeBom.setId(1);
         refClassTypeBom.setName("Valid Name");
@@ -113,7 +113,7 @@ class RefClassTypeServiceTest {
     }
 
     @Test
-    void testDeleteClassType_Success() {
+    public void testDeleteClassType_Success() {
         Integer typeId = 1;
         when(refClassTypeDao.existsById(typeId)).thenReturn(true);
 
@@ -123,7 +123,7 @@ class RefClassTypeServiceTest {
     }
 
     @Test
-    void testDeleteClassType_TypeNotFound() {
+    public void testDeleteClassType_TypeNotFound() {
         Integer typeId = 1;
         when(refClassTypeDao.existsById(typeId)).thenReturn(false);
 
