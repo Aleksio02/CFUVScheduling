@@ -26,7 +26,7 @@ public class ClassController {
     @Autowired
     private ClassService classService;
 
-    @GetMapping("/{id}/addComment")
+    @PostMapping("/{id}/addComment")
     public void addCommentToClass(
         @RequestHeader(name = "Authorization", required = false) String token,
         @PathVariable Integer id,

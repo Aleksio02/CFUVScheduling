@@ -11,6 +11,7 @@ import kotlinx.serialization.encoding.Encoder
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 import java.time.LocalDate
@@ -61,7 +62,7 @@ interface TTManagerApiService {
         @Query("endDate") endDate: LocalDate
     ): Response<List<TTClassModel>>
 
-    @GET("/tt-manager/class/{id}/addComment")  // Why not POST/PUT/UPDATE?
+    @POST("/tt-manager/class/{id}/addComment")
     suspend fun addComment(
         @Header("Authorization") token: String,
         @Path("id") id: Int,
