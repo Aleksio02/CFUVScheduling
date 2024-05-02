@@ -54,4 +54,9 @@
     <string name="netErrorTimeout">Таймаут! Проблемы с интернетом?</string>
     <string name="netErrorGeneric">Произошла ошибка при общении с сервером!</string>
     <string name="netErrorServerside">Произошла ошибка на сервере!</string>
+
+    <!-- About app -->
+    <string name="aboutAppDevel">Разработка:</string>
+    <string name="aboutAppBackend">Бэкенд:</string>
+    <string name="aboutAppVersion">Версия:</string>
 </resources>
