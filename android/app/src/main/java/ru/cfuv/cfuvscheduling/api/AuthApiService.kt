@@ -10,9 +10,9 @@ import retrofit2.http.POST
 @Serializable
 data class UserModel(
     val username: String,
-    val firstName: String?,
-    val secondName: String?,
-    val lastName: String?,
+    val firstName: String? = null,
+    val secondName: String? = null,
+    val lastName: String? = null,
     val role: String
 )
 

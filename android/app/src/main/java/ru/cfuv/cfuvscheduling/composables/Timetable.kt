@@ -26,15 +26,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.cfuv.cfuvscheduling.MainViewModel
+import ru.cfuv.cfuvscheduling.MainViewModelFactory
 import ru.cfuv.cfuvscheduling.R
+import ru.cfuv.cfuvscheduling.api.TTClassDuration
 import ru.cfuv.cfuvscheduling.api.TTClassModel
+import ru.cfuv.cfuvscheduling.api.UserModel
+import ru.cfuv.cfuvscheduling.dataStore
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 @Composable
@@ -100,6 +107,8 @@ fun ClassCard(data: TTClassModel) {
                 Text(
                     text = data.subjectName,
                     fontSize = 16.sp,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
                         .padding(horizontal = 12.dp)
                         .weight(1f),
@@ -143,6 +152,25 @@ fun TimetableScreenPreview() {
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
-        TimetableScreen(LocalDate.now())
+        TimetableScreen(viewModel = viewModel(factory = MainViewModelFactory(LocalContext.current.dataStore)), date = LocalDate.now())
     }
+}
+
+@Preview
+@Composable
+fun ClassCardPreview() {
+    ClassCard(data = TTClassModel(
+        subjectName = "Testing test",
+        classroom = "404A",
+        duration = TTClassDuration(
+            startTime = LocalTime.now(),
+            endTime = LocalTime.now()
+        ),
+        comment = "",
+        classType = TTClassModel.N("practical"),
+        teacher = UserModel(
+            username = "SanyaPilot",
+            role = "TEACHER"
+        )
+    ))
 }
