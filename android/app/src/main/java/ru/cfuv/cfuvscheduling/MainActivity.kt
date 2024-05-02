@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -59,7 +60,7 @@ import ru.cfuv.cfuvscheduling.composables.NetStatusSnack
 import ru.cfuv.cfuvscheduling.composables.RegisterScreen
 import ru.cfuv.cfuvscheduling.composables.TimetableListScreen
 import ru.cfuv.cfuvscheduling.composables.TimetableScreen
-import ru.cfuv.cfuvscheduling.ui.theme.CFUVSchedulingTheme
+import ru.cfuv.cfuvscheduling.ui.theme.AppTheme
 import java.time.LocalDate
 
 // DataStore
@@ -68,8 +69,9 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "au
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContent {
-            CFUVSchedulingTheme {
+            AppTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -208,7 +210,7 @@ fun MainScreen(viewModel: MainViewModel) {
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
-    CFUVSchedulingTheme {
+    AppTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
