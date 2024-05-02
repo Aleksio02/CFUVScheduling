@@ -1,12 +1,5 @@
 package ru.cfuv.cfuvscheduling.admin.service;
 
-import javax.persistence.EntityNotFoundException;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.cfuv.cfuvscheduling.admin.dao.RefClassDurationsDao;
@@ -15,6 +8,13 @@ import ru.cfuv.cfuvscheduling.commons.converter.RefClassDurationsConverter;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.RefClassDurationsDto;
 import ru.cfuv.cfuvscheduling.commons.exception.AlreadyExistsException;
 import ru.cfuv.cfuvscheduling.commons.exception.IncorrectRequestDataException;
+
+import javax.persistence.EntityNotFoundException;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Service
@@ -61,6 +61,25 @@ public class RefClassDurationsService {
         return classDuration;
     }
 
+    public void changeClassDuration(RefClassDurationsBom newClassDurationBom) {
+        if (newClassDurationBom.getNumber() == null
+                || newClassDurationBom.getStartTime() == null
+                || newClassDurationBom.getEndTime() == null) {
+            throw new IncorrectRequestDataException("Obj fields can't be null.");
+        }
+
+        RefClassDurationsDto existsClassDurationDto = refClassDurationsDao.findById(newClassDurationBom.getNumber()).
+                orElseThrow(() -> new EntityNotFoundException("Class duration with this ID was not found."));
+        refClassDurationsDao.findByStartTimeAndEndTime(newClassDurationBom.getStartTime(), newClassDurationBom.getEndTime()).
+                ifPresent((i) -> {
+                    throw new AlreadyExistsException("This class duration already exists.");
+                });
+
+        existsClassDurationDto.setStartTime(newClassDurationBom.getStartTime());
+        existsClassDurationDto.setEndTime(newClassDurationBom.getEndTime());
+
+        refClassDurationsDao.save(existsClassDurationDto);
+    }
 
     public void deleteClassDuration(Integer id) {
         if (!refClassDurationsDao.existsById(id)) {

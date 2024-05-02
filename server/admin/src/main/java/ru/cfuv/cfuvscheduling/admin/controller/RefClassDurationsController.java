@@ -28,6 +28,12 @@ public class RefClassDurationsController {
         return refClassDurationsService.addClassDuration(classDuration);
     }
 
+    @PostMapping("/changeClassDuration")
+    public void changeClassDuration(@RequestBody RefClassDurationsBom classDuration, @RequestHeader(name = "Authorization", required = false) String token) {
+        userValidator.validateUserAsAdmin(token);
+        refClassDurationsService.changeClassDuration(classDuration);
+    }
+
     @DeleteMapping("/delete/{id}")
     public void deleteClassDuration(
             @RequestHeader(name = "Authorization", required = false) String token,
