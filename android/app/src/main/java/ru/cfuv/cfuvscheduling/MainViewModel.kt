@@ -166,7 +166,9 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
         }
         viewModelScope.launch {
             processResp { SchedApi.timetable.addComment(userToken!!, id, comment) }
-            currentClasses.value.find { it.id == id }?.comment = comment
+            val mutableClasses = currentClasses.value.toMutableList()
+            mutableClasses.replaceAll { if (it.id == id) it.copy(comment = comment) else it }
+            _currentClasses.value = mutableClasses.toList()
         }
     }
 }
