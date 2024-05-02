@@ -44,6 +44,16 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
+val DOW_LIST = listOf(
+    R.string.monday,
+    R.string.tuesday,
+    R.string.wednesday,
+    R.string.thursday,
+    R.string.friday,
+    R.string.saturday,
+    R.string.sunday
+)
+
 @Composable
 fun TimetableScreen(date: LocalDate, viewModel: MainViewModel = viewModel()) {
     val currentGroupName by viewModel.currentGroupName.collectAsState()
@@ -61,7 +71,7 @@ fun TimetableScreen(date: LocalDate, viewModel: MainViewModel = viewModel()) {
             Text(
                 text = stringResource(
                     id = R.string.timetableTitle,
-                    date.format(DateTimeFormatter.ofPattern("EEEE"))
+                    stringResource(id = DOW_LIST[date.dayOfWeek.ordinal])
                 ),
                 fontSize = 28.sp,
                 modifier = Modifier.padding(bottom = 12.dp)

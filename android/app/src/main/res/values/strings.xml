@@ -59,4 +59,13 @@
     <string name="aboutAppDevel">Разработка:</string>
     <string name="aboutAppBackend">Бэкенд:</string>
     <string name="aboutAppVersion">Версия:</string>
+
+    <!-- Days of the week -->
+    <string name="monday">понедельник</string>
+    <string name="tuesday">вторник</string>
+    <string name="wednesday">среду</string>
+    <string name="thursday">четверг</string>
+    <string name="friday">пятницу</string>
+    <string name="saturday">субботу</string>
+    <string name="sunday">воскресенье</string>
 </resources>
