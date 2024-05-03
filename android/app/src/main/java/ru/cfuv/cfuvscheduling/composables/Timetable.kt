@@ -36,6 +36,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,6 +52,16 @@ import ru.cfuv.cfuvscheduling.dataStore
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+
+val DOW_LIST = listOf(
+    R.string.monday,
+    R.string.tuesday,
+    R.string.wednesday,
+    R.string.thursday,
+    R.string.friday,
+    R.string.saturday,
+    R.string.sunday
+)
 
 @Composable
 fun TimetableScreen(date: LocalDate, viewModel: MainViewModel = viewModel()) {
@@ -70,7 +81,7 @@ fun TimetableScreen(date: LocalDate, viewModel: MainViewModel = viewModel()) {
             Text(
                 text = stringResource(
                     id = R.string.timetableTitle,
-                    date.format(DateTimeFormatter.ofPattern("EEEE"))
+                    stringResource(id = DOW_LIST[date.dayOfWeek.ordinal])
                 ),
                 fontSize = 28.sp,
                 modifier = Modifier.padding(bottom = 12.dp)
@@ -136,6 +147,8 @@ fun ClassCard(data: TTClassModel, userData: UserModel?, onChangeComment: (String
                 Text(
                     text = data.subjectName,
                     fontSize = 16.sp,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
                         .padding(horizontal = 12.dp)
                         .weight(1f),
@@ -261,6 +274,30 @@ fun CommentDialog(
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun ClassCardPreview() {
+    ClassCard(
+        data = TTClassModel(
+            id = 0,
+            subjectName = "Testing test",
+            classroom = "404A",
+            duration = TTClassDuration(
+                startTime = LocalTime.now(),
+                endTime = LocalTime.now()
+            ),
+            comment = "",
+            classType = TTClassModel.N("practical"),
+            teacher = UserModel(
+                username = "SanyaPilot",
+                role = "TEACHER"
+            )
+        ),
+        userData = null,
+        onChangeComment = {}
+    )
 }
 
 @Preview
