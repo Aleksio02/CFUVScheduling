@@ -13,6 +13,7 @@ import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -168,7 +169,7 @@ fun AccountScreen(
         ) {
             ClickableText(
                 text = aboutText,
-                style = LocalTextStyle.current,
+                style = LocalTextStyle.current.copy(color = LocalContentColor.current),
                 onClick = { offset ->
                     aboutText.getStringAnnotations(tag = "SanyaPilot", start = offset, end = offset)
                         .firstOrNull()?.let {
