@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -71,11 +72,10 @@ fun TimetableScreen(date: LocalDate, viewModel: MainViewModel = viewModel()) {
     }
     val classes by viewModel.currentClasses.collectAsState()
     val userData by viewModel.userData.collectAsState()
+    val allowedToAdd by viewModel.userCanCreateClasses.collectAsState()
 
     LazyColumn(
-        Modifier
-            .fillMaxSize()
-            .padding(horizontal = 12.dp)
+        Modifier.fillMaxSize()
     ) {
         item {
             Text(
@@ -84,7 +84,9 @@ fun TimetableScreen(date: LocalDate, viewModel: MainViewModel = viewModel()) {
                     stringResource(id = DOW_LIST[date.dayOfWeek.ordinal])
                 ),
                 fontSize = 28.sp,
-                modifier = Modifier.padding(bottom = 12.dp)
+                modifier = Modifier
+                    .padding(horizontal = 12.dp)
+                    .padding(bottom = 12.dp)
             )
         }
         items(classes) {
@@ -95,6 +97,14 @@ fun TimetableScreen(date: LocalDate, viewModel: MainViewModel = viewModel()) {
                     viewModel.updateClassComment(it.id, comment)
                 }
             )
+        }
+        // Empty column to ensure that last item under the FAB is accessible
+        if (allowedToAdd) {
+            item {
+                Column(
+                    modifier = Modifier.height(80.dp)
+                ) {}
+            }
         }
     }
 }
@@ -120,6 +130,7 @@ fun ClassCard(data: TTClassModel, userData: UserModel?, onChangeComment: (String
     OutlinedCard(
         onClick = { cardExpanded = !cardExpanded },
         Modifier
+            .padding(horizontal = 12.dp)
             .padding(bottom = 8.dp)
             .fillMaxWidth()
     ) {
@@ -285,6 +296,7 @@ fun ClassCardPreview() {
             subjectName = "Testing test",
             classroom = "404A",
             duration = TTClassDuration(
+                number = 1,
                 startTime = LocalTime.now(),
                 endTime = LocalTime.now()
             ),
@@ -309,6 +321,7 @@ fun CommentDialogPreview() {
             subjectName = "Операционные системы",
             classroom = "8А",
             duration = TTClassDuration(
+                number = 1,
                 startTime = LocalTime.now(),
                 endTime = LocalTime.now(),
             ),

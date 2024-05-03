@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import okio.IOException
 import retrofit2.Response
+import ru.cfuv.cfuvscheduling.api.ClassCreationBody
 import ru.cfuv.cfuvscheduling.api.GroupModel
 import ru.cfuv.cfuvscheduling.api.LoginBody
 import ru.cfuv.cfuvscheduling.api.NetErrors
@@ -41,6 +42,7 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
     private val _groupList = MutableStateFlow(listOf<GroupModel>())
     private val _currentClasses = MutableStateFlow(listOf<TTClassModel>())
     private val _userData = MutableStateFlow<UserModel?>(null)
+    private val _userCanCreateClasses = MutableStateFlow(false)
 
     val netStatus: StateFlow<NetStatus>
         get() = _netStatus
@@ -56,6 +58,8 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
         get() = _currentClasses
     val userData: StateFlow<UserModel?>
         get() = _userData
+    val userCanCreateClasses: StateFlow<Boolean>
+        get() = _userCanCreateClasses
 
     private suspend fun <T> processResp(func: suspend () -> Response<T>): T? {
         _netStatus.value = NetStatus(true)
@@ -81,6 +85,7 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
             _netStatus.value = NetStatus(
                 false,
                 when (resp.code()) {
+                    400 -> NetErrors.BAD_REQUEST
                     401 -> NetErrors.UNAUTHORIZED
                     else -> NetErrors.UNKNOWN
                 }
@@ -109,6 +114,7 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
             if (userToken != null) {
                 val res = processResp { SchedApi.auth.getCurrentUser(userToken!!) } ?: return@launch
                 _userData.value = res
+                _userCanCreateClasses.value = res.role == "TEACHER"
             }
         }
         viewModelScope.launch {
@@ -169,6 +175,28 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
             val mutableClasses = currentClasses.value.toMutableList()
             mutableClasses.replaceAll { if (it.id == id) it.copy(comment = comment) else it }
             _currentClasses.value = mutableClasses.toList()
+        }
+    }
+    // Break UDF a little by calling a callback on success
+    fun createConsultation(name: String, room: String, position: Int, comment: String, date: LocalDate, onSuccess: () -> Unit) {
+        if (userToken == null) {
+            return
+        }
+        viewModelScope.launch {
+            processResp { SchedApi.timetable.createConsultation(
+                token = userToken!!,
+                body = ClassCreationBody(
+                    subjectName = name,
+                    classroom = room,
+                    duration = ClassCreationBody.N(position),
+                    comment = comment,
+                    group = ClassCreationBody.G(_currentGroup.value.id),
+                    classDate = date
+                )
+            ) }
+            // Re-fetch timetable
+            fetchTimetable()
+            onSuccess()
         }
     }
 }

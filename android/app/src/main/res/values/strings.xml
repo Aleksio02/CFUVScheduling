@@ -4,6 +4,8 @@
 
     <!-- Common -->
     <string name="cancel">Отмена</string>
+    <string name="inputOptional">Опционально</string>
+    <string name="save">Сохранить</string>
 
     <!-- Login screen -->
     <string name="loginTitle">Вход 👋</string>
@@ -74,4 +76,13 @@
     <string name="friday">пятницу</string>
     <string name="saturday">субботу</string>
     <string name="sunday">воскресенье</string>
+
+    <!-- Class creation screen -->
+    <string name="classCreationTitle">Создание пары</string>
+    <string name="classCreationNameFieldLabel">Название</string>
+    <string name="classCreationRoomFieldLabel">Кабинет</string>
+    <string name="classCreationDateFieldLabel">Дата</string>
+    <string name="classCreationPositionFieldLabel">Номер</string>
+    <string name="classCreationCommentFieldLabel">Комментарий</string>
+    <string name="classCreationError">Пара в это время уже существует!</string>
 </resources>
