@@ -1,0 +1,41 @@
+pipeline {
+  agent any
+
+  environment {
+    mavenHome = tool 'jenkins-maven'
+  }
+
+  stages {
+    stage('Run unit tests') {
+      steps{
+        sh 'cd server && mvn -pl admin -am clean test -P unit'
+      }
+    }
+    stage('Run integration tests') {
+      steps{
+        sh 'cd server && mvn -pl admin -am clean test -P integration'
+      }
+    }
+    stage('Build project') {
+      steps{
+        sh 'cd server && mvn -pl admin -am clean package -Dmaven.test.skip=true'
+      }
+    }
+    stage('Build docker image') {
+      steps{
+        sh 'cd server/admin && ls && ls target && docker build -f Dockerfile -t cfuvscheduling_admin:test .'
+      }
+    }
+    stage('Run application') {
+      steps{
+        catchError{
+          sh 'docker stop cfuvscheduling_admin'
+        }
+        catchError{
+          sh 'docker container rm cfuvscheduling_admin'
+        }
+        sh """docker run -d --name=cfuvscheduling_admin -p 8082:8082 --network=cfuvsched_net -e POSTGRES_HOST=${env.POSTGRES_HOST} -e AUTH_SERVER_HOST=${env.AUTH_SERVER_HOST} -e AUTH_SERVER_PORT=${env.AUTH_SERVER_PORT} cfuvscheduling_admin:test"""
+      }
+    }
+  }
+}

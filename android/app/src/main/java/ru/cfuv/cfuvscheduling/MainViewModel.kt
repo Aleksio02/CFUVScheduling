@@ -31,6 +31,8 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
         private const val TAG = "MainViewModel"
     }
 
+    private var userToken: String? = null
+
     private val _netStatus = MutableStateFlow(NetStatus(true))
     private val _appBarTitle = MutableStateFlow("")
     private val _currentGroupName = MutableStateFlow("")
@@ -82,7 +84,7 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
                 }
             )
             null
-        } else if (resp.code() in 500 .. 599 || resp.body() == null) {
+        } else if (resp.code() in 500 .. 599) {
             _netStatus.value = NetStatus(false, NetErrors.SERVERSIDE)
             null
         } else resp.body()
@@ -101,9 +103,9 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
         viewModelScope.launch {
             // Try to fetch user info
             val userTokenFlow = datastore.data.map { it[USER_TOKEN_DS_KEY] }
-            val token = userTokenFlow.first()
-            if (token != null) {
-                val res = processResp { SchedApi.auth.getCurrentUser(token) } ?: return@launch
+            userToken = userTokenFlow.first()
+            if (userToken != null) {
+                val res = processResp { SchedApi.auth.getCurrentUser(userToken!!) } ?: return@launch
                 _userData.value = res
             }
         }
@@ -131,11 +133,13 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
         viewModelScope.launch { fetchTimetable() }
     }
 
+    // Authorization
     fun loginUser(username: String, pass: String) {
         viewModelScope.launch {
             val res = processResp { SchedApi.auth.authenticateUser(LoginBody(username, pass)) } ?: return@launch
             // Write token
             datastore.edit { it[USER_TOKEN_DS_KEY] = res.token }
+            userToken = res.token
             _userData.value = res.user
         }
     }
@@ -144,6 +148,7 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
             val res = processResp { SchedApi.auth.registerUser(LoginBody(username, pass)) } ?: return@launch
             // Write token
             datastore.edit { it[USER_TOKEN_DS_KEY] = res.token }
+            userToken = res.token
             _userData.value = res.user
         }
     }
@@ -152,6 +157,19 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
             datastore.edit { it.remove(USER_TOKEN_DS_KEY) }
         }
         _userData.value = null
+    }
+
+    // Timetable
+    fun updateClassComment(id: Int, comment: String) {
+        if (userToken == null) {
+            return
+        }
+        viewModelScope.launch {
+            processResp { SchedApi.timetable.addComment(userToken!!, id, comment) }
+            val mutableClasses = currentClasses.value.toMutableList()
+            mutableClasses.replaceAll { if (it.id == id) it.copy(comment = comment) else it }
+            _currentClasses.value = mutableClasses.toList()
+        }
     }
 }
 

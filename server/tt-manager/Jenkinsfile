@@ -1,0 +1,41 @@
+pipeline {
+  agent any
+
+  environment {
+    mavenHome = tool 'jenkins-maven'
+  }
+
+  stages {
+    stage('Run unit tests') {
+      steps{
+        sh 'cd server && mvn -pl tt-manager -am clean test -P unit'
+      }
+    }
+    stage('Run integration tests') {
+      steps{
+        sh 'cd server && mvn -pl tt-manager -am clean test -P integration'
+      }
+    }
+    stage('Build project') {
+      steps{
+        sh 'cd server && mvn -pl tt-manager -am clean package -Dmaven.test.skip=true'
+      }
+    }
+    stage('Build docker image') {
+      steps{
+        sh 'cd server/tt-manager && ls && ls target && docker build -f Dockerfile -t cfuvscheduling_tt-manager:test .'
+      }
+    }
+    stage('Run application') {
+      steps{
+        catchError{
+          sh 'docker stop cfuvscheduling_tt-manager'
+        }
+        catchError{
+          sh 'docker container rm cfuvscheduling_tt-manager'
+        }
+        sh """docker run -d --name=cfuvscheduling_tt-manager -p 8080:8080 --network=cfuvsched_net -e POSTGRES_HOST=${env.POSTGRES_HOST} -e AUTH_SERVER_HOST=${env.AUTH_SERVER_HOST} -e AUTH_SERVER_PORT=${env.AUTH_SERVER_PORT} cfuvscheduling_tt-manager:test"""
+      }
+    }
+  }
+}

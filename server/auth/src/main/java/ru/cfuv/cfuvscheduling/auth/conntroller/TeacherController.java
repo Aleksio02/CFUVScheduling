@@ -21,10 +21,7 @@ public class TeacherController {
     private TeacherService teacherService;
 
     @GetMapping("/findAllTeachers")
-    List<UserBom> findAllTeachers(@RequestHeader(name = "Authorization", required = false) String token) {
-        if (!authService.getCurrentUser(token).hasAdminRole()) {
-            throw new AccessForbiddenException("You don't have access to this action!");
-        }
+    public List<UserBom> findAllTeachers(@RequestHeader(name = "Authorization", required = false) String token) {
         return teacherService.findAllTeachers();
     }
 

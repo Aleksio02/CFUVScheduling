@@ -2,6 +2,9 @@
     <string name="app_name">CFUVScheduling</string>
     <string name="title_activity_login">LoginActivity</string>
 
+    <!-- Common -->
+    <string name="cancel">Отмена</string>
+
     <!-- Login screen -->
     <string name="loginTitle">Вход 👋</string>
     <string name="loginDescription">Это приложение для просмотра расписания ФТИ КФУ</string>
@@ -24,6 +27,9 @@
     <string name="evenWeek">Четная неделя</string>
     <string name="classTypeLecture">ЛК</string>
     <string name="classTypePractical">ПЗ</string>
+    <string name="addCommentButton">Пометка</string>
+    <string name="addCommentDialogTitle">Комментарий</string>
+    <string name="addCommentDialogFieldLabel">Введите комментарий</string>
 
     <!-- Timetable list -->
     <string name="timetableListDescription">Здесь можно выбрать группу, расписание которой будет показываться при входе в приложение.</string>
