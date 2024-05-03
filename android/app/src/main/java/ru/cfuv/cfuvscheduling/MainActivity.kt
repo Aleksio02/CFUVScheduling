@@ -17,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.List
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -127,7 +126,7 @@ fun MainScreen(viewModel: MainViewModel, onCreateClass: () -> Unit) {
             id = "timetable",
             icon = Icons.Rounded.List,
             label = R.string.timetableNavItem,
-            composable = { TimetableScreen(date = LocalDate.now(), viewModel) }
+            composable = { TimetableScreen(date = LocalDate.now(), viewModel, onCreateClass) }
         ),
         DestinationInfo(
             id = "timetableList",
@@ -167,17 +166,6 @@ fun MainScreen(viewModel: MainViewModel, onCreateClass: () -> Unit) {
             }
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        floatingActionButton = {
-            val allowedToAdd by viewModel.userCanCreateClasses.collectAsState()
-            if (allowedToAdd) {
-                FloatingActionButton(onClick = onCreateClass) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.rounded_add_24),
-                        contentDescription = null
-                    )
-                }
-            }
-        }
     ) {
         val netStatus = viewModel.netStatus.collectAsState()
         if (!netStatus.value.ok) {

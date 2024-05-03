@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,10 +18,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -65,7 +68,7 @@ val DOW_LIST = listOf(
 )
 
 @Composable
-fun TimetableScreen(date: LocalDate, viewModel: MainViewModel = viewModel()) {
+fun TimetableScreen(date: LocalDate, viewModel: MainViewModel = viewModel(), onCreateClass: () -> Unit) {
     val currentGroup by viewModel.currentGroup.collectAsState()
     LaunchedEffect(currentGroup) {
         viewModel.setAppBarTitle(currentGroup.name)
@@ -74,36 +77,52 @@ fun TimetableScreen(date: LocalDate, viewModel: MainViewModel = viewModel()) {
     val userData by viewModel.userData.collectAsState()
     val allowedToAdd by viewModel.userCanCreateClasses.collectAsState()
 
-    LazyColumn(
-        Modifier.fillMaxSize()
-    ) {
-        item {
-            Text(
-                text = stringResource(
-                    id = R.string.timetableTitle,
-                    stringResource(id = DOW_LIST[date.dayOfWeek.ordinal])
-                ),
-                fontSize = 28.sp,
-                modifier = Modifier
-                    .padding(horizontal = 12.dp)
-                    .padding(bottom = 12.dp)
-            )
-        }
-        items(classes) {
-            ClassCard(
-                data = it,
-                userData = userData,
-                onChangeComment = { comment ->
-                    viewModel.updateClassComment(it.id, comment)
+    Scaffold(
+        floatingActionButton = {
+            if (allowedToAdd) {
+                FloatingActionButton(onClick = onCreateClass) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.rounded_add_24),
+                        contentDescription = null
+                    )
                 }
-            )
-        }
-        // Empty column to ensure that last item under the FAB is accessible
-        if (allowedToAdd) {
+            }
+        },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
+    ) {
+        LazyColumn(
+            Modifier
+                .fillMaxSize()
+                .padding(it)
+        ) {
             item {
-                Column(
-                    modifier = Modifier.height(80.dp)
-                ) {}
+                Text(
+                    text = stringResource(
+                        id = R.string.timetableTitle,
+                        stringResource(id = DOW_LIST[date.dayOfWeek.ordinal])
+                    ),
+                    fontSize = 28.sp,
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp)
+                        .padding(bottom = 12.dp)
+                )
+            }
+            items(classes) {
+                ClassCard(
+                    data = it,
+                    userData = userData,
+                    onChangeComment = { comment ->
+                        viewModel.updateClassComment(it.id, comment)
+                    }
+                )
+            }
+            // Empty column to ensure that last item under the FAB is accessible
+            if (allowedToAdd) {
+                item {
+                    Column(
+                        modifier = Modifier.height(80.dp)
+                    ) {}
+                }
             }
         }
     }
@@ -239,7 +258,7 @@ fun TimetableScreenPreview() {
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
-        TimetableScreen(viewModel = viewModel(factory = MainViewModelFactory(LocalContext.current.dataStore)), date = LocalDate.now())
+        TimetableScreen(viewModel = viewModel(factory = MainViewModelFactory(LocalContext.current.dataStore)), date = LocalDate.now(), onCreateClass = {})
     }
 }
 
