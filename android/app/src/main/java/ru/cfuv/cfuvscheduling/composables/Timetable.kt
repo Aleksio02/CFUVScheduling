@@ -65,9 +65,9 @@ val DOW_LIST = listOf(
 
 @Composable
 fun TimetableScreen(date: LocalDate, viewModel: MainViewModel = viewModel()) {
-    val currentGroupName by viewModel.currentGroupName.collectAsState()
-    LaunchedEffect(currentGroupName) {
-        viewModel.setAppBarTitle(currentGroupName)
+    val currentGroup by viewModel.currentGroup.collectAsState()
+    LaunchedEffect(currentGroup) {
+        viewModel.setAppBarTitle(currentGroup.name)
     }
     val classes by viewModel.currentClasses.collectAsState()
     val userData by viewModel.userData.collectAsState()

@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import okio.IOException
 import retrofit2.Response
+import ru.cfuv.cfuvscheduling.api.GroupModel
 import ru.cfuv.cfuvscheduling.api.LoginBody
 import ru.cfuv.cfuvscheduling.api.NetErrors
 import ru.cfuv.cfuvscheduling.api.NetStatus
@@ -35,9 +36,9 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
 
     private val _netStatus = MutableStateFlow(NetStatus(true))
     private val _appBarTitle = MutableStateFlow("")
-    private val _currentGroupName = MutableStateFlow("")
+    private val _currentGroup = MutableStateFlow(GroupModel(0, ""))
     private val _currentGroupIdx = MutableStateFlow(0)
-    private val _groupList = MutableStateFlow(listOf<String>())
+    private val _groupList = MutableStateFlow(listOf<GroupModel>())
     private val _currentClasses = MutableStateFlow(listOf<TTClassModel>())
     private val _userData = MutableStateFlow<UserModel?>(null)
 
@@ -45,10 +46,10 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
         get() = _netStatus
     val appBarTitle: StateFlow<String>
         get() = _appBarTitle
-    val groupList: StateFlow<List<String>>
+    val groupList: StateFlow<List<GroupModel>>
         get() = _groupList
-    val currentGroupName: StateFlow<String>
-        get() = _currentGroupName
+    val currentGroup: StateFlow<GroupModel>
+        get() = _currentGroup
     val currentGroupIdx: StateFlow<Int>
         get() = _currentGroupIdx
     val currentClasses: StateFlow<List<TTClassModel>>
@@ -71,9 +72,10 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
             _netStatus.value = NetStatus(false, NetErrors.TIMEOUT)
             return null
         }
+        val errorBody = resp.errorBody()?.string()
         if (resp.code() != 200) {
             Log.e(TAG, "Request to ${resp.raw().request.url} failed!\n" +
-                    "Code ${resp.code()}\nResponse: ${resp.body()}")
+                    "Code ${resp.code()}\nResponse: $errorBody")
         }
         return if (resp.code() in 400..499) {
             _netStatus.value = NetStatus(
@@ -92,7 +94,7 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
 
     private suspend fun fetchTimetable() {
         val res = processResp { SchedApi.timetable.getClasses(
-            groupName = _currentGroupName.value,
+            groupName = _currentGroup.value.name,
             startDate = LocalDate.now(),
             endDate = LocalDate.now()
         ) } ?: return
@@ -112,10 +114,8 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
         viewModelScope.launch {
             // Fetch groups
             val res = processResp { SchedApi.admin.getGroups() } ?: return@launch
-            val strList = mutableListOf<String>()
-            res.forEach { strList.add(it.name) }
-            _groupList.value = strList.toList()
-            _currentGroupName.value = _groupList.value[0]
+            _groupList.value = res
+            _currentGroup.value = _groupList.value[0]
 
             // Fetch timetable for selected group
             fetchTimetable()
@@ -128,7 +128,7 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
 
     fun setCurrentGroup(idx: Int) {
         _currentGroupIdx.value = idx
-        _currentGroupName.value = _groupList.value[idx]
+        _currentGroup.value = _groupList.value[idx]
         // Fetch timetable for selected group
         viewModelScope.launch { fetchTimetable() }
     }
