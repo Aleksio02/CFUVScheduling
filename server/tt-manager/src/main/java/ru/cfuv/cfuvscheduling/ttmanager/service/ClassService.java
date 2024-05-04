@@ -48,7 +48,7 @@ public class ClassService {
     public void addCommentToClass(UserBom currentUser, Integer id, String comment) {
         UserDto currentUserDto = userDao.findByUsername(currentUser.getUsername()).get();
         ClassDto classDto = classDao.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Class with this id doesn't exist."));
+            .orElseThrow(() -> new EntityNotFoundException("Class with this id doesn't exist."));
         if (currentUserDto.getId().equals(classDto.getUserId().getId())) {
             classDto.setComment(comment);
             classDao.save(classDto);
@@ -59,7 +59,7 @@ public class ClassService {
 
     public List<ClassBom> findClassesForGroup(String groupName, LocalDate startDate, LocalDate endDate) {
         GroupsDto foundGroup = groupsDao.findByName(groupName)
-                .orElseThrow(() -> new EntityNotFoundException("Group with given name isn't exist"));
+            .orElseThrow(() -> new EntityNotFoundException("Group with given name isn't exist"));
         return classDao.findAllByGroupIdAndDateBetween(foundGroup, startDate, endDate).stream().map(i -> {
             ClassBom classBom = new ClassBom();
             new ClassConverter().fromDto(i, classBom);
@@ -69,8 +69,8 @@ public class ClassService {
 
     public ClassBom createConsultation(ClassBom classBom, UserBom currentUser) {
         if (classBom.getSubjectName() == null || classBom.getClassroom() == null ||
-                classBom.getDuration() == null || classBom.getDuration().getNumber() == null ||
-                classBom.getGroup() == null || classBom.getGroup().getId() == null || classBom.getClassDate() == null) {
+            classBom.getDuration() == null || classBom.getDuration().getNumber() == null ||
+            classBom.getGroup() == null || classBom.getGroup().getId() == null || classBom.getClassDate() == null) {
             throw new IncorrectRequestDataException("Object fields can't be null");
         }
 
@@ -92,13 +92,16 @@ public class ClassService {
 
     public ClassBom addClassByAdmin(ClassBom classBom) {
         if (classBom.getSubjectName() == null ||
-                classBom.getClassroom() == null ||
-                classBom.getDuration() == null ||
-                classBom.getGroup() == null ||
-                classBom.getClassType() == null ||
-                classBom.getTeacher() == null ||
-                classBom.getTeacher().getId() == null ||
-                classBom.getClassDate() == null
+            classBom.getClassroom() == null ||
+            classBom.getDuration() == null ||
+//            TODO: aleksio: проверить номер пары (DurationBOM.id)
+            classBom.getGroup() == null ||
+//            TODO: aleksio: проверить id группы (GroupBOM.id)
+            classBom.getClassType() == null ||
+//            TODO: aleksio: проверить id типа (RefClassTypeBOM.id)
+            classBom.getTeacher() == null ||
+            classBom.getTeacher().getId() == null ||
+            classBom.getClassDate() == null
         ) {
             throw new IncorrectRequestDataException("Object fields can't be null");
         }
@@ -108,6 +111,7 @@ public class ClassService {
             ClassDto classDto = new ClassDto();
             ClassConverter converter = new ClassConverter();
             converter.toDto(classBom, classDto);
+//          TODO: aleksio: добавить проверку на то, что пользователь является преподавателем
             classDao.save(classDto);
             converter.fromDto(classDto, classBom);
             return classBom;
