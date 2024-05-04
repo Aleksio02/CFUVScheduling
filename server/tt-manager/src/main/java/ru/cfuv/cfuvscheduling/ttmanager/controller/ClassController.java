@@ -1,20 +1,14 @@
 package ru.cfuv.cfuvscheduling.ttmanager.controller;
 
 import jakarta.annotation.Nullable;
-import java.time.LocalDate;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.cfuv.cfuvscheduling.commons.bom.UserBom;
 import ru.cfuv.cfuvscheduling.ttmanager.bom.ClassBom;
 import ru.cfuv.cfuvscheduling.ttmanager.service.ClassService;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/tt-manager/class")
@@ -53,4 +47,16 @@ public class ClassController {
         UserBom currentUser = userValidator.validateUserAsTeacher(token);
         return classService.createConsultation(classBom, currentUser);
     }
+
+    @PostMapping("/addClassByAdmin")
+    public ClassBom addClassByAdmin(
+            @RequestHeader(name = "Authorization", required = false) String token,
+            @RequestBody ClassBom classBom
+    ) {
+
+        userValidator.validateUserAsAdmin(token);
+
+        return classService.addClassByAdmin(classBom);
+    }
+
 }
