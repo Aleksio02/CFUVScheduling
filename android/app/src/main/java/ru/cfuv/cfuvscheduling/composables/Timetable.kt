@@ -18,8 +18,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
@@ -50,6 +52,7 @@ import ru.cfuv.cfuvscheduling.ClassTypes
 import ru.cfuv.cfuvscheduling.MainViewModel
 import ru.cfuv.cfuvscheduling.MainViewModelFactory
 import ru.cfuv.cfuvscheduling.R
+import ru.cfuv.cfuvscheduling.UserRoles
 import ru.cfuv.cfuvscheduling.api.TTClassDuration
 import ru.cfuv.cfuvscheduling.api.TTClassModel
 import ru.cfuv.cfuvscheduling.api.UserModel
@@ -147,6 +150,12 @@ fun ClassCard(data: TTClassModel, userData: UserModel?, onChangeComment: (String
         )
     }
 
+    val classType = try {
+        ClassTypes.valueOf(data.classType.name.uppercase())
+    } catch (e: IllegalArgumentException) {
+        ClassTypes.UNKNOWN
+    }
+
     OutlinedCard(
         onClick = { cardExpanded = !cardExpanded },
         Modifier
@@ -160,11 +169,6 @@ fun ClassCard(data: TTClassModel, userData: UserModel?, onChangeComment: (String
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                val classType = try {
-                    ClassTypes.valueOf(data.classType.name.uppercase())
-                } catch (e: IllegalArgumentException) {
-                    ClassTypes.UNKNOWN
-                }
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(50))
@@ -243,7 +247,7 @@ fun ClassCard(data: TTClassModel, userData: UserModel?, onChangeComment: (String
                         modifier = Modifier.weight(1f)
                     )
                     // Show comment button
-                    if (userData?.role == "TEACHER" && data.teacher.username == userData.username) {
+                    if (userData?.role == UserRoles.ADMIN.name || (userData?.role == UserRoles.TEACHER.name && data.teacher.username == userData.username)) {
                         FilledTonalButton(
                             onClick = { commentDialogOpened = true },
                             contentPadding = PaddingValues(
@@ -251,7 +255,8 @@ fun ClassCard(data: TTClassModel, userData: UserModel?, onChangeComment: (String
                                 end = 24.dp,
                                 top = 8.dp,
                                 bottom = 8.dp
-                            )
+                            ),
+                            modifier = Modifier.padding(end = 4.dp)
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.rounded_edit_note_24),
@@ -259,6 +264,21 @@ fun ClassCard(data: TTClassModel, userData: UserModel?, onChangeComment: (String
                                 modifier = Modifier.padding(end = 8.dp)
                             )
                             Text(text = stringResource(id = R.string.addCommentButton))
+                        }
+                        // Deletion button
+                        if (userData.role == UserRoles.ADMIN.name || classType == ClassTypes.CONSULTATION) {
+                            FilledTonalIconButton(
+                                onClick = { /* No logics for now */ },
+                                colors = IconButtonDefaults
+                                    .filledTonalIconButtonColors(
+                                        containerColor = MaterialTheme.colorScheme.errorContainer
+                                    )
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.rounded_delete_24),
+                                    contentDescription = stringResource(id = R.string.classRemoveButton)
+                                )
+                            }
                         }
                     }
                 }
@@ -338,10 +358,13 @@ fun ClassCardPreview() {
             classType = TTClassModel.N("practical"),
             teacher = UserModel(
                 username = "SanyaPilot",
-                role = "TEACHER"
+                role = "ADMIN"
             )
         ),
-        userData = null,
+        userData = UserModel(
+            username = "SanyaPilot",
+            role = "ADMIN"
+        ),
         onChangeComment = {}
     )
 }

@@ -31,6 +31,10 @@ enum class ClassTypes {
     LECTURE, PRACTICAL, CONSULTATION, UNKNOWN
 }
 
+enum class UserRoles {
+    TEACHER, ADMIN
+}
+
 class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel() {
     companion object {
         private const val TAG = "MainViewModel"
@@ -117,7 +121,7 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
             if (userToken != null) {
                 val res = processResp { SchedApi.auth.getCurrentUser(userToken!!) } ?: return@launch
                 _userData.value = res
-                _userCanCreateClasses.value = res.role == "TEACHER"
+                _userCanCreateClasses.value = res.role == UserRoles.TEACHER.name || res.role == UserRoles.ADMIN.name
             }
         }
         viewModelScope.launch {
