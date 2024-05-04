@@ -29,6 +29,8 @@
     <string name="evenWeek">Четная неделя</string>
     <string name="classTypeLecture">ЛК</string>
     <string name="classTypePractical">ПЗ</string>
+    <string name="classTypeConsultation">КН</string>
+    <string name="classTypeUnknown">--</string>
     <string name="addCommentButton">Пометка</string>
     <string name="addCommentDialogTitle">Комментарий</string>
     <string name="addCommentDialogFieldLabel">Введите комментарий</string>

@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+import ru.cfuv.cfuvscheduling.ClassTypes
 import ru.cfuv.cfuvscheduling.MainViewModel
 import ru.cfuv.cfuvscheduling.MainViewModelFactory
 import ru.cfuv.cfuvscheduling.R
@@ -159,18 +160,32 @@ fun ClassCard(data: TTClassModel, userData: UserModel?, onChangeComment: (String
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                val isPractical = data.classType.name == "practical"
+                val classType = try {
+                    ClassTypes.valueOf(data.classType.name.uppercase())
+                } catch (e: IllegalArgumentException) {
+                    ClassTypes.UNKNOWN
+                }
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(50))
                         .background(
-                            if (isPractical)
-                                MaterialTheme.colorScheme.tertiaryContainer else
-                                MaterialTheme.colorScheme.primaryContainer
+                            when (classType) {
+                                ClassTypes.LECTURE -> MaterialTheme.colorScheme.primaryContainer
+                                ClassTypes.PRACTICAL -> MaterialTheme.colorScheme.tertiaryContainer
+                                ClassTypes.CONSULTATION -> MaterialTheme.colorScheme.secondaryContainer
+                                ClassTypes.UNKNOWN -> MaterialTheme.colorScheme.surfaceContainer
+                            }
                         )
                 ) {
                     Text(
-                        text = stringResource(id = if (isPractical) R.string.classTypePractical else R.string.classTypeLecture),
+                        text = stringResource(
+                            id = when (classType) {
+                                ClassTypes.LECTURE -> R.string.classTypeLecture
+                                ClassTypes.PRACTICAL -> R.string.classTypePractical
+                                ClassTypes.CONSULTATION -> R.string.classTypeConsultation
+                                ClassTypes.UNKNOWN -> R.string.classTypeUnknown
+                            }
+                        ),
                         modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp)
                     )
                 }

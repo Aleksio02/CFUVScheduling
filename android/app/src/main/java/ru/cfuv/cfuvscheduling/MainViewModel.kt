@@ -27,6 +27,9 @@ import java.net.ConnectException
 import java.time.LocalDate
 
 val USER_TOKEN_DS_KEY = stringPreferencesKey("token")
+enum class ClassTypes {
+    LECTURE, PRACTICAL, CONSULTATION, UNKNOWN
+}
 
 class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel() {
     companion object {
