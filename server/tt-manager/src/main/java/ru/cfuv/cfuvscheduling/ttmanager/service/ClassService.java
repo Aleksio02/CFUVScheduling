@@ -119,4 +119,11 @@ public class ClassService {
             throw new AlreadyExistsException("You can't create class in this day and this place with given group");
         }
     }
+
+    public void deleteClassByAdmin(Integer classId) {
+        if (!classDao.existsById(classId)) {
+            throw new EntityNotFoundException("Class with ID %d not found".formatted(classId));
+        }
+        classDao.deleteById(classId);
+    }
 }
