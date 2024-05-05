@@ -22,9 +22,9 @@ public class ClassController {
 
     @PostMapping("/{id}/addComment")
     public void addCommentToClass(
-        @RequestHeader(name = "Authorization", required = false) String token,
-        @PathVariable Integer id,
-        @RequestParam @Nullable String comment
+            @RequestHeader(name = "Authorization", required = false) String token,
+            @PathVariable Integer id,
+            @RequestParam @Nullable String comment
     ) {
         UserBom currentUser = userValidator.validateUserAsTeacher(token);
         classService.addCommentToClass(currentUser, id, comment);
@@ -32,17 +32,17 @@ public class ClassController {
 
     @GetMapping("/findClassesForGroup")
     public List<ClassBom> findClassesForGroup(
-        @RequestParam String groupName,
-        @RequestParam LocalDate startDate,
-        @RequestParam LocalDate endDate
+            @RequestParam String groupName,
+            @RequestParam LocalDate startDate,
+            @RequestParam LocalDate endDate
     ) {
         return classService.findClassesForGroup(groupName, startDate, endDate);
     }
 
     @PostMapping("/createConsultation")
     public ClassBom createConsultation(
-        @RequestHeader(name = "Authorization", required = false) String token,
-        @RequestBody ClassBom classBom
+            @RequestHeader(name = "Authorization", required = false) String token,
+            @RequestBody ClassBom classBom
     ) {
         UserBom currentUser = userValidator.validateUserAsTeacher(token);
         return classService.createConsultation(classBom, currentUser);
@@ -53,9 +53,7 @@ public class ClassController {
             @RequestHeader(name = "Authorization", required = false) String token,
             @RequestBody ClassBom classBom
     ) {
-
         userValidator.validateUserAsAdmin(token);
-
         return classService.addClassByAdmin(classBom);
     }
 

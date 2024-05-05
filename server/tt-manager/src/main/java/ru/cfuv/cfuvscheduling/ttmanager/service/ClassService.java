@@ -4,11 +4,8 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import ru.cfuv.cfuvscheduling.commons.bom.GroupsBom;
-import ru.cfuv.cfuvscheduling.commons.bom.RefClassDurationsBom;
-import ru.cfuv.cfuvscheduling.commons.bom.RefClassTypeBom;
 import ru.cfuv.cfuvscheduling.commons.bom.UserBom;
-import ru.cfuv.cfuvscheduling.commons.converter.GroupsConverter;
+import ru.cfuv.cfuvscheduling.commons.bom.UserRoles;
 import ru.cfuv.cfuvscheduling.commons.dao.GroupsDao;
 import ru.cfuv.cfuvscheduling.commons.dao.RefClassTypeDao;
 import ru.cfuv.cfuvscheduling.commons.dao.UserDao;
@@ -24,7 +21,6 @@ import ru.cfuv.cfuvscheduling.ttmanager.dao.ClassDao;
 import ru.cfuv.cfuvscheduling.ttmanager.dao.dto.ClassDto;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,10 +41,11 @@ public class ClassService {
     @Autowired
     private ClassDao classDao;
 
+
     public void addCommentToClass(UserBom currentUser, Integer id, String comment) {
         UserDto currentUserDto = userDao.findByUsername(currentUser.getUsername()).get();
         ClassDto classDto = classDao.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Class with this id doesn't exist."));
+                .orElseThrow(() -> new EntityNotFoundException("Class with this id doesn't exist."));
         if (currentUserDto.getId().equals(classDto.getUserId().getId())) {
             classDto.setComment(comment);
             classDao.save(classDto);
@@ -59,7 +56,7 @@ public class ClassService {
 
     public List<ClassBom> findClassesForGroup(String groupName, LocalDate startDate, LocalDate endDate) {
         GroupsDto foundGroup = groupsDao.findByName(groupName)
-            .orElseThrow(() -> new EntityNotFoundException("Group with given name isn't exist"));
+                .orElseThrow(() -> new EntityNotFoundException("Group with given name isn't exist"));
         return classDao.findAllByGroupIdAndDateBetween(foundGroup, startDate, endDate).stream().map(i -> {
             ClassBom classBom = new ClassBom();
             new ClassConverter().fromDto(i, classBom);
@@ -69,8 +66,8 @@ public class ClassService {
 
     public ClassBom createConsultation(ClassBom classBom, UserBom currentUser) {
         if (classBom.getSubjectName() == null || classBom.getClassroom() == null ||
-            classBom.getDuration() == null || classBom.getDuration().getNumber() == null ||
-            classBom.getGroup() == null || classBom.getGroup().getId() == null || classBom.getClassDate() == null) {
+                classBom.getDuration() == null || classBom.getDuration().getNumber() == null ||
+                classBom.getGroup() == null || classBom.getGroup().getId() == null || classBom.getClassDate() == null) {
             throw new IncorrectRequestDataException("Object fields can't be null");
         }
 
@@ -92,16 +89,16 @@ public class ClassService {
 
     public ClassBom addClassByAdmin(ClassBom classBom) {
         if (classBom.getSubjectName() == null ||
-            classBom.getClassroom() == null ||
-            classBom.getDuration() == null ||
-//            TODO: aleksio: проверить номер пары (DurationBOM.id)
-            classBom.getGroup() == null ||
-//            TODO: aleksio: проверить id группы (GroupBOM.id)
-            classBom.getClassType() == null ||
-//            TODO: aleksio: проверить id типа (RefClassTypeBOM.id)
-            classBom.getTeacher() == null ||
-            classBom.getTeacher().getId() == null ||
-            classBom.getClassDate() == null
+                classBom.getClassroom() == null ||
+                classBom.getDuration() == null ||
+                classBom.getDuration().getNumber() == null ||
+                classBom.getGroup() == null ||
+                classBom.getGroup().getId() == null ||
+                classBom.getClassType() == null ||
+                classBom.getClassType().getId() == null ||
+                classBom.getTeacher() == null ||
+                classBom.getTeacher().getId() == null ||
+                classBom.getClassDate() == null
         ) {
             throw new IncorrectRequestDataException("Object fields can't be null");
         }
@@ -111,7 +108,10 @@ public class ClassService {
             ClassDto classDto = new ClassDto();
             ClassConverter converter = new ClassConverter();
             converter.toDto(classBom, classDto);
-//          TODO: aleksio: добавить проверку на то, что пользователь является преподавателем
+            UserDto receivedUser = userDao.findById(classDto.getUserId().getId()).get();
+            if (!receivedUser.getRoleId().getName().equals(UserRoles.TEACHER.name())) {
+                throw new IncorrectRequestDataException("User is not a teacher");
+            }
             classDao.save(classDto);
             converter.fromDto(classDto, classBom);
             return classBom;
