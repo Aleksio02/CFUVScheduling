@@ -57,4 +57,12 @@ public class ClassController {
         return classService.addClassByAdmin(classBom);
     }
 
+    @DeleteMapping("/deleteClassByAdmin/{id}")
+    public void deleteClassByAdmin(
+            @RequestHeader(name = "Authorization", required = false) String token,
+            @PathVariable Integer id
+    ) {
+        userValidator.validateUserAsAdmin(token);
+        classService.deleteClassByAdmin(id);
+    }
 }
