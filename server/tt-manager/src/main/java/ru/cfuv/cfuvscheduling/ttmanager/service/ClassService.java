@@ -116,7 +116,7 @@ public class ClassService {
             converter.fromDto(classDto, classBom);
             return classBom;
         } catch (DataIntegrityViolationException e) {
-            throw new AlreadyExistsException("This class already exists");
+            throw new AlreadyExistsException("You can't create class in this day and this place with given group");
         }
     }
 }
