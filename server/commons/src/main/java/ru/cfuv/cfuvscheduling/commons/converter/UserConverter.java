@@ -17,7 +17,7 @@ public class UserConverter {
     }
 
     public void toDto(UserBom source, UserDto destination) {
-        destination.setId(null);
+        destination.setId(source.getId());
         destination.setUsername(source.getUsername());
         destination.setFirstName(source.getFirstName());
         destination.setSecondName(source.getSecondName());

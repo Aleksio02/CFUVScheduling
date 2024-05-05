@@ -31,4 +31,19 @@ public class UserValidator {
             throw new UnauthorizedException(exceptionMessage);
         }
     }
+
+    public UserBom validateUserAsAdmin(String token) {
+        String exceptionMessage = "You don't have access to this action";
+        try {
+            if (!authConnector.getCurrentUser(token).hasAdminRole()) {
+                throw new AccessForbiddenException(exceptionMessage);
+            }
+        } catch (FeignException e) {
+            if (e instanceof RetryableException) {
+                throw new ServerUnavailableException("Server can't receive response from authorization service");
+            }
+            throw new UnauthorizedException(exceptionMessage);
+        }
+        return null;
+    }
 }
