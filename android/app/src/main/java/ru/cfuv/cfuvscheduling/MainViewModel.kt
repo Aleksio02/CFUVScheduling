@@ -206,6 +206,16 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
             onSuccess()
         }
     }
+    fun deleteClass(id: Int) {
+        if (userToken == null) {
+            return
+        }
+        viewModelScope.launch {
+            processResp { SchedApi.timetable.deleteClass(userToken!!, id) }
+            // Re-fetch timetable
+            fetchTimetable()
+        }
+    }
 }
 
 class MainViewModelFactory(

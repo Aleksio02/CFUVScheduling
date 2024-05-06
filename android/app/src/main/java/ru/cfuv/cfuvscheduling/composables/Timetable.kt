@@ -117,6 +117,9 @@ fun TimetableScreen(date: LocalDate, viewModel: MainViewModel = viewModel(), onC
                     userData = userData,
                     onChangeComment = { comment ->
                         viewModel.updateClassComment(it.id, comment)
+                    },
+                    onDelete = {
+                        viewModel.deleteClass(it.id)
                     }
                 )
             }
@@ -134,7 +137,7 @@ fun TimetableScreen(date: LocalDate, viewModel: MainViewModel = viewModel(), onC
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ClassCard(data: TTClassModel, userData: UserModel?, onChangeComment: (String) -> Unit) {
+fun ClassCard(data: TTClassModel, userData: UserModel?, onChangeComment: (String) -> Unit, onDelete: () -> Unit) {
     var cardExpanded by rememberSaveable { mutableStateOf(false) }
     var commentDialogOpened by rememberSaveable { mutableStateOf(false) }
 
@@ -268,7 +271,13 @@ fun ClassCard(data: TTClassModel, userData: UserModel?, onChangeComment: (String
                         // Deletion button
                         if (userData.role == UserRoles.ADMIN.name || classType == ClassTypes.CONSULTATION) {
                             FilledTonalIconButton(
-                                onClick = { /* No logics for now */ },
+                                onClick = {
+                                    if (userData.role == UserRoles.ADMIN.name) {
+                                        onDelete()
+                                    } else {
+                                        // No logics (((
+                                    }
+                                },
                                 colors = IconButtonDefaults
                                     .filledTonalIconButtonColors(
                                         containerColor = MaterialTheme.colorScheme.errorContainer
@@ -365,7 +374,8 @@ fun ClassCardPreview() {
             username = "SanyaPilot",
             role = "ADMIN"
         ),
-        onChangeComment = {}
+        onChangeComment = {},
+        onDelete = {}
     )
 }
 
