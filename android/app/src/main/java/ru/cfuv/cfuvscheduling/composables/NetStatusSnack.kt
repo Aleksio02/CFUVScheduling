@@ -13,19 +13,22 @@ import ru.cfuv.cfuvscheduling.api.NetStatus
 fun NetStatusSnack(
     context: Context,
     netStatus: NetStatus,
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
+    messageHandler: ((NetErrors) -> String?)? = null
 ) {
-    LaunchedEffect(snackbarHostState) {
-        snackbarHostState.showSnackbar(
-            message = when(netStatus.error) {
-                NetErrors.UNAUTHORIZED -> context.resources.getString(R.string.loginInvalid)
-                NetErrors.SERVERSIDE -> context.resources.getString(R.string.netErrorServerside)
-                NetErrors.NO_INTERNET -> context.resources.getString(R.string.netErrorNoInternet)
-                NetErrors.TIMEOUT -> context.resources.getString(R.string.netErrorTimeout)
-                NetErrors.UNKNOWN -> context.resources.getString(R.string.netErrorGeneric)
-                else -> "WTF"
-            },
-            duration = SnackbarDuration.Long
-        )
+    if (netStatus.error != null) {
+        LaunchedEffect(snackbarHostState) {
+            snackbarHostState.showSnackbar(
+                message = messageHandler?.invoke(netStatus.error) ?: when (netStatus.error) {
+                    NetErrors.BAD_REQUEST -> context.resources.getString(R.string.netErrorGeneric)
+                    NetErrors.UNAUTHORIZED -> context.resources.getString(R.string.loginInvalid)
+                    NetErrors.SERVERSIDE -> context.resources.getString(R.string.netErrorServerside)
+                    NetErrors.NO_INTERNET -> context.resources.getString(R.string.netErrorNoInternet)
+                    NetErrors.TIMEOUT -> context.resources.getString(R.string.netErrorTimeout)
+                    NetErrors.UNKNOWN -> context.resources.getString(R.string.netErrorGeneric)
+                },
+                duration = SnackbarDuration.Long
+            )
+        }
     }
 }

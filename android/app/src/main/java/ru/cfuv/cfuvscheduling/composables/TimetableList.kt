@@ -57,17 +57,19 @@ fun TimetableListScreen(viewModel: MainViewModel = viewModel()) {
                 }
             }
         }
-        items(groups.size) { idx ->
-            ListItem(
-                headlineContent = { Text(text = groups[idx]) },
-                leadingContent = {
-                    RadioButton(
-                        selected = selectedID == idx,
-                        onClick = { viewModel.setCurrentGroup(idx) }
-                    )
-                },
-                modifier = Modifier.clickable { viewModel.setCurrentGroup(idx) }
-            )
+        groups.forEachIndexed { idx, group ->
+            item {
+                ListItem(
+                    headlineContent = { Text(text = group.name) },
+                    leadingContent = {
+                        RadioButton(
+                            selected = selectedID == idx,
+                            onClick = { viewModel.setCurrentGroup(idx) }
+                        )
+                    },
+                    modifier = Modifier.clickable { viewModel.setCurrentGroup(idx) }
+                )
+            }
         }
     }
 }

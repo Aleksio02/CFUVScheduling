@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,10 +18,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -42,9 +48,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+import ru.cfuv.cfuvscheduling.ClassTypes
 import ru.cfuv.cfuvscheduling.MainViewModel
 import ru.cfuv.cfuvscheduling.MainViewModelFactory
 import ru.cfuv.cfuvscheduling.R
+import ru.cfuv.cfuvscheduling.UserRoles
 import ru.cfuv.cfuvscheduling.api.TTClassDuration
 import ru.cfuv.cfuvscheduling.api.TTClassModel
 import ru.cfuv.cfuvscheduling.api.UserModel
@@ -64,37 +72,62 @@ val DOW_LIST = listOf(
 )
 
 @Composable
-fun TimetableScreen(date: LocalDate, viewModel: MainViewModel = viewModel()) {
-    val currentGroupName by viewModel.currentGroupName.collectAsState()
-    LaunchedEffect(currentGroupName) {
-        viewModel.setAppBarTitle(currentGroupName)
+fun TimetableScreen(date: LocalDate, viewModel: MainViewModel = viewModel(), onCreateClass: () -> Unit) {
+    val currentGroup by viewModel.currentGroup.collectAsState()
+    LaunchedEffect(currentGroup) {
+        viewModel.setAppBarTitle(currentGroup.name)
     }
     val classes by viewModel.currentClasses.collectAsState()
     val userData by viewModel.userData.collectAsState()
+    val allowedToAdd by viewModel.userCanCreateClasses.collectAsState()
 
-    LazyColumn(
-        Modifier
-            .fillMaxSize()
-            .padding(horizontal = 12.dp)
-    ) {
-        item {
-            Text(
-                text = stringResource(
-                    id = R.string.timetableTitle,
-                    stringResource(id = DOW_LIST[date.dayOfWeek.ordinal])
-                ),
-                fontSize = 28.sp,
-                modifier = Modifier.padding(bottom = 12.dp)
-            )
-        }
-        items(classes) {
-            ClassCard(
-                data = it,
-                userData = userData,
-                onChangeComment = { comment ->
-                    viewModel.updateClassComment(it.id, comment)
+    Scaffold(
+        floatingActionButton = {
+            if (allowedToAdd) {
+                FloatingActionButton(onClick = onCreateClass) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.rounded_add_24),
+                        contentDescription = null
+                    )
                 }
-            )
+            }
+        },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
+    ) {
+        LazyColumn(
+            Modifier
+                .fillMaxSize()
+                .padding(it)
+        ) {
+            item {
+                Text(
+                    text = stringResource(
+                        id = R.string.timetableTitle,
+                        stringResource(id = DOW_LIST[date.dayOfWeek.ordinal])
+                    ),
+                    fontSize = 28.sp,
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp)
+                        .padding(bottom = 12.dp)
+                )
+            }
+            items(classes) {
+                ClassCard(
+                    data = it,
+                    userData = userData,
+                    onChangeComment = { comment ->
+                        viewModel.updateClassComment(it.id, comment)
+                    }
+                )
+            }
+            // Empty column to ensure that last item under the FAB is accessible
+            if (allowedToAdd) {
+                item {
+                    Column(
+                        modifier = Modifier.height(80.dp)
+                    ) {}
+                }
+            }
         }
     }
 }
@@ -117,9 +150,16 @@ fun ClassCard(data: TTClassModel, userData: UserModel?, onChangeComment: (String
         )
     }
 
+    val classType = try {
+        ClassTypes.valueOf(data.classType.name.uppercase())
+    } catch (e: IllegalArgumentException) {
+        ClassTypes.UNKNOWN
+    }
+
     OutlinedCard(
         onClick = { cardExpanded = !cardExpanded },
         Modifier
+            .padding(horizontal = 12.dp)
             .padding(bottom = 8.dp)
             .fillMaxWidth()
     ) {
@@ -129,18 +169,27 @@ fun ClassCard(data: TTClassModel, userData: UserModel?, onChangeComment: (String
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                val isPractical = data.classType.name == "practical"
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(50))
                         .background(
-                            if (isPractical)
-                                MaterialTheme.colorScheme.tertiaryContainer else
-                                MaterialTheme.colorScheme.primaryContainer
+                            when (classType) {
+                                ClassTypes.LECTURE -> MaterialTheme.colorScheme.primaryContainer
+                                ClassTypes.PRACTICAL -> MaterialTheme.colorScheme.tertiaryContainer
+                                ClassTypes.CONSULTATION -> MaterialTheme.colorScheme.secondaryContainer
+                                ClassTypes.UNKNOWN -> MaterialTheme.colorScheme.surfaceContainer
+                            }
                         )
                 ) {
                     Text(
-                        text = stringResource(id = if (isPractical) R.string.classTypePractical else R.string.classTypeLecture),
+                        text = stringResource(
+                            id = when (classType) {
+                                ClassTypes.LECTURE -> R.string.classTypeLecture
+                                ClassTypes.PRACTICAL -> R.string.classTypePractical
+                                ClassTypes.CONSULTATION -> R.string.classTypeConsultation
+                                ClassTypes.UNKNOWN -> R.string.classTypeUnknown
+                            }
+                        ),
                         modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp)
                     )
                 }
@@ -198,7 +247,7 @@ fun ClassCard(data: TTClassModel, userData: UserModel?, onChangeComment: (String
                         modifier = Modifier.weight(1f)
                     )
                     // Show comment button
-                    if (userData?.role == "TEACHER" && data.teacher.username == userData.username) {
+                    if (userData?.role == UserRoles.ADMIN.name || (userData?.role == UserRoles.TEACHER.name && data.teacher.username == userData.username)) {
                         FilledTonalButton(
                             onClick = { commentDialogOpened = true },
                             contentPadding = PaddingValues(
@@ -206,7 +255,8 @@ fun ClassCard(data: TTClassModel, userData: UserModel?, onChangeComment: (String
                                 end = 24.dp,
                                 top = 8.dp,
                                 bottom = 8.dp
-                            )
+                            ),
+                            modifier = Modifier.padding(end = 4.dp)
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.rounded_edit_note_24),
@@ -214,6 +264,21 @@ fun ClassCard(data: TTClassModel, userData: UserModel?, onChangeComment: (String
                                 modifier = Modifier.padding(end = 8.dp)
                             )
                             Text(text = stringResource(id = R.string.addCommentButton))
+                        }
+                        // Deletion button
+                        if (userData.role == UserRoles.ADMIN.name || classType == ClassTypes.CONSULTATION) {
+                            FilledTonalIconButton(
+                                onClick = { /* No logics for now */ },
+                                colors = IconButtonDefaults
+                                    .filledTonalIconButtonColors(
+                                        containerColor = MaterialTheme.colorScheme.errorContainer
+                                    )
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.rounded_delete_24),
+                                    contentDescription = stringResource(id = R.string.classRemoveButton)
+                                )
+                            }
                         }
                     }
                 }
@@ -228,7 +293,7 @@ fun TimetableScreenPreview() {
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
-        TimetableScreen(viewModel = viewModel(factory = MainViewModelFactory(LocalContext.current.dataStore)), date = LocalDate.now())
+        TimetableScreen(viewModel = viewModel(factory = MainViewModelFactory(LocalContext.current.dataStore)), date = LocalDate.now(), onCreateClass = {})
     }
 }
 
@@ -285,6 +350,7 @@ fun ClassCardPreview() {
             subjectName = "Testing test",
             classroom = "404A",
             duration = TTClassDuration(
+                number = 1,
                 startTime = LocalTime.now(),
                 endTime = LocalTime.now()
             ),
@@ -292,10 +358,13 @@ fun ClassCardPreview() {
             classType = TTClassModel.N("practical"),
             teacher = UserModel(
                 username = "SanyaPilot",
-                role = "TEACHER"
+                role = "ADMIN"
             )
         ),
-        userData = null,
+        userData = UserModel(
+            username = "SanyaPilot",
+            role = "ADMIN"
+        ),
         onChangeComment = {}
     )
 }
@@ -309,6 +378,7 @@ fun CommentDialogPreview() {
             subjectName = "Операционные системы",
             classroom = "8А",
             duration = TTClassDuration(
+                number = 1,
                 startTime = LocalTime.now(),
                 endTime = LocalTime.now(),
             ),

@@ -8,7 +8,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
 enum class NetErrors {
-    UNAUTHORIZED, NO_INTERNET, TIMEOUT, SERVERSIDE, UNKNOWN
+    BAD_REQUEST, UNAUTHORIZED, NO_INTERNET, TIMEOUT, SERVERSIDE, UNKNOWN
 }
 
 data class NetStatus(
@@ -26,6 +26,7 @@ object SchedApi {
         ignoreUnknownKeys = true
         serializersModule = SerializersModule {
             contextual(LocalTimeSerializer)
+            contextual(LocalDateSerializer)
         }
     }
 

@@ -6,6 +6,7 @@ import retrofit2.http.GET
 
 @Serializable
 data class GroupModel(
+    val id: Int,
     val name: String
 )
 

@@ -55,6 +55,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import ru.cfuv.cfuvscheduling.api.NetErrors
 import ru.cfuv.cfuvscheduling.composables.AccountScreen
+import ru.cfuv.cfuvscheduling.composables.ClassCreationScreen
 import ru.cfuv.cfuvscheduling.composables.LoginScreen
 import ru.cfuv.cfuvscheduling.composables.NetStatusSnack
 import ru.cfuv.cfuvscheduling.composables.RegisterScreen
@@ -71,13 +72,31 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val topNavController = rememberNavController()
+            val viewModel: MainViewModel = viewModel(factory = MainViewModelFactory(LocalContext.current.dataStore))
             AppTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen(viewModel(factory = MainViewModelFactory(LocalContext.current.dataStore)))
+                    NavHost(
+                        navController = topNavController,
+                        startDestination = "main",
+                    ) {
+                        composable("main") {
+                            MainScreen(
+                                viewModel = viewModel,
+                                onCreateClass = { topNavController.navigate("createClass") }
+                            )
+                        }
+                        composable("createClass") {
+                            ClassCreationScreen(
+                                viewModel = viewModel,
+                                onNavigateUp = { topNavController.navigateUp() }
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -96,7 +115,7 @@ data class DestinationInfo(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(viewModel: MainViewModel) {
+fun MainScreen(viewModel: MainViewModel, onCreateClass: () -> Unit) {
     val context = LocalContext.current
     val navController = rememberNavController()
     val appBarTitle by viewModel.appBarTitle.collectAsState()
@@ -107,7 +126,7 @@ fun MainScreen(viewModel: MainViewModel) {
             id = "timetable",
             icon = Icons.Rounded.List,
             label = R.string.timetableNavItem,
-            composable = { TimetableScreen(date = LocalDate.now(), viewModel) }
+            composable = { TimetableScreen(date = LocalDate.now(), viewModel, onCreateClass) }
         ),
         DestinationInfo(
             id = "timetableList",
@@ -146,7 +165,7 @@ fun MainScreen(viewModel: MainViewModel) {
                 }
             }
         },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) {
         val netStatus = viewModel.netStatus.collectAsState()
         if (!netStatus.value.ok) {
@@ -215,7 +234,7 @@ fun MainScreenPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            MainScreen(viewModel(factory = MainViewModelFactory(LocalContext.current.dataStore)))
+            MainScreen(viewModel(factory = MainViewModelFactory(LocalContext.current.dataStore)), {})
         }
     }
 }
