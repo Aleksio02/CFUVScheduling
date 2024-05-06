@@ -10,6 +10,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -109,4 +110,10 @@ interface TTManagerApiService {
         @Header("Authorization") token: String,
         @Body body: ClassCreationBody
     ): Response<Void>  // Returned object is not suitable for inserting in the timetable (Aleksioi hello...)
+
+    @DELETE("/tt-manager/class/deleteClassByAdmin/{id}")
+    suspend fun deleteClass(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int,
+    ): Response<Void>
 }
