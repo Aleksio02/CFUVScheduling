@@ -17,9 +17,7 @@ data class NetStatus(
 )
 
 val JSON_MEDIA_TYPE = "application/json".toMediaType()
-const val ADMIN_URL = "http://192.168.1.3:8082/"  // Temporary address
-const val TT_URL = "http://192.168.1.3:8080/"  // Temporary address
-const val AUTH_URL = "http://192.168.1.3:8081/"  // Temporary address
+const val API_URL = "https://cfuvsched.sanyapilot.ru"
 
 object SchedApi {
     private val json = Json {
@@ -34,15 +32,15 @@ object SchedApi {
         .addConverterFactory(json.asConverterFactory(JSON_MEDIA_TYPE))
 
     private val adminRetrofit = retrofitBuilder
-        .baseUrl(ADMIN_URL)
+        .baseUrl(API_URL)
         .build()
 
     private val ttRetrofit = retrofitBuilder
-        .baseUrl(TT_URL)
+        .baseUrl(API_URL)
         .build()
 
     private val authRetrofit = retrofitBuilder
-        .baseUrl(AUTH_URL)
+        .baseUrl(API_URL)
         .build()
 
     val admin: AdminApiService by lazy { adminRetrofit.create(AdminApiService::class.java) }
