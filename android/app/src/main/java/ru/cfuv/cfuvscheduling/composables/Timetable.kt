@@ -250,7 +250,8 @@ fun ClassCard(data: TTClassModel, userData: UserModel?, onChangeComment: (String
                         modifier = Modifier.weight(1f)
                     )
                     // Show comment button
-                    if (userData?.role == UserRoles.ADMIN.name || (userData?.role == UserRoles.TEACHER.name && data.teacher.username == userData.username)) {
+                    val classBelongsToTeacher = userData?.role == UserRoles.TEACHER.name && data.teacher.username == userData.username
+                    if (classBelongsToTeacher) {
                         FilledTonalButton(
                             onClick = { commentDialogOpened = true },
                             contentPadding = PaddingValues(
@@ -268,26 +269,27 @@ fun ClassCard(data: TTClassModel, userData: UserModel?, onChangeComment: (String
                             )
                             Text(text = stringResource(id = R.string.addCommentButton))
                         }
-                        // Deletion button
-                        if (userData.role == UserRoles.ADMIN.name || classType == ClassTypes.CONSULTATION) {
-                            FilledTonalIconButton(
-                                onClick = {
-                                    if (userData.role == UserRoles.ADMIN.name) {
-                                        onDelete()
-                                    } else {
-                                        // No logics (((
-                                    }
-                                },
-                                colors = IconButtonDefaults
-                                    .filledTonalIconButtonColors(
-                                        containerColor = MaterialTheme.colorScheme.errorContainer
-                                    )
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.rounded_delete_24),
-                                    contentDescription = stringResource(id = R.string.classRemoveButton)
+                    }
+                    // Deletion button
+                    if (userData?.role == UserRoles.ADMIN.name ||
+                        (classBelongsToTeacher && classType == ClassTypes.CONSULTATION)) {
+                        FilledTonalIconButton(
+                            onClick = {
+                                if (userData?.role == UserRoles.ADMIN.name) {
+                                    onDelete()
+                                } else {
+                                    // No logics (((
+                                }
+                            },
+                            colors = IconButtonDefaults
+                                .filledTonalIconButtonColors(
+                                    containerColor = MaterialTheme.colorScheme.errorContainer
                                 )
-                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.rounded_delete_24),
+                                contentDescription = stringResource(id = R.string.classRemoveButton)
+                            )
                         }
                     }
                 }
