@@ -65,4 +65,13 @@ public class ClassController {
         userValidator.validateUserAsAdmin(token);
         classService.deleteClassByAdmin(id);
     }
+
+    @GetMapping("/findClassesForTeacher")
+    public List<ClassBom> findClassesForTeacher(
+            @RequestParam Integer userId,
+            @RequestParam LocalDate startDate,
+            @RequestParam LocalDate endDate
+    ) {
+        return classService.findClassesForTeacher(userId, startDate, endDate);
+    }
 }
