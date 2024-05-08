@@ -4,12 +4,18 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import ru.cfuv.cfuvscheduling.commons.bom.RefClassTypeBom;
 import ru.cfuv.cfuvscheduling.commons.bom.UserBom;
 import ru.cfuv.cfuvscheduling.commons.bom.UserRoles;
+import ru.cfuv.cfuvscheduling.commons.converter.GroupsConverter;
+import ru.cfuv.cfuvscheduling.commons.converter.RefClassDurationsConverter;
+import ru.cfuv.cfuvscheduling.commons.converter.RefClassTypeConverter;
+import ru.cfuv.cfuvscheduling.commons.converter.UserConverter;
 import ru.cfuv.cfuvscheduling.commons.dao.GroupsDao;
 import ru.cfuv.cfuvscheduling.commons.dao.RefClassTypeDao;
 import ru.cfuv.cfuvscheduling.commons.dao.UserDao;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.GroupsDto;
+import ru.cfuv.cfuvscheduling.commons.dao.dto.RefClassDurationsDto;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.RefClassTypeDto;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.UserDto;
 import ru.cfuv.cfuvscheduling.commons.exception.AccessForbiddenException;
@@ -118,6 +124,55 @@ public class ClassService {
         } catch (DataIntegrityViolationException e) {
             throw new AlreadyExistsException("You can't create class in this day and this place with given group");
         }
+    }
+
+    public void changeClassByAdmin(ClassBom classBom) {
+        if (classBom.getId() == null
+                || classBom.getSubjectName() == null
+                || classBom.getClassroom() == null
+                || classBom.getDuration() == null
+                || classBom.getComment() == null
+                || classBom.getGroup() == null
+                || classBom.getClassType() == null
+                || classBom.getTeacher() == null
+                || classBom.getClassDate() == null) {
+            throw new IncorrectRequestDataException("Obj fields can't be null");
+        }
+        RefClassDurationsDto durationsDto = new RefClassDurationsDto();
+        RefClassDurationsConverter durationsConverter = new RefClassDurationsConverter();
+        durationsConverter.toDto(classBom.getDuration(), durationsDto);
+
+        GroupsDto groupsDto = new GroupsDto();
+        GroupsConverter groupsConverter = new GroupsConverter();
+        groupsConverter.toDto(classBom.getGroup(), groupsDto);
+
+        RefClassTypeDto refClassTypeDto = new RefClassTypeDto();
+        RefClassTypeConverter refClassTypeConverter = new RefClassTypeConverter();
+        refClassTypeConverter.toDto(classBom.getClassType(), refClassTypeDto);
+
+        UserDto userDto = new UserDto();
+        UserConverter userConverter = new UserConverter();
+        userConverter.toDto(classBom.getTeacher(), userDto);
+
+        UserDto newUser = userDao.findById(userDto.getId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        if (!newUser.getRoleId().getName().equals(UserRoles.TEACHER.name())) {
+            throw new IncorrectRequestDataException("New user is not a teacher");
+        }
+
+        ClassDto existsClassDto = classDao.findById(classBom.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Class with this ID was not found"));
+
+        existsClassDto.setId(classBom.getId());
+        existsClassDto.setSubjectName(classBom.getSubjectName());
+        existsClassDto.setClassroom(classBom.getClassroom());
+        existsClassDto.setClassNumber(durationsDto);
+        existsClassDto.setComment(classBom.getComment());
+        existsClassDto.setGroupId(groupsDto);
+        existsClassDto.setTypeId(refClassTypeDto);
+        existsClassDto.setUserId(userDto);
+        existsClassDto.setDate(classBom.getClassDate());
+        classDao.save(existsClassDto);
     }
 
     public void deleteClassByAdmin(Integer classId) {
