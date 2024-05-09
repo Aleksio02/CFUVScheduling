@@ -169,7 +169,7 @@ public class ClassService {
             existsClassDto.setDate(classBom.getClassDate());
             classDao.save(existsClassDto);
         } catch (DataIntegrityViolationException e) {
-            throw new AlreadyExistsException(" ");
+            throw new AlreadyExistsException("You can't change class in this day and this place with given group");
         }
     }
 
