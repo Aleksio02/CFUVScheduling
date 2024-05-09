@@ -176,7 +176,7 @@ public class ClassService {
             existsClassDto.setUserId(userDto);
             existsClassDto.setDate(classBom.getClassDate());
             classDao.save(existsClassDto);
-        } catch (DataIntegrityViolationException e){
+        } catch (DataIntegrityViolationException e) {
             throw new AlreadyExistsException(" ");
 
         }
