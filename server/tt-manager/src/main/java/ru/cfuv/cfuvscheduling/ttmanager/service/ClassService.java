@@ -138,41 +138,48 @@ public class ClassService {
                 || classBom.getClassDate() == null) {
             throw new IncorrectRequestDataException("Obj fields can't be null");
         }
-        RefClassDurationsDto durationsDto = new RefClassDurationsDto();
-        RefClassDurationsConverter durationsConverter = new RefClassDurationsConverter();
-        durationsConverter.toDto(classBom.getDuration(), durationsDto);
+        try {
 
-        GroupsDto groupsDto = new GroupsDto();
-        GroupsConverter groupsConverter = new GroupsConverter();
-        groupsConverter.toDto(classBom.getGroup(), groupsDto);
 
-        RefClassTypeDto refClassTypeDto = new RefClassTypeDto();
-        RefClassTypeConverter refClassTypeConverter = new RefClassTypeConverter();
-        refClassTypeConverter.toDto(classBom.getClassType(), refClassTypeDto);
+            RefClassDurationsDto durationsDto = new RefClassDurationsDto();
+            RefClassDurationsConverter durationsConverter = new RefClassDurationsConverter();
+            durationsConverter.toDto(classBom.getDuration(), durationsDto);
 
-        UserDto userDto = new UserDto();
-        UserConverter userConverter = new UserConverter();
-        userConverter.toDto(classBom.getTeacher(), userDto);
+            GroupsDto groupsDto = new GroupsDto();
+            GroupsConverter groupsConverter = new GroupsConverter();
+            groupsConverter.toDto(classBom.getGroup(), groupsDto);
 
-        UserDto newUser = userDao.findById(userDto.getId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
-        if (!newUser.getRoleId().getName().equals(UserRoles.TEACHER.name())) {
-            throw new IncorrectRequestDataException("New user is not a teacher");
+            RefClassTypeDto refClassTypeDto = new RefClassTypeDto();
+            RefClassTypeConverter refClassTypeConverter = new RefClassTypeConverter();
+            refClassTypeConverter.toDto(classBom.getClassType(), refClassTypeDto);
+
+            UserDto userDto = new UserDto();
+            UserConverter userConverter = new UserConverter();
+            userConverter.toDto(classBom.getTeacher(), userDto);
+
+            UserDto newUser = userDao.findById(userDto.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
+            if (!newUser.getRoleId().getName().equals(UserRoles.TEACHER.name())) {
+                throw new IncorrectRequestDataException("New user is not a teacher");
+            }
+
+            ClassDto existsClassDto = classDao.findById(classBom.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Class with this ID was not found"));
+
+            existsClassDto.setId(classBom.getId());
+            existsClassDto.setSubjectName(classBom.getSubjectName());
+            existsClassDto.setClassroom(classBom.getClassroom());
+            existsClassDto.setClassNumber(durationsDto);
+            existsClassDto.setComment(classBom.getComment());
+            existsClassDto.setGroupId(groupsDto);
+            existsClassDto.setTypeId(refClassTypeDto);
+            existsClassDto.setUserId(userDto);
+            existsClassDto.setDate(classBom.getClassDate());
+            classDao.save(existsClassDto);
+        } catch (DataIntegrityViolationException e){
+            throw new AlreadyExistsException(" ");
+
         }
-
-        ClassDto existsClassDto = classDao.findById(classBom.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Class with this ID was not found"));
-
-        existsClassDto.setId(classBom.getId());
-        existsClassDto.setSubjectName(classBom.getSubjectName());
-        existsClassDto.setClassroom(classBom.getClassroom());
-        existsClassDto.setClassNumber(durationsDto);
-        existsClassDto.setComment(classBom.getComment());
-        existsClassDto.setGroupId(groupsDto);
-        existsClassDto.setTypeId(refClassTypeDto);
-        existsClassDto.setUserId(userDto);
-        existsClassDto.setDate(classBom.getClassDate());
-        classDao.save(existsClassDto);
     }
 
     public void deleteClassByAdmin(Integer classId) {
