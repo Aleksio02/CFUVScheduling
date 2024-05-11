@@ -135,7 +135,11 @@ public class ClassService {
                 || classBom.getGroup() == null
                 || classBom.getClassType() == null
                 || classBom.getTeacher() == null
-                || classBom.getClassDate() == null) {
+                || classBom.getClassDate() == null
+                || classBom.getGroup().getId() == null
+                || classBom.getTeacher().getId() == null
+                || classBom.getDuration().getNumber() == null) {
+
             throw new IncorrectRequestDataException("Obj fields can't be null");
         }
         try {
