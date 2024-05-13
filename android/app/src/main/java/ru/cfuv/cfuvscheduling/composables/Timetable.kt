@@ -15,6 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -57,26 +60,19 @@ import ru.cfuv.cfuvscheduling.api.TTClassDuration
 import ru.cfuv.cfuvscheduling.api.TTClassModel
 import ru.cfuv.cfuvscheduling.api.UserModel
 import ru.cfuv.cfuvscheduling.dataStore
-import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
-val DOW_LIST = listOf(
-    R.string.monday,
-    R.string.tuesday,
-    R.string.wednesday,
-    R.string.thursday,
-    R.string.friday,
-    R.string.saturday,
-    R.string.sunday
-)
-
 @Composable
-fun TimetableScreen(date: LocalDate, viewModel: MainViewModel = viewModel(), onCreateClass: () -> Unit) {
+fun TimetableScreen(
+    viewModel: MainViewModel = viewModel(),
+    onCreateClass: () -> Unit,
+) {
     val currentGroup by viewModel.currentGroup.collectAsState()
     LaunchedEffect(currentGroup) {
         viewModel.setAppBarTitle(currentGroup.name)
     }
+    val currentDate by viewModel.currentDate.collectAsState()
     val classes by viewModel.currentClasses.collectAsState()
     val userData by viewModel.userData.collectAsState()
     val allowedToAdd by viewModel.userCanCreateClasses.collectAsState()
@@ -100,16 +96,36 @@ fun TimetableScreen(date: LocalDate, viewModel: MainViewModel = viewModel(), onC
                 .padding(it)
         ) {
             item {
-                Text(
-                    text = stringResource(
-                        id = R.string.timetableTitle,
-                        stringResource(id = DOW_LIST[date.dayOfWeek.ordinal])
-                    ),
-                    fontSize = 28.sp,
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .padding(horizontal = 12.dp)
                         .padding(bottom = 12.dp)
-                )
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 8.dp)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.timetableTitle),
+                            fontSize = 28.sp,
+                        )
+                        Text(
+                            text = currentDate.format(DateTimeFormatter.ofPattern("E, d MMM")),
+                            fontSize = 24.sp
+                        )
+                    }
+                    FilledTonalIconButton(
+                        onClick = { viewModel.changeDate(-1) },
+                        modifier = Modifier.padding(end = 8.dp)
+                    ) {
+                        Icon(imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowLeft, contentDescription = null)
+                    }
+                    FilledTonalIconButton(onClick = { viewModel.changeDate(1) }) {
+                        Icon(imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight, contentDescription = null)
+                    }
+                }
             }
             items(classes) {
                 ClassCard(
@@ -304,7 +320,7 @@ fun TimetableScreenPreview() {
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
-        TimetableScreen(viewModel = viewModel(factory = MainViewModelFactory(LocalContext.current.dataStore)), date = LocalDate.now(), onCreateClass = {})
+        TimetableScreen(viewModel = viewModel(factory = MainViewModelFactory(LocalContext.current.dataStore)), onCreateClass = {})
     }
 }
 

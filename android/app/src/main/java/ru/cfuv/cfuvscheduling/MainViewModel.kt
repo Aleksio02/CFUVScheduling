@@ -50,6 +50,7 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
     private val _currentClasses = MutableStateFlow(listOf<TTClassModel>())
     private val _userData = MutableStateFlow<UserModel?>(null)
     private val _userCanCreateClasses = MutableStateFlow(false)
+    private val _currentDate = MutableStateFlow(LocalDate.now())
 
     val netStatus: StateFlow<NetStatus>
         get() = _netStatus
@@ -67,6 +68,8 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
         get() = _userData
     val userCanCreateClasses: StateFlow<Boolean>
         get() = _userCanCreateClasses
+    val currentDate: StateFlow<LocalDate>
+        get() = _currentDate
 
     private suspend fun <T> processResp(func: suspend () -> Response<T>): T? {
         _netStatus.value = NetStatus(true)
@@ -104,13 +107,14 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
         } else resp.body()
     }
 
-    private suspend fun fetchTimetable() {
+    private suspend fun fetchTimetable(date: LocalDate = LocalDate.now()) {
         val res = processResp { SchedApi.timetable.getClasses(
             groupName = _currentGroup.value.name,
-            startDate = LocalDate.now(),
-            endDate = LocalDate.now()
+            startDate = date,
+            endDate = date
         ) } ?: return
         _currentClasses.value = res
+        _currentDate.value = date
     }
 
     init {
@@ -214,6 +218,12 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
             processResp { SchedApi.timetable.deleteClass(userToken!!, id) }
             // Re-fetch timetable
             fetchTimetable()
+        }
+    }
+    fun changeDate(dir: Long) {
+        viewModelScope.launch {
+            val tempDate = _currentDate.value.plusDays(dir)
+            fetchTimetable(tempDate)
         }
     }
 }

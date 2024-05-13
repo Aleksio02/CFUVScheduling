@@ -24,7 +24,7 @@
     <string name="registerChecksNotPassed">Не выполнены требования!</string>
 
     <!-- Timetable -->
-    <string name="timetableTitle">Расписание на %1$s</string>
+    <string name="timetableTitle">Расписание на</string>
     <string name="oddWeek">Нечетная неделя</string>
     <string name="evenWeek">Четная неделя</string>
     <string name="classTypeLecture">ЛК</string>
@@ -70,15 +70,6 @@
     <string name="aboutAppDevel">Разработка:</string>
     <string name="aboutAppBackend">Бэкенд:</string>
     <string name="aboutAppVersion">Версия:</string>
-
-    <!-- Days of the week -->
-    <string name="monday">понедельник</string>
-    <string name="tuesday">вторник</string>
-    <string name="wednesday">среду</string>
-    <string name="thursday">четверг</string>
-    <string name="friday">пятницу</string>
-    <string name="saturday">субботу</string>
-    <string name="sunday">воскресенье</string>
 
     <!-- Class creation screen -->
     <string name="classCreationTitle">Создание пары</string>

@@ -62,7 +62,6 @@ import ru.cfuv.cfuvscheduling.composables.RegisterScreen
 import ru.cfuv.cfuvscheduling.composables.TimetableListScreen
 import ru.cfuv.cfuvscheduling.composables.TimetableScreen
 import ru.cfuv.cfuvscheduling.ui.theme.AppTheme
-import java.time.LocalDate
 
 // DataStore
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "authData")
@@ -126,7 +125,7 @@ fun MainScreen(viewModel: MainViewModel, onCreateClass: () -> Unit) {
             id = "timetable",
             icon = Icons.Rounded.List,
             label = R.string.timetableNavItem,
-            composable = { TimetableScreen(date = LocalDate.now(), viewModel, onCreateClass) }
+            composable = { TimetableScreen(viewModel, onCreateClass) }
         ),
         DestinationInfo(
             id = "timetableList",
