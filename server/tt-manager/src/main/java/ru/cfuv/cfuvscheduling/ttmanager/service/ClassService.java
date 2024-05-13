@@ -143,15 +143,6 @@ public class ClassService {
             throw new IncorrectRequestDataException("Obj fields can't be null");
         }
         try {
-            RefClassDurationsDto durationsDto = new RefClassDurationsDto();
-            RefClassDurationsConverter durationsConverter = new RefClassDurationsConverter();
-            durationsConverter.toDto(classBom.getDuration(), durationsDto);
-            GroupsDto groupsDto = new GroupsDto();
-            GroupsConverter groupsConverter = new GroupsConverter();
-            groupsConverter.toDto(classBom.getGroup(), groupsDto);
-            RefClassTypeDto refClassTypeDto = new RefClassTypeDto();
-            RefClassTypeConverter refClassTypeConverter = new RefClassTypeConverter();
-            refClassTypeConverter.toDto(classBom.getClassType(), refClassTypeDto);
             UserDto userDto = new UserDto();
             UserConverter userConverter = new UserConverter();
             userConverter.toDto(classBom.getTeacher(), userDto);
@@ -162,15 +153,19 @@ public class ClassService {
             }
             ClassDto existsClassDto = classDao.findById(classBom.getId())
                     .orElseThrow(() -> new EntityNotFoundException("Class with this ID was not found"));
-            existsClassDto.setId(classBom.getId());
-            existsClassDto.setSubjectName(classBom.getSubjectName());
-            existsClassDto.setClassroom(classBom.getClassroom());
-            existsClassDto.setClassNumber(durationsDto);
-            existsClassDto.setComment(classBom.getComment());
-            existsClassDto.setGroupId(groupsDto);
-            existsClassDto.setTypeId(refClassTypeDto);
-            existsClassDto.setUserId(userDto);
-            existsClassDto.setDate(classBom.getClassDate());
+            ClassBom existClassBom = new ClassBom();
+            new ClassConverter().fromDto(existsClassDto, existClassBom);
+
+            existClassBom.setSubjectName(classBom.getSubjectName());
+            existClassBom.setClassroom(classBom.getClassroom());
+            existClassBom.getDuration().setNumber(classBom.getDuration().getNumber());
+            existClassBom.setComment(classBom.getComment());
+            existClassBom.getGroup().setId(classBom.getGroup().getId());
+            existClassBom.getClassType().setId(classBom.getClassType().getId());
+            existClassBom.getTeacher().setId(classBom.getTeacher().getId());
+            existClassBom.setClassDate(classBom.getClassDate());
+
+            new ClassConverter().toDto(existClassBom, existsClassDto);
             classDao.save(existsClassDto);
         } catch (DataIntegrityViolationException e) {
             throw new AlreadyExistsException("You can't change class in this day and this place with given group");
