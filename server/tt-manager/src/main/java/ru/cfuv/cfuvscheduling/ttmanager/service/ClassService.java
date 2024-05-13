@@ -131,22 +131,19 @@ public class ClassService {
                 || classBom.getSubjectName() == null
                 || classBom.getClassroom() == null
                 || classBom.getDuration() == null
+                || classBom.getDuration().getNumber() == null
                 || classBom.getComment() == null
                 || classBom.getGroup() == null
-                || classBom.getClassType() == null
-                || classBom.getTeacher() == null
-                || classBom.getClassDate() == null
                 || classBom.getGroup().getId() == null
+                || classBom.getClassType() == null
+                || classBom.getClassType().getId() == null
+                || classBom.getTeacher() == null
                 || classBom.getTeacher().getId() == null
-                || classBom.getDuration().getNumber() == null) {
-
+                || classBom.getClassDate() == null) {
             throw new IncorrectRequestDataException("Obj fields can't be null");
         }
         try {
-            UserDto userDto = new UserDto();
-            UserConverter userConverter = new UserConverter();
-            userConverter.toDto(classBom.getTeacher(), userDto);
-            UserDto newUser = userDao.findById(userDto.getId())
+            UserDto newUser = userDao.findById(classBom.getTeacher().getId())
                     .orElseThrow(() -> new EntityNotFoundException("User not found"));
             if (!newUser.getRoleId().getName().equals(UserRoles.TEACHER.name())) {
                 throw new IncorrectRequestDataException("New user is not a teacher");
