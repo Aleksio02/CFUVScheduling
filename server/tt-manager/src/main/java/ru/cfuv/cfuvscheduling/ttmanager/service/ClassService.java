@@ -126,4 +126,14 @@ public class ClassService {
         }
         classDao.deleteById(classId);
     }
+
+    public List<ClassBom> findClassesForTeacher(Integer userId, LocalDate startDate, LocalDate endDate) {
+        UserDto foundTeacher = userDao.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Teacher with given id isn't exist"));
+        return classDao.findAllByUserIdAndDateBetween(foundTeacher, startDate, endDate).stream().map(i -> {
+            ClassBom classBom = new ClassBom();
+            new ClassConverter().fromDto(i, classBom);
+            return classBom;
+        }).collect(Collectors.toList());
+    }
 }
