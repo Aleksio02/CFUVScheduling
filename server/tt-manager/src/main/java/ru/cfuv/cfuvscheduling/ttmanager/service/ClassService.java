@@ -4,12 +4,18 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import ru.cfuv.cfuvscheduling.commons.bom.RefClassTypeBom;
 import ru.cfuv.cfuvscheduling.commons.bom.UserBom;
 import ru.cfuv.cfuvscheduling.commons.bom.UserRoles;
+import ru.cfuv.cfuvscheduling.commons.converter.GroupsConverter;
+import ru.cfuv.cfuvscheduling.commons.converter.RefClassDurationsConverter;
+import ru.cfuv.cfuvscheduling.commons.converter.RefClassTypeConverter;
+import ru.cfuv.cfuvscheduling.commons.converter.UserConverter;
 import ru.cfuv.cfuvscheduling.commons.dao.GroupsDao;
 import ru.cfuv.cfuvscheduling.commons.dao.RefClassTypeDao;
 import ru.cfuv.cfuvscheduling.commons.dao.UserDao;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.GroupsDto;
+import ru.cfuv.cfuvscheduling.commons.dao.dto.RefClassDurationsDto;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.RefClassTypeDto;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.UserDto;
 import ru.cfuv.cfuvscheduling.commons.exception.AccessForbiddenException;
@@ -117,6 +123,49 @@ public class ClassService {
             return classBom;
         } catch (DataIntegrityViolationException e) {
             throw new AlreadyExistsException("You can't create class in this day and this place with given group");
+        }
+    }
+
+    public void changeClassByAdmin(ClassBom classBom) {
+        if (classBom.getId() == null
+                || classBom.getSubjectName() == null
+                || classBom.getClassroom() == null
+                || classBom.getDuration() == null
+                || classBom.getDuration().getNumber() == null
+                || classBom.getComment() == null
+                || classBom.getGroup() == null
+                || classBom.getGroup().getId() == null
+                || classBom.getClassType() == null
+                || classBom.getClassType().getId() == null
+                || classBom.getTeacher() == null
+                || classBom.getTeacher().getId() == null
+                || classBom.getClassDate() == null) {
+            throw new IncorrectRequestDataException("Obj fields can't be null");
+        }
+        try {
+            UserDto newUser = userDao.findById(classBom.getTeacher().getId())
+                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
+            if (!newUser.getRoleId().getName().equals(UserRoles.TEACHER.name())) {
+                throw new IncorrectRequestDataException("New user is not a teacher");
+            }
+            ClassDto existsClassDto = classDao.findById(classBom.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Class with this ID was not found"));
+            ClassBom existClassBom = new ClassBom();
+            new ClassConverter().fromDto(existsClassDto, existClassBom);
+
+            existClassBom.setSubjectName(classBom.getSubjectName());
+            existClassBom.setClassroom(classBom.getClassroom());
+            existClassBom.getDuration().setNumber(classBom.getDuration().getNumber());
+            existClassBom.setComment(classBom.getComment());
+            existClassBom.getGroup().setId(classBom.getGroup().getId());
+            existClassBom.getClassType().setId(classBom.getClassType().getId());
+            existClassBom.getTeacher().setId(classBom.getTeacher().getId());
+            existClassBom.setClassDate(classBom.getClassDate());
+
+            new ClassConverter().toDto(existClassBom, existsClassDto);
+            classDao.save(existsClassDto);
+        } catch (DataIntegrityViolationException e) {
+            throw new AlreadyExistsException("You can't change class in this day and this place with given group");
         }
     }
 

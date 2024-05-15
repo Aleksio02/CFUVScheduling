@@ -57,6 +57,15 @@ public class ClassController {
         return classService.addClassByAdmin(classBom);
     }
 
+    @PostMapping("/changeClassByAdmin")
+    public void changeClassByAdmin(
+            @RequestHeader(name = "Aruthorization", required = false) String token,
+            @RequestBody ClassBom classBom
+    ) {
+        userValidator.validateUserAsAdmin(token);
+        classService.changeClassByAdmin(classBom);
+    }
+
     @DeleteMapping("/deleteClassByAdmin/{id}")
     public void deleteClassByAdmin(
             @RequestHeader(name = "Authorization", required = false) String token,
