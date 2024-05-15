@@ -58,6 +58,7 @@ public class RefClassDurationsService {
         new RefClassDurationsConverter().toDto(classDuration, newDto);
         refClassDurationsDao.save(newDto);
 
+        new RefClassDurationsConverter().fromDto(newDto, classDuration);
         return classDuration;
     }
 
