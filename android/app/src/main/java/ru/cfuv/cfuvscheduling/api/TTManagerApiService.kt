@@ -75,7 +75,9 @@ data class ClassCreationBody(
     val classroom: String,
     val duration: N,
     val comment: String,
-    val group: G,
+    val group: ID,
+    val classType: ID? = null,
+    val teacher: ID? = null,
     @Contextual
     val classDate: LocalDate
 ) {
@@ -85,7 +87,7 @@ data class ClassCreationBody(
         val number: Int
     )
     @Serializable
-    data class G(
+    data class ID(
         val id: Int
     )
 }
@@ -107,6 +109,12 @@ interface TTManagerApiService {
 
     @POST("/tt-manager/class/createConsultation")
     suspend fun createConsultation(
+        @Header("Authorization") token: String,
+        @Body body: ClassCreationBody
+    ): Response<Void>  // Returned object is not suitable for inserting in the timetable (Aleksioi hello...)
+
+    @POST("/tt-manager/class/addClassByAdmin")
+    suspend fun createClass(
         @Header("Authorization") token: String,
         @Body body: ClassCreationBody
     ): Response<Void>  // Returned object is not suitable for inserting in the timetable (Aleksioi hello...)

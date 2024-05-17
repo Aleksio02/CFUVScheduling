@@ -30,6 +30,9 @@
     <string name="classTypeLecture">ЛК</string>
     <string name="classTypePractical">ПЗ</string>
     <string name="classTypeConsultation">КН</string>
+    <string name="classTypeLectureLong">Лекция</string>
+    <string name="classTypePracticalLong">Практическое занятие</string>
+    <string name="classTypeConsultationLong">Консультация</string>
     <string name="classTypeUnknown">--</string>
     <string name="addCommentButton">Пометка</string>
     <string name="classRemoveButton">Удалить</string>
@@ -74,6 +77,8 @@
     <!-- Class creation screen -->
     <string name="classCreationTitle">Создание пары</string>
     <string name="classCreationNameFieldLabel">Название</string>
+    <string name="classCreationTypeFieldLabel">Тип пары</string>
+    <string name="classCreationTeacherFieldLabel">Преподаватель</string>
     <string name="classCreationRoomFieldLabel">Кабинет</string>
     <string name="classCreationDateFieldLabel">Дата</string>
     <string name="classCreationPositionFieldLabel">Номер</string>

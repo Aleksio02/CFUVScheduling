@@ -14,10 +14,14 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -46,25 +50,44 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.cfuv.cfuvscheduling.MainViewModel
 import ru.cfuv.cfuvscheduling.MainViewModelFactory
 import ru.cfuv.cfuvscheduling.R
+import ru.cfuv.cfuvscheduling.UserRoles
 import ru.cfuv.cfuvscheduling.api.NetErrors
 import ru.cfuv.cfuvscheduling.dataStore
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
+data class ClassMenuOption<T>(
+    val labelID: Int? = null,
+    val labelString: String? = null,
+    val value: T
+)
+
+val CLASS_TYPE_STRINGS = mapOf(
+    "lecture" to R.string.classTypeLectureLong,
+    "practical" to R.string.classTypePracticalLong,
+    "consultation" to R.string.classTypeConsultationLong
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClassCreationScreen(viewModel: MainViewModel, onNavigateUp: () -> Unit) {
+    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    val userData by viewModel.userData.collectAsState()
+    val teachers by viewModel.teachers.collectAsState()
+    val classTypes by viewModel.classTypes.collectAsState()
+    val userIsAdmin = userData?.role == UserRoles.ADMIN.name
+    
     // Variables
     val className = rememberSaveable { mutableStateOf("") }
+    val classType: MutableState<Int?> = rememberSaveable { mutableStateOf(classTypes.getOrNull(0)?.id) }
     val classRoom = rememberSaveable { mutableStateOf("") }
     var selectedDateMillis: Long? by rememberSaveable { mutableStateOf(null) }
     var number by rememberSaveable { mutableStateOf("") }
+    val teacher: MutableState<Int?> = rememberSaveable { mutableStateOf(null) }
     val comment = rememberSaveable { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
-
-    val context = LocalContext.current
-    val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -86,14 +109,32 @@ fun ClassCreationScreen(viewModel: MainViewModel, onNavigateUp: () -> Unit) {
                         showError = true
                         return@ExtendedFloatingActionButton
                     }
-                    viewModel.createConsultation(
-                        name = className.value,
-                        room = classRoom.value,
-                        date = LocalDate.ofEpochDay(selectedDateMillis!! / 24 / 60 / 60 / 1000),
-                        position = number.toInt(),
-                        comment = comment.value
-                    ) {
-                        onNavigateUp()
+                    if (userIsAdmin) {
+                        if (teacher.value == null || classType.value == null) {
+                            showError = true
+                            return@ExtendedFloatingActionButton
+                        }
+                        viewModel.createClass(
+                            name = className.value,
+                            typeID = classType.value!!,
+                            room = classRoom.value,
+                            date = LocalDate.ofEpochDay(selectedDateMillis!! / 24 / 60 / 60 / 1000),
+                            position = number.toInt(),
+                            teacherID = teacher.value!!,
+                            comment = comment.value
+                        ) {
+                            onNavigateUp()
+                        }
+                    } else {
+                        viewModel.createConsultation(
+                            name = className.value,
+                            room = classRoom.value,
+                            date = LocalDate.ofEpochDay(selectedDateMillis!! / 24 / 60 / 60 / 1000),
+                            position = number.toInt(),
+                            comment = comment.value
+                        ) {
+                            onNavigateUp()
+                        }
                     }
                 },
             )
@@ -127,6 +168,20 @@ fun ClassCreationScreen(viewModel: MainViewModel, onNavigateUp: () -> Unit) {
                 label = stringResource(id = R.string.classCreationNameFieldLabel),
                 isError = showError && className.value.isEmpty()
             )
+
+            // Type
+            if (userIsAdmin) {
+                val classTypeOptions = classTypes.map {
+                    ClassMenuOption(labelID = CLASS_TYPE_STRINGS[it.name], value = it.id)
+                }
+                ClassCreationMenuField(
+                    initialText = classTypeOptions[0].labelID?.let { stringResource(it) } ?: "",
+                    realValue = classType,
+                    options = classTypeOptions,
+                    label = stringResource(id = R.string.classCreationTypeFieldLabel),
+                    isError = showError && classType.value == null
+                )
+            }
 
             // Room
             ClassCreationField(
@@ -201,6 +256,30 @@ fun ClassCreationScreen(viewModel: MainViewModel, onNavigateUp: () -> Unit) {
                     modifier = Modifier.weight(1f),
                 )
             }
+
+            // Teacher
+            if (userIsAdmin) {
+                val teacherOptions = teachers.map {
+                    val teacherName =
+                        if (it.firstName != null && it.lastName != null && it.secondName != null) {
+                            "${it.lastName} " +
+                                    "${it.firstName[0].uppercase()}. " +
+                                    "${it.secondName[0].uppercase()}."
+                        } else {
+                            it.username
+                        }
+                    ClassMenuOption(labelString = teacherName, value = it.id)
+                }
+
+                ClassCreationMenuField(
+                    initialText = "",
+                    realValue = teacher,
+                    options = teacherOptions,
+                    label = stringResource(id = R.string.classCreationTeacherFieldLabel),
+                    isError = showError && teacher.value == null
+                )
+            }
+
             // Comment
             ClassCreationField(
                 text = comment,
@@ -227,6 +306,56 @@ fun ClassCreationField(
         isError = isError,
         modifier = Modifier.fillMaxWidth()
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun <T> ClassCreationMenuField(
+    initialText: String,
+    realValue: MutableState<T?>,
+    options: List<ClassMenuOption<T>>,
+    label: String,
+    supportingText: @Composable (() -> Unit)? = null,
+    isError: Boolean = false
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    var text by rememberSaveable { mutableStateOf(initialText) }
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it }
+    ) {
+        OutlinedTextField(
+            value = text,
+            onValueChange = {},
+            label = { Text(text = label) },
+            supportingText = supportingText,
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            readOnly = true,
+            singleLine = true,
+            isError = isError,
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor()
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            options.forEach { option ->
+                val optionLabel = option.labelID?.let { context.resources.getString(it) } ?: option.labelString ?: ""
+                DropdownMenuItem(
+                    text = { Text(optionLabel, style = MaterialTheme.typography.bodyLarge) },
+                    onClick = {
+                        text = optionLabel
+                        realValue.value = option.value
+                        expanded = false
+                    },
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                )
+            }
+        }
+    }
 }
 
 @Preview

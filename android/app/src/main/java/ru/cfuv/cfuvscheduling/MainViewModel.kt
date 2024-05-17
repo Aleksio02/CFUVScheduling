@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 import okio.IOException
 import retrofit2.Response
 import ru.cfuv.cfuvscheduling.api.ClassCreationBody
+import ru.cfuv.cfuvscheduling.api.ClassTypeModel
 import ru.cfuv.cfuvscheduling.api.GroupModel
 import ru.cfuv.cfuvscheduling.api.LoginBody
 import ru.cfuv.cfuvscheduling.api.NetErrors
@@ -51,6 +52,8 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
     private val _userData = MutableStateFlow<UserModel?>(null)
     private val _userCanCreateClasses = MutableStateFlow(false)
     private val _currentDate = MutableStateFlow(LocalDate.now())
+    private val _classTypes = MutableStateFlow(listOf<ClassTypeModel>())
+    private val _teachers = MutableStateFlow(listOf<UserModel>())
 
     val netStatus: StateFlow<NetStatus>
         get() = _netStatus
@@ -70,6 +73,10 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
         get() = _userCanCreateClasses
     val currentDate: StateFlow<LocalDate>
         get() = _currentDate
+    val classTypes: StateFlow<List<ClassTypeModel>>
+        get() = _classTypes
+    val teachers: StateFlow<List<UserModel>>
+        get() = _teachers
 
     private suspend fun <T> processResp(func: suspend () -> Response<T>): T? {
         _netStatus.value = NetStatus(true)
@@ -117,6 +124,18 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
         _currentDate.value = date
     }
 
+    private suspend fun doUserRelatedFetches(user: UserModel) {
+        if (user.role == UserRoles.ADMIN.name) {
+            // Fetch teachers
+            val teachersRes = processResp { SchedApi.auth.getAllTeachers() } ?: return
+            _teachers.value = teachersRes
+
+            // Fetch class types
+            val typesRes = processResp { SchedApi.admin.getClassTypes() } ?: return
+            _classTypes.value = typesRes
+        }
+    }
+
     init {
         viewModelScope.launch {
             // Try to fetch user info
@@ -126,6 +145,7 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
                 val res = processResp { SchedApi.auth.getCurrentUser(userToken!!) } ?: return@launch
                 _userData.value = res
                 _userCanCreateClasses.value = res.role == UserRoles.TEACHER.name || res.role == UserRoles.ADMIN.name
+                doUserRelatedFetches(res)
             }
         }
         viewModelScope.launch {
@@ -158,6 +178,7 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
             datastore.edit { it[USER_TOKEN_DS_KEY] = res.token }
             userToken = res.token
             _userData.value = res.user
+            doUserRelatedFetches(res.user)
         }
     }
     fun registerUser(username: String, pass: String) {
@@ -167,6 +188,7 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
             datastore.edit { it[USER_TOKEN_DS_KEY] = res.token }
             userToken = res.token
             _userData.value = res.user
+            doUserRelatedFetches(res.user)
         }
     }
     fun logoutUser() {
@@ -201,8 +223,31 @@ class MainViewModel(private val datastore: DataStore<Preferences>) : ViewModel()
                     classroom = room,
                     duration = ClassCreationBody.N(position),
                     comment = comment,
-                    group = ClassCreationBody.G(_currentGroup.value.id),
+                    group = ClassCreationBody.ID(_currentGroup.value.id),
                     classDate = date
+                )
+            ) }
+            // Re-fetch timetable
+            fetchTimetable()
+            onSuccess()
+        }
+    }
+    fun createClass(name: String, typeID: Int, room: String, position: Int, comment: String, date: LocalDate, teacherID: Int, onSuccess: () -> Unit) {
+        if (userToken == null) {
+            return
+        }
+        viewModelScope.launch {
+            processResp { SchedApi.timetable.createClass(
+                token = userToken!!,
+                body = ClassCreationBody(
+                    subjectName = name,
+                    classroom = room,
+                    duration = ClassCreationBody.N(position),
+                    comment = comment,
+                    group = ClassCreationBody.ID(_currentGroup.value.id),
+                    classType = ClassCreationBody.ID(typeID),
+                    classDate = date,
+                    teacher = ClassCreationBody.ID(teacherID)
                 )
             ) }
             // Re-fetch timetable

@@ -9,6 +9,7 @@ import retrofit2.http.POST
 
 @Serializable
 data class UserModel(
+    val id: Int = 0,
     val username: String,
     val firstName: String? = null,
     val secondName: String? = null,
@@ -37,4 +38,7 @@ interface AuthApiService {
 
     @POST("/auth/authenticateUser")
     suspend fun authenticateUser(@Body body: LoginBody): Response<AuthResponse>
+
+    @GET("/teacher/findAllTeachers")
+    suspend fun getAllTeachers(): Response<List<UserModel>>
 }

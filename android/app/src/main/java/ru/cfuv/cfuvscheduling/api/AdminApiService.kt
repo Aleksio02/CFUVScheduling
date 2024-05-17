@@ -10,7 +10,16 @@ data class GroupModel(
     val name: String
 )
 
+@Serializable
+data class ClassTypeModel(
+    val id: Int,
+    val name: String
+)
+
 interface AdminApiService {
     @GET("/admin/group/findAll")
     suspend fun getGroups(): Response<List<GroupModel>>
+
+    @GET("/admin/classType/findAll")
+    suspend fun getClassTypes(): Response<List<ClassTypeModel>>
 }
