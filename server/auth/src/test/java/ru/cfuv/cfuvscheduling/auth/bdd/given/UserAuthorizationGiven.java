@@ -7,6 +7,7 @@ import ru.cfuv.cfuvscheduling.auth.dao.UserRolesDao;
 import ru.cfuv.cfuvscheduling.commons.bom.UserRoles;
 import ru.cfuv.cfuvscheduling.commons.dao.UserDao;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.UserDto;
+import ru.cfuv.cfuvscheduling.commons.exception.AlreadyExistsException;
 
 public class UserAuthorizationGiven {
 
@@ -16,7 +17,7 @@ public class UserAuthorizationGiven {
     @Autowired
     private UserRolesDao userRolesDao;
 
-    @Given("user {} with password {} is exist")
+    @Given("username {} with password {} is exist")
     public void givenUserWithPassword(String username, String password) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
@@ -25,5 +26,13 @@ public class UserAuthorizationGiven {
         userDto.setPassword(bCryptPasswordEncoder.encode(password));
         userDto.setRoleId(userRolesDao.findByName(UserRoles.USER.name()).get());
         userDao.save(userDto);
+    }
+
+    @Given("username {} with password {} not exist")
+    public void givenUserNotExist(String username, String password) {
+        userDao.findByUsername(username)
+                .ifPresent(i -> {
+                    throw new AlreadyExistsException("This username already taken");
+                });
     }
 }
