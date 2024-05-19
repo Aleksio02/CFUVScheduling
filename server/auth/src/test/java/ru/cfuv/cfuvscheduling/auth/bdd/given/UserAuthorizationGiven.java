@@ -17,7 +17,7 @@ public class UserAuthorizationGiven {
     @Autowired
     private UserRolesDao userRolesDao;
 
-    @Given("username {} with password {} is exist")
+    @Given("user {} with password {} is exist")
     public void givenUserWithPassword(String username, String password) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
@@ -28,7 +28,7 @@ public class UserAuthorizationGiven {
         userDao.save(userDto);
     }
 
-    @Given("username {} with password {} not exist")
+    @Given("user {} with password {} not exist")
     public void givenUserNotExist(String username, String password) {
         userDao.findByUsername(username)
                 .ifPresent(i -> {
