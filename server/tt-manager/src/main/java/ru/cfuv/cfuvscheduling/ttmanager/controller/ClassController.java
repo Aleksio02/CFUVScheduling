@@ -59,7 +59,7 @@ public class ClassController {
 
     @PostMapping("/changeClassByAdmin")
     public void changeClassByAdmin(
-            @RequestHeader(name = "Aruthorization", required = false) String token,
+            @RequestHeader(name = "Authorization", required = false) String token,
             @RequestBody ClassBom classBom
     ) {
         userValidator.validateUserAsAdmin(token);
