@@ -49,7 +49,7 @@ class RefClassDurationsServiceTest {
         verify(refClassDurationsDao, Mockito.times(1)).findAll();
     }
 
-    /*@Test
+    @Test
     public void testAddClassDuration_Success() {
         RefClassDurationsBom expectedBom = new RefClassDurationsBom();
 
@@ -71,7 +71,6 @@ class RefClassDurationsServiceTest {
         assertEquals(expectedBom.getStartTime(), result.getStartTime());
         assertEquals(expectedBom.getEndTime(), result.getEndTime());
     }
-*/
     @Test
     public void testAddClassDuration_NumberIsNull() {
         RefClassDurationsBom refClassDurationsBom = new RefClassDurationsBom();
@@ -122,7 +121,7 @@ class RefClassDurationsServiceTest {
         assertThrows(AlreadyExistsException.class, () -> refClassDurationsService.addClassDuration(bom));
     }
 
-/*    @Test
+    @Test
     public void testAddClassDuration_TimeDurationAlreadyExists() {
         RefClassDurationsBom bom = new RefClassDurationsBom();
 
@@ -134,7 +133,7 @@ class RefClassDurationsServiceTest {
         when(refClassDurationsDao.existsByStartTimeAndEndTime(bom.getStartTime(), bom.getEndTime())).thenReturn(true);
 
         assertThrows(AlreadyExistsException.class, () -> refClassDurationsService.addClassDuration(bom));
-    }*/
+    }
 
     @Test
     public void testChangeClassDuration_Success() {
