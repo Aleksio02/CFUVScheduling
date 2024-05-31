@@ -1,0 +1,46 @@
+name: Check project stability and running tests before merging to master
+run-name: Build project and run tests
+on:
+  pull_request:
+    branches:
+      - 'master'
+jobs:
+  test_build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'oracle'
+          java-version: '21'
+          cache: 'maven'
+          cache-dependency-path: 'server\pom.xml' 
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build project
+        run: cd ./server && mvn clean package -Dmaven.test.skip=true
+  unit_testing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'oracle'
+          java-version: '21'
+          cache: 'maven'
+          cache-dependency-path: 'server\pom.xml' 
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Run unit tests
+        run: cd ./server && mvn clean test -P unit
+  integration_testing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'oracle'
+          java-version: '21'
+          cache: 'maven'
+          cache-dependency-path: 'server\pom.xml' 
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Run integration tests
+        run: cd ./server && mvn clean test -P integration
