@@ -9,9 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-java@v4
-#        with:
-#          distribution: 'oracle'
-#          java-version: '21'
+        with:
+          distribution: 'oracle'
+          java-version: '21'
 #          cache: 'maven'                          
       - name: Checkout
         uses: actions/checkout@v3
