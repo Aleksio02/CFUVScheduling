@@ -26,7 +26,7 @@ jobs:
     steps:
       - uses: actions/setup-java@v4
         with:
-          distribution: 'corretto'
+          distribution: 'oracle'
           java-version: '21'
       - name: Checkout
         uses: actions/checkout@v3
