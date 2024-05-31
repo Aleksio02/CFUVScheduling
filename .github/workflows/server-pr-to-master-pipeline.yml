@@ -12,8 +12,7 @@ jobs:
         with:
           distribution: 'oracle'
           java-version: '21'
-          cache: 'maven'
-          cache-dependency-path: 'server\pom.xml' 
+          cache: 'maven'                          
       - name: Checkout
         uses: actions/checkout@v3
       - name: Build project
@@ -25,8 +24,7 @@ jobs:
         with:
           distribution: 'oracle'
           java-version: '21'
-          cache: 'maven'
-          cache-dependency-path: 'server\pom.xml' 
+          cache: 'maven'                          
       - name: Checkout
         uses: actions/checkout@v3
       - name: Run unit tests
@@ -38,8 +36,7 @@ jobs:
         with:
           distribution: 'oracle'
           java-version: '21'
-          cache: 'maven'
-          cache-dependency-path: 'server\pom.xml' 
+          cache: 'maven'                          
       - name: Checkout
         uses: actions/checkout@v3
       - name: Run integration tests
