@@ -46,7 +46,7 @@ class ClassServiceTest {
     private RefClassTypeDao classTypeDao;
 
     @Test
-    void testAddCommentToClass_Success() {
+    public void testAddCommentToClass_Success() {
         UserBom currentUser = new UserBom();
         currentUser.setId(1);
         currentUser.setUsername("Смирнова С.И.");
@@ -77,10 +77,10 @@ class ClassServiceTest {
     }
 
     @Test
-    void testAddCommentToClass_AccessForbiddenException() {
+    public void testAddCommentToClass_AccessForbiddenException() {
         UserBom currentUser = new UserBom();
-        currentUser.setId(1);
-        currentUser.setUsername("Смирнова С.И.");
+        currentUser.setId(2);
+        currentUser.setUsername("Горская И.Ю.");
 
         Integer classId = 11;
         String comment = "Пара в 402В";
@@ -106,7 +106,7 @@ class ClassServiceTest {
     }
 
     @Test
-    void testFindClassesForGroup_Success() {
+    public void testFindClassesForGroup_Success() {
         LocalDate startDate = LocalDate.of(2022, 5, 18);
         LocalDate endDate = LocalDate.of(2022, 5, 25);
 
@@ -174,7 +174,7 @@ class ClassServiceTest {
     }
 
     @Test
-    void testCreateConsultation_Success() {
+    public void testCreateConsultation_Success() {
         ClassBom classBom = new ClassBom();
         classBom.setId(11);
         classBom.setSubjectName("Математика");
@@ -224,7 +224,7 @@ class ClassServiceTest {
     }
 
     @Test
-    void testCreateConsultation_IncorrectRequestDataException() {
+    public void testCreateConsultation_IncorrectRequestDataException() {
         ClassBom classBom = new ClassBom();
         UserBom currentUser = new UserBom();
 
@@ -232,7 +232,7 @@ class ClassServiceTest {
     }
 
     @Test
-    void testCreateConsultation_AlreadyExistsException() {
+    public void testCreateConsultation_AlreadyExistsException() {
         ClassBom classBom = new ClassBom();
         classBom.setId(11);
         classBom.setSubjectName("Математика");
@@ -279,7 +279,7 @@ class ClassServiceTest {
     }
 
     @Test
-    void testAddClassByAdmin_Success() {
+    public void testAddClassByAdmin_Success() {
         ClassBom classToAdd = new ClassBom();
         classToAdd.setId(11);
         classToAdd.setSubjectName("Математика");
@@ -345,14 +345,14 @@ class ClassServiceTest {
     }
 
     @Test
-    void testAddClassByAdmin_IncorrectRequestDataException() {
+    public void testAddClassByAdmin_IncorrectRequestDataException() {
         ClassBom classToAdd = new ClassBom();
 
         assertThrows(IncorrectRequestDataException.class, () -> classService.addClassByAdmin(classToAdd));
     }
 
     @Test
-    void testAddClassByAdmin_AlreadyExistsException() {
+    public void testAddClassByAdmin_AlreadyExistsException() {
         ClassBom classToAdd = new ClassBom();
         classToAdd.setId(11);
         classToAdd.setSubjectName("Математика");
@@ -393,7 +393,7 @@ class ClassServiceTest {
     }
 
     @Test
-    void testAddClassByAdmin_UserIsNotTeacher() {
+    public void testAddClassByAdmin_UserIsNotTeacher() {
         ClassBom classToAdd = new ClassBom();
         classToAdd.setId(11);
         classToAdd.setSubjectName("Математика");
@@ -456,7 +456,7 @@ class ClassServiceTest {
     }
 
     @Test
-    void testChangeClassByAdmin_Success() {
+    public void testChangeClassByAdmin_Success() {
         ClassBom classToChange = new ClassBom();
         classToChange.setId(11);
         classToChange.setSubjectName("Математика");
@@ -533,14 +533,14 @@ class ClassServiceTest {
     }
 
     @Test
-    void testChangeClassByAdmin_IncorrectRequestDataException() {
+    public void testChangeClassByAdmin_IncorrectRequestDataException() {
         ClassBom classToChange = new ClassBom();
 
         assertThrows(IncorrectRequestDataException.class, () -> classService.changeClassByAdmin(classToChange));
     }
 
     @Test
-    void testChangeClassByAdmin_UserNotFound() {
+    public void testChangeClassByAdmin_UserNotFound() {
         ClassBom classToChange = new ClassBom();
         classToChange.setId(11);
         classToChange.setSubjectName("Математика");
@@ -615,7 +615,7 @@ class ClassServiceTest {
     }
 
     @Test
-    void testChangeClassByAdmin_NewUserIsNotTeacher() {
+    public void testChangeClassByAdmin_NewUserIsNotTeacher() {
         ClassBom classToChange = new ClassBom();
         classToChange.setId(11);
         classToChange.setSubjectName("Математика");
@@ -690,7 +690,7 @@ class ClassServiceTest {
     }
 
     @Test
-    void testChangeClassByAdmin_ClassNotFound() {
+    public void testChangeClassByAdmin_ClassNotFound() {
         ClassBom classToChange = new ClassBom();
         classToChange.setId(11);
         classToChange.setSubjectName("Математика");
@@ -768,7 +768,7 @@ class ClassServiceTest {
 
 
     @Test
-    void testChangeClassByAdmin_AlreadyExistsException() {
+    public void testChangeClassByAdmin_AlreadyExistsException() {
         ClassBom classToChange = new ClassBom();
         classToChange.setId(11);
         classToChange.setSubjectName("Математика");
@@ -846,7 +846,7 @@ class ClassServiceTest {
     }
 
     @Test
-    void testDeleteClassByAdmin_Success() {
+    public void testDeleteClassByAdmin_Success() {
         ClassBom classToDelete = new ClassBom();
         classToDelete.setId(11);
         classToDelete.setSubjectName("Математика");
@@ -881,7 +881,7 @@ class ClassServiceTest {
     }
 
     @Test
-    void testDeleteClassByAdmin_ClassNotFound() {
+    public void testDeleteClassByAdmin_ClassNotFound() {
         ClassBom classToDelete = new ClassBom();
         classToDelete.setId(11);
         classToDelete.setSubjectName("Математика");
@@ -916,7 +916,7 @@ class ClassServiceTest {
     }
 
     @Test
-    void testFindClassesForTeacher_Success() {
+    public void testFindClassesForTeacher_Success() {
         LocalDate startDate = LocalDate.of(2022, 5, 18);
         LocalDate endDate = LocalDate.of(2022, 5, 25);
 
