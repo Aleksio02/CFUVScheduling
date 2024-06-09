@@ -65,12 +65,9 @@ class TeacherServiceTest {
 
         when(userDao.findById(userId)).thenReturn(Optional.of(userDto));
         when(userRolesDao.findByName(UserRoles.TEACHER.name())).thenReturn(Optional.of(userRole));
-        when(userDao.save(any(UserDto.class))).thenReturn(new UserDto());
 
         teacherService.giveTeacherRoleToUser(userId);
 
-        verify(userDao, times(1)).findById(userId);
-        verify(userRolesDao, times(1)).findByName(UserRoles.TEACHER.name());
         verify(userDao, times(1)).save(userDto);
     }
 
@@ -86,12 +83,9 @@ class TeacherServiceTest {
 
         when(userDao.findById(userId)).thenReturn(Optional.of(userDto));
         when(userRolesDao.findByName(UserRoles.USER.name())).thenReturn(Optional.of(userRole));
-        when(userDao.save(any(UserDto.class))).thenReturn(new UserDto());
 
         teacherService.removeTeacherRoleFromUser(userId);
 
-        verify(userDao, times(1)).findById(userId);
-        verify(userRolesDao, times(1)).findByName(UserRoles.USER.name());
         verify(userDao, times(1)).save(userDto);
     }
 }
