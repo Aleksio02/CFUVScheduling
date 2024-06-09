@@ -12,9 +12,11 @@ import ru.cfuv.cfuvscheduling.commons.dao.UserDao;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.RefUserRolesDto;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.UserDto;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -72,6 +74,17 @@ class TeacherServiceTest {
     }
 
     @Test
+    public void testGiveTeacherRoleToUser_UserNotFound() {
+        Integer userId = 1;
+
+        when(userDao.findById(userId)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> teacherService.giveTeacherRoleToUser(userId));
+        verify(userRolesDao, never()).findByName(UserRoles.TEACHER.name());
+        verify(userDao, never()).save(any(UserDto.class));
+    }
+
+    @Test
     public void testRemoveTeacherRoleFromUser_Success() {
         Integer userId = 1;
         UserDto userDto = new UserDto();
@@ -87,5 +100,16 @@ class TeacherServiceTest {
         teacherService.removeTeacherRoleFromUser(userId);
 
         verify(userDao, times(1)).save(userDto);
+    }
+
+    @Test
+    public void testRemoveTeacherRoleFromUser_UserNotFound() {
+        Integer userId = 1;
+
+        when(userDao.findById(userId)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> teacherService.removeTeacherRoleFromUser(userId));
+        verify(userRolesDao, never()).findByName(UserRoles.USER.name());
+        verify(userDao, never()).save(any(UserDto.class));
     }
 }
