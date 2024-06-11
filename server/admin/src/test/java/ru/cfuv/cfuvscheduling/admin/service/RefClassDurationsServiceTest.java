@@ -71,7 +71,6 @@ class RefClassDurationsServiceTest {
         assertEquals(expectedBom.getStartTime(), result.getStartTime());
         assertEquals(expectedBom.getEndTime(), result.getEndTime());
     }
-
     @Test
     public void testAddClassDuration_NumberIsNull() {
         RefClassDurationsBom refClassDurationsBom = new RefClassDurationsBom();
