@@ -9,14 +9,14 @@ Feature: Scenarios for adding a group
     Given group name is null and group not exists
 
     When server got a request to add a group named null
-    Then The group will not be added due to an exception IncorrectRequestDataException
+    Then the group will not be added due to an exception IncorrectRequestDataException
 
   Scenario: CS-NewGroup-03 | The name is too short
     Given group not exists and named IT
     When server got a request to add a group named IT
-    Then The group will not be added due to an exception IncorrectRequestDataException
+    Then the group will not be added due to an exception IncorrectRequestDataException
 
   Scenario: CS-NewGroup-04 | A group with this name already exists
     Given group already exists and named PI-989
     When server got a request to add a group named PI-989
-    Then The group will not be added due to an exception AlreadyExistsException
+    Then the group will not be added due to an exception AlreadyExistsException
