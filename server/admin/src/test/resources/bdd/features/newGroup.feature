@@ -17,6 +17,6 @@ Feature: Scenarios for adding a group
     Then The group will not be added due to an exception IncorrectRequestDataException
 
   Scenario: CS-NewGroup-04 | A group with this name already exists
-    Given group already exists and named PI-999
-    When server got a request to add a group named PI-999
+    Given group already exists and named PI-989
+    When server got a request to add a group named PI-989
     Then The group will not be added due to an exception AlreadyExistsException
