@@ -1,15 +1,22 @@
 package ru.cfuv.cfuvscheduling.admin.bdd.when;
 
 import io.cucumber.java.en.When;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.cfuv.cfuvscheduling.admin.bdd.AdminTestContext;
+import ru.cfuv.cfuvscheduling.admin.bdd.AdminTestUtils;
 import ru.cfuv.cfuvscheduling.admin.connector.AuthConnector;
 import ru.cfuv.cfuvscheduling.admin.controller.GroupsController;
+import ru.cfuv.cfuvscheduling.admin.controller.UserValidator;
 import ru.cfuv.cfuvscheduling.commons.bom.GroupsBom;
+import ru.cfuv.cfuvscheduling.commons.bom.UserBom;
+import ru.cfuv.cfuvscheduling.commons.bom.UserRoles;
 import ru.cfuv.cfuvscheduling.commons.converter.GroupsConverter;
-import ru.cfuv.cfuvscheduling.commons.dao.GroupsDao;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.GroupsDto;
 import ru.cfuv.cfuvscheduling.commons.exception.IncorrectRequestDataException;
+
+import static org.mockito.Mockito.*;
 
 public class NewGroupWhen {
 
@@ -23,20 +30,11 @@ public class NewGroupWhen {
 
     @When("server got a request to add a group named {}")
     public void serverGotARequestToAddAGroupNamed(String name) {
+        UserBom admin = new AdminTestUtils().createDummyUserWithRole(UserRoles.ADMIN);
+        when(authConnector.getCurrentUser(anyString())).thenReturn(admin);
+
         try {
-            if (name == null || name.trim().length() < 3) {
-                testContext.setExceptionObject(
-                        new IncorrectRequestDataException("The groups name cannot be null and should contain three or more symbols"),
-                        IncorrectRequestDataException.class);
-                return;
-            }
-
-            // Тут надо сгенерировать токен
-            GroupsBom groupsBom = new GroupsBom();
-            new GroupsConverter().fromDto((GroupsDto)testContext.getRequestObject(), groupsBom);
-
-            // Сюда подставить сгенерированный токен
-            GroupsBom responceGroupsBom = groupsController.group("token", groupsBom);
+            GroupsBom responceGroupsBom = groupsController.group("token", (GroupsBom) testContext.getRequestObject());
             testContext.setResponseObject(responceGroupsBom, GroupsBom.class);
         } catch (Exception e) {
             testContext.setExceptionObject(e, e.getClass());

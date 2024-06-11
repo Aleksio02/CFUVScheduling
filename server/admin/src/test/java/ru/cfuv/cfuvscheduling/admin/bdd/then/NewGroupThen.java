@@ -20,7 +20,7 @@ public class NewGroupThen {
         assertEquals(responceClass, GroupsBom.class);
     }
 
-    @Then("The {} group will not be added")
+    @Then("The group will not be added due to an exception {}")
     public void groupWontAdded(String exceptionClass) {
         Class responceExceptionClass = testContext.getExceptionClass();
 
