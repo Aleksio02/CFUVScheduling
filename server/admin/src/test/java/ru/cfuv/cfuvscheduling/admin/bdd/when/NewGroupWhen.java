@@ -1,22 +1,17 @@
 package ru.cfuv.cfuvscheduling.admin.bdd.when;
 
 import io.cucumber.java.en.When;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.cfuv.cfuvscheduling.admin.bdd.AdminTestContext;
 import ru.cfuv.cfuvscheduling.admin.bdd.AdminTestUtils;
 import ru.cfuv.cfuvscheduling.admin.connector.AuthConnector;
 import ru.cfuv.cfuvscheduling.admin.controller.GroupsController;
-import ru.cfuv.cfuvscheduling.admin.controller.UserValidator;
 import ru.cfuv.cfuvscheduling.commons.bom.GroupsBom;
 import ru.cfuv.cfuvscheduling.commons.bom.UserBom;
 import ru.cfuv.cfuvscheduling.commons.bom.UserRoles;
-import ru.cfuv.cfuvscheduling.commons.converter.GroupsConverter;
-import ru.cfuv.cfuvscheduling.commons.dao.dto.GroupsDto;
-import ru.cfuv.cfuvscheduling.commons.exception.IncorrectRequestDataException;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.when;
 
 public class NewGroupWhen {
 
