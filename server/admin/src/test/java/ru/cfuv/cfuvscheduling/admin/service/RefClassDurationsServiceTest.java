@@ -1,30 +1,26 @@
 package ru.cfuv.cfuvscheduling.admin.service;
 
-import javassist.LoaderClassPath;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.cglib.core.Local;
 import ru.cfuv.cfuvscheduling.admin.dao.RefClassDurationsDao;
 import ru.cfuv.cfuvscheduling.commons.bom.RefClassDurationsBom;
-import ru.cfuv.cfuvscheduling.commons.bom.RefClassTypeBom;
 import ru.cfuv.cfuvscheduling.commons.converter.RefClassDurationsConverter;
 import ru.cfuv.cfuvscheduling.commons.dao.dto.RefClassDurationsDto;
 import ru.cfuv.cfuvscheduling.commons.exception.AlreadyExistsException;
 import ru.cfuv.cfuvscheduling.commons.exception.IncorrectRequestDataException;
 
 import javax.persistence.EntityNotFoundException;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -73,6 +69,7 @@ class RefClassDurationsServiceTest {
         assertEquals(expectedBom.getStartTime(), result.getStartTime());
         assertEquals(expectedBom.getEndTime(), result.getEndTime());
     }
+
     @Test
     public void testAddClassDuration_NumberIsNull() {
         RefClassDurationsBom refClassDurationsBom = new RefClassDurationsBom();
