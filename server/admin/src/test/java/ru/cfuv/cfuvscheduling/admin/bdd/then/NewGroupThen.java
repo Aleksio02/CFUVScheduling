@@ -11,8 +11,8 @@ public class NewGroupThen {
 
     private final AdminTestContext testContext = AdminTestContext.getINSTANCE();
 
-    @Then("a group named {} has been added to the database")
-    public void groupWillBeAdded(String name) {
+    @Then("a group has been added to the database")
+    public void groupWillBeAdded() {
         Object responceObject = testContext.getResponseObject();
         Class responceClass = testContext.getResponseClass();
 

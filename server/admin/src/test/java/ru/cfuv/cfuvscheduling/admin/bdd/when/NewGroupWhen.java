@@ -23,8 +23,8 @@ public class NewGroupWhen {
 
     private final AdminTestContext testContext = AdminTestContext.getINSTANCE();
 
-    @When("server got a request to add a group named {}")
-    public void serverGotARequestToAddAGroupNamed(String name) {
+    @When("server got a request to add a group")
+    public void serverGotARequestToAddAGroupNamed() {
         UserBom admin = new AdminTestUtils().createDummyUserWithRole(UserRoles.ADMIN);
         when(authConnector.getCurrentUser(anyString())).thenReturn(admin);
 
