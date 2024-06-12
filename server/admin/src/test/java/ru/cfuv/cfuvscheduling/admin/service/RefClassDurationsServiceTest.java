@@ -3,6 +3,7 @@ package ru.cfuv.cfuvscheduling.admin.service;
 import javassist.LoaderClassPath;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -17,6 +18,7 @@ import ru.cfuv.cfuvscheduling.commons.exception.AlreadyExistsException;
 import ru.cfuv.cfuvscheduling.commons.exception.IncorrectRequestDataException;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,8 +62,8 @@ class RefClassDurationsServiceTest {
         RefClassDurationsDto dto = new RefClassDurationsDto();
         new RefClassDurationsConverter().toDto(expectedBom, dto);
 
-        when(refClassDurationsDao.findById(expectedBom.getNumber())).thenReturn(Optional.empty());
-        when(refClassDurationsDao.existsByStartTimeAndEndTime(expectedBom.getStartTime(), expectedBom.getEndTime())).
+        when(refClassDurationsDao.findById(anyInt())).thenReturn(Optional.empty());
+        when(refClassDurationsDao.existsByStartTimeAndEndTime(any(LocalTime.class), any(LocalTime.class))).
                 thenReturn(false);
         when(refClassDurationsDao.save(any(RefClassDurationsDto.class))).thenReturn(dto);
 
@@ -116,7 +118,7 @@ class RefClassDurationsServiceTest {
         dto.setStartTime(LocalTime.of(8, 0));
         dto.setEndTime(LocalTime.of(9, 30));
 
-        when(refClassDurationsDao.findById(bom.getNumber())).thenReturn(Optional.of(dto));
+        when(refClassDurationsDao.findById(anyInt())).thenReturn(Optional.of(dto));
 
         assertThrows(AlreadyExistsException.class, () -> refClassDurationsService.addClassDuration(bom));
     }
@@ -129,8 +131,9 @@ class RefClassDurationsServiceTest {
         bom.setStartTime(LocalTime.of(8, 0));
         bom.setEndTime(LocalTime.of(9, 30));
 
-        when(refClassDurationsDao.findById(bom.getNumber())).thenReturn(Optional.empty());
-        when(refClassDurationsDao.existsByStartTimeAndEndTime(bom.getStartTime(), bom.getEndTime())).thenReturn(true);
+        when(refClassDurationsDao.findById(anyInt())).thenReturn(Optional.empty());
+        when(refClassDurationsDao.existsByStartTimeAndEndTime(any(LocalTime.class), any(LocalTime.class))).
+                thenReturn(true);
 
         assertThrows(AlreadyExistsException.class, () -> refClassDurationsService.addClassDuration(bom));
     }
@@ -148,8 +151,8 @@ class RefClassDurationsServiceTest {
         dto.setStartTime(LocalTime.of(8, 0));
         dto.setEndTime(LocalTime.of(9, 0));
 
-        when(refClassDurationsDao.findById(expectedBom.getNumber())).thenReturn(Optional.of(dto));
-        when(refClassDurationsDao.findByStartTimeAndEndTime(expectedBom.getStartTime(), expectedBom.getEndTime())).
+        when(refClassDurationsDao.findById(anyInt())).thenReturn(Optional.of(dto));
+        when(refClassDurationsDao.findByStartTimeAndEndTime(any(LocalTime.class), any(LocalTime.class))).
                 thenReturn(Optional.empty());
 
         refClassDurationsService.changeClassDuration(expectedBom);
@@ -198,7 +201,7 @@ class RefClassDurationsServiceTest {
         expectedBom.setStartTime(LocalTime.of(8, 1));
         expectedBom.setEndTime(LocalTime.of(9, 31));
 
-        when(refClassDurationsDao.findById(expectedBom.getNumber())).
+        when(refClassDurationsDao.findById(anyInt())).
                 thenThrow(new EntityNotFoundException("Class duration with this ID was not found."));
 
         assertThrows(EntityNotFoundException.class, () -> refClassDurationsService.changeClassDuration(expectedBom));
@@ -222,8 +225,8 @@ class RefClassDurationsServiceTest {
         dto2.setStartTime(LocalTime.of(8, 0));
         dto2.setEndTime(LocalTime.of(9, 30));
 
-        when(refClassDurationsDao.findById(expectedBom.getNumber())).thenReturn(Optional.of(dto));
-        when(refClassDurationsDao.findByStartTimeAndEndTime(expectedBom.getStartTime(), expectedBom.getEndTime())).
+        when(refClassDurationsDao.findById(anyInt())).thenReturn(Optional.of(dto));
+        when(refClassDurationsDao.findByStartTimeAndEndTime(any(LocalTime.class), any(LocalTime.class))).
                 thenReturn(Optional.of(dto2));
 
         assertThrows(AlreadyExistsException.class, () -> refClassDurationsService.changeClassDuration(expectedBom));
@@ -233,7 +236,7 @@ class RefClassDurationsServiceTest {
     public void testDeleteClassDuration_Success() {
         Integer expectedID = 1;
 
-        when(refClassDurationsDao.existsById(expectedID)).thenReturn(true);
+        when(refClassDurationsDao.existsById(anyInt())).thenReturn(true);
 
         refClassDurationsService.deleteClassDuration(expectedID);
 
@@ -244,7 +247,7 @@ class RefClassDurationsServiceTest {
     public void testDeleteClassDuration_EntityNotFound() {
         Integer expectedID = 1;
 
-        when(refClassDurationsDao.existsById(expectedID)).thenReturn(false);
+        when(refClassDurationsDao.existsById(anyInt())).thenReturn(false);
 
         assertThrows(EntityNotFoundException.class, () -> refClassDurationsService.deleteClassDuration(expectedID));
     }
