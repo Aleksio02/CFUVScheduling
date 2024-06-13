@@ -22,10 +22,9 @@ CFUV Scheduling – это приложение, которое помогает
 ### Регистрация
 В первый раз вы войдёте в качестве гостя. Чтобы начать полноценную работу с приложением, вам необходимо будет зарегестрироваться.
 
-
 Сделать это можно будет следующим образом:
 1. Перейдите на страницу "Аккаунт" и нажмите на кнопку "Войти" в правом верхнем углу экрана.
-![<img src="https://raw.githubusercontent.com/Aleksio02/CFUVScheduling/8e40b1cfa5697a22d9b6a5357bdb52d764f91ff2/img/IMG_20240612_234452.jpg" width=100 height=230>](https://raw.githubusercontent.com/Aleksio02/CFUVScheduling/8e40b1cfa5697a22d9b6a5357bdb52d764f91ff2/img/IMG_20240612_234452.jpg)
+<img src="https://raw.githubusercontent.com/Aleksio02/CFUVScheduling/8e40b1cfa5697a22d9b6a5357bdb52d764f91ff2/img/IMG_20240612_234452.jpg" width=25 height=50>
 2. В появившемся окне нажмите кнопку "Зарегистрироваться".
 ![](https://raw.githubusercontent.co/Aleksio02/CFUVScheduling/8e40b1cfa5697a22d9b6a5357bdb52d764f91ff2/img/IMG_20240612_234511.jpg)
 3. В следующем окне укажите имя своего пользователя и пароль. Минимальная длина пароля - 8 символов.
