@@ -27,7 +27,7 @@ CFUV Scheduling – это приложение, которое помогает
 1. Перейдите на страницу "Аккаунт" и нажмите на кнопку "Войти" в правом верхнем углу экрана.
 ![](https://raw.githubusercontent.com/Aleksio02/CFUVScheduling/8e40b1cfa5697a22d9b6a5357bdb52d764f91ff2/img/IMG_20240612_234452.jpg)
 2. В появившемся окне нажмите кнопку "Зарегистрироваться".
-![](https://raw.githubusercontent.com/Aleksio02/CFUVScheduling/8e40b1cfa5697a22d9b6a5357bdb52d764f91ff2/img/IMG_20240612_234511.jpg)
+![](https://raw.githubusercontent.co/Aleksio02/CFUVScheduling/8e40b1cfa5697a22d9b6a5357bdb52d764f91ff2/img/IMG_20240612_234511.jpg)
 3. В следующем окне укажите имя своего пользователя и пароль. Минимальная длина пароля - 8 символов.
 ![](https://raw.githubusercontent.com/Aleksio02/CFUVScheduling/8e40b1cfa5697a22d9b6a5357bdb52d764f91ff2/img/IMG_20240612_234601.jpg)
 После этого вы увидете во вкладке "Аккаунт" имя своего пользователя и свою текущую роль. Сразу после регистрации в поле роли будет указано "Пользователь".
@@ -95,7 +95,7 @@ CFUV Scheduling – это приложение, которое помогает
 ![](https://raw.githubusercontent.com/Aleksio02/CFUVScheduling/02d6328a5c6526af45518a0ff8a008ef8b1a8129/img/IMG_20240612_235650.jpg)
 2. В появившемся окне заполнить все обязательные поля. Поле "Комментарий" необязательно, его можно пропустить.
 3. Нажать кнопку "Сохранить".
-![](https://raw.githubusercontent.com/Aleksio02/CFUVScheduling/02d6328a5c6526af45518a0ff8a008ef8b1a8129/img/Screenshot_2024_06_13_00_04_19_474_ru_cfuv_cfuvscheduling_edit.jpg)
+![](https://raw.githubusercontent.com/Aleksio02/CFUVScheduling/3856c2113971e3ea376da73eb742dbbefa01decf/img/Screenshot_2024_06_13_00_06_47_877_ru_cfuv_cfuvscheduling_edit.jpg)
 Пара не добавится в расписание указанного дня, если пара с таким номером уже существует. Поэтому заранее проверяйте наличие пары нужным вам номером.
 
 #### Удаление пары
