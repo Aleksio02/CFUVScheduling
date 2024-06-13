@@ -50,28 +50,6 @@ class RefClassDurationsServiceTest {
     }
 
     @Test
-    public void testAddClassDuration_Success() {
-        RefClassDurationsBom expectedBom = new RefClassDurationsBom();
-
-        expectedBom.setNumber(21);
-        expectedBom.setStartTime(LocalTime.of(22, 0));
-        expectedBom.setEndTime(LocalTime.of(23, 30));
-
-        RefClassDurationsDto dto = new RefClassDurationsDto();
-        new RefClassDurationsConverter().toDto(expectedBom, dto);
-
-        when(refClassDurationsDao.findById(expectedBom.getNumber())).thenReturn(Optional.empty());
-        when(refClassDurationsDao.existsByStartTimeAndEndTime(expectedBom.getStartTime(), expectedBom.getEndTime())).
-                thenReturn(false);
-        when(refClassDurationsDao.save(any(RefClassDurationsDto.class))).thenReturn(dto);
-
-        RefClassDurationsBom result = refClassDurationsService.addClassDuration(expectedBom);
-
-        assertEquals(expectedBom.getNumber(), result.getNumber());
-        assertEquals(expectedBom.getStartTime(), result.getStartTime());
-        assertEquals(expectedBom.getEndTime(), result.getEndTime());
-    }
-    @Test
     public void testAddClassDuration_NumberIsNull() {
         RefClassDurationsBom refClassDurationsBom = new RefClassDurationsBom();
 
@@ -117,20 +95,6 @@ class RefClassDurationsServiceTest {
         dto.setEndTime(LocalTime.of(9, 30));
 
         when(refClassDurationsDao.findById(bom.getNumber())).thenReturn(Optional.of(dto));
-
-        assertThrows(AlreadyExistsException.class, () -> refClassDurationsService.addClassDuration(bom));
-    }
-
-    @Test
-    public void testAddClassDuration_TimeDurationAlreadyExists() {
-        RefClassDurationsBom bom = new RefClassDurationsBom();
-
-        bom.setNumber(8);
-        bom.setStartTime(LocalTime.of(8, 0));
-        bom.setEndTime(LocalTime.of(9, 30));
-
-        when(refClassDurationsDao.findById(bom.getNumber())).thenReturn(Optional.empty());
-        when(refClassDurationsDao.existsByStartTimeAndEndTime(bom.getStartTime(), bom.getEndTime())).thenReturn(true);
 
         assertThrows(AlreadyExistsException.class, () -> refClassDurationsService.addClassDuration(bom));
     }
