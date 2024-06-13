@@ -24,11 +24,9 @@ CFUV Scheduling – это приложение, которое помогает
 
 Сделать это можно будет следующим образом:
 1. Перейдите на страницу "Аккаунт" и нажмите на кнопку "Войти" в правом верхнем углу экрана.
-<p align="center">
-    <img src="https://raw.githubusercontent.com/Aleksio02/CFUVScheduling/8e40b1cfa5697a22d9b6a5357bdb52d764f91ff2/img/IMG_20240612_234452.jpg" width=50% height=50%>
-<\p>
+<img src="./img/IMG_20240612_234452.jpg" width=50% height=50%>
 2. В появившемся окне нажмите кнопку "Зарегистрироваться".
-<img src="https://raw.githubusercontent.co/Aleksio02/CFUVScheduling/8e40b1cfa5697a22d9b6a5357bdb52d764f91ff2/img/IMG_20240612_234511.jpg" width=50% height=50%>
+<img src="https://github.com/Aleksio02/CFUVScheduling/blob/Documentation/img/IMG_20240612_234511.jpg?raw=true" width=50% height=50%>
 3. В следующем окне укажите имя своего пользователя и пароль. Минимальная длина пароля - 8 символов.
 <img src="https://raw.githubusercontent.com/Aleksio02/CFUVScheduling/8e40b1cfa5697a22d9b6a5357bdb52d764f91ff2/img/IMG_20240612_234601.jpg" width=50% height=50%>
 После этого вы увидете во вкладке "Аккаунт" имя своего пользователя и свою текущую роль. Сразу после регистрации в поле роли будет указано "Пользователь".
