@@ -12,8 +12,11 @@ public class UserConverter {
         destination.setFirstName(source.getFirstName());
         destination.setSecondName(source.getSecondName());
         destination.setLastName(source.getLastName());
-        destination.setRoleId(source.getRoleId().getId());
-        destination.setRole(source.getRoleId().getName());
+
+        if (source.getRoleId() != null) {
+            destination.setRoleId(source.getRoleId().getId());
+            destination.setRole(source.getRoleId().getName());
+        }
     }
 
     public void toDto(UserBom source, UserDto destination) {
@@ -23,9 +26,11 @@ public class UserConverter {
         destination.setSecondName(source.getSecondName());
         destination.setLastName(source.getLastName());
 
-        RefUserRolesDto refUserRolesDto = new RefUserRolesDto();
-        refUserRolesDto.setId(source.getRoleId());
-        refUserRolesDto.setName(source.getRole());
-        destination.setRoleId(refUserRolesDto);
+        if (source.getRoleId() != null) {
+            RefUserRolesDto refUserRolesDto = new RefUserRolesDto();
+            refUserRolesDto.setId(source.getRoleId());
+            refUserRolesDto.setName(source.getRole());
+            destination.setRoleId(refUserRolesDto);
+        }
     }
 }

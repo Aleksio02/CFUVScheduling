@@ -32,13 +32,6 @@ public class AuthService {
     @Autowired
     private JwtUtils jwtUtils;
 
-    public String authenticateUser(String username) {
-        UserDto user = userDao.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
-        String token = jwtUtils.generateToken(user.getUsername());
-        return token;
-    }
-
     public AccountResponse authenticateUser(AccountForm accountForm) {
         if (accountForm.getUsername() == null || accountForm.getPassword() == null) {
             throw new IncorrectRequestDataException("Username or password cannot be null");
