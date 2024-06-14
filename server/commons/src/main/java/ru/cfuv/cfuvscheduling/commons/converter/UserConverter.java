@@ -16,9 +16,6 @@ public class UserConverter {
         if (source.getRoleId() != null) {
             destination.setRoleId(source.getRoleId().getId());
             destination.setRole(source.getRoleId().getName());
-        } else {
-            destination.setRoleId(null);
-            destination.setRole(null);
         }
     }
 
@@ -34,8 +31,6 @@ public class UserConverter {
             refUserRolesDto.setId(source.getRoleId());
             refUserRolesDto.setName(source.getRole());
             destination.setRoleId(refUserRolesDto);
-        } else {
-            destination.setRoleId(null);
         }
     }
 }
