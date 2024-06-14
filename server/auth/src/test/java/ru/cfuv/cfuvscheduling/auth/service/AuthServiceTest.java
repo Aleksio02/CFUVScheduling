@@ -43,7 +43,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void testAuthenticateUser_Success() {
+    public void testAuthenticateUser_Success() {
         String username = "testuser";
         String password = "password";
         AccountForm accountForm = new AccountForm();
@@ -64,7 +64,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void testAuthenticateUser_Failure() {
+    public void testAuthenticateUser_Failure() {
         String username = "testuser";
         String password = "wrongpassword";
         AccountForm accountForm = new AccountForm();
@@ -81,7 +81,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void testGetCurrentUser_Success() {
+    public void testGetCurrentUser_Success() {
         String token = "token";
         String username = "testuser";
         UserDto userDto = new UserDto();
@@ -96,7 +96,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void testGetCurrentUser_Failure() {
+    public void testGetCurrentUser_Failure() {
         String token = "invalidtoken";
 
         when(jwtUtils.parseJwt(token)).thenThrow(new IncorrectRequestDataException("Error occured in parsing JWT"));
@@ -105,7 +105,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void testGetCurrentUser_ValidToken() {
+    public void testGetCurrentUser_ValidToken() {
         String token = "validToken";
         String username = "testuser";
 
@@ -121,7 +121,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void testGetCurrentUser_InvalidToken() {
+    public void testGetCurrentUser_InvalidToken() {
         String invalidToken = "invalidToken";
 
         when(jwtUtils.parseJwt(invalidToken)).thenThrow(new IncorrectRequestDataException("Invalid JWT"));
@@ -130,7 +130,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void testRegistration_Success() {
+    public void testRegistration_Success() {
         String username = "newuser_" + System.currentTimeMillis();
         String password = "password";
 
@@ -161,7 +161,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void testRegistration_Failure_UserExists() {
+    public void testRegistration_Failure_UserExists() {
         String username = "existinguser";
         String password = "password";
         AccountForm accountForm = new AccountForm();
@@ -177,7 +177,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void testRegistration_AlreadyExists() {
+    public void testRegistration_AlreadyExists() {
         String existingUsername = "existinguser";
         String password = "password";
         AccountForm accountForm = new AccountForm();
@@ -193,7 +193,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void testRegistration_NullFields() {
+    public void testRegistration_NullFields() {
         AccountForm accountForm = new AccountForm();
 
         assertThrows(IncorrectRequestDataException.class, () -> authService.registration(accountForm));
